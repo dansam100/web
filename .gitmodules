@@ -1,0 +1,3 @@
+[submodule "lib/oauth_simple"]
+	path = lib/oauth_simple
+	url = git@github.com:dansam100/oauthsimple.git
