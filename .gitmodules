@@ -1,3 +1,9 @@
 [submodule "lib/oauth_simple"]
 	path = lib/oauth_simple
 	url = git@github.com:dansam100/oauthsimple.git
+[submodule "lib/dbal"]
+	path = lib/dbal
+	url = git@github.com:dansam100/dbal.git
+[submodule "lib/common"]
+	path = lib/common
+	url = git@github.com:dansam100/common.git
