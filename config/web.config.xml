@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<!--
+	DB INFO
+	- Link to a file using 'configuration' attribute
+	- Alternatively, specify configuration directly
+		<database host="localhost">
+			<username>tet</username>
+			<password>test</password>
+		<database>test</database>
+	-->
+	<database configuration="db.config.xml"/>
+	
+	<!--TEMPLATES-->
+	<templates>
+		<playlist location="application/views/templates.xml" />
+	</templates>
+</config>

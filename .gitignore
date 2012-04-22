@@ -1,4 +1,4 @@
-
+*.mine.*
 .metadata*/
 .settings*/
 *.wb50.*
