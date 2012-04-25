@@ -4,15 +4,13 @@
 	DB INFO
 	- Link to a file using 'configuration' attribute
 	- Alternatively, specify configuration directly
-		<database host="localhost">
-			<username>tet</username>
+		<database host="localhost" name="test">
+			<username>test</username>
 			<password>test</password>
-		<database>test</database>
+		</database>
 	-->
 	<database configuration="db.config.xml"/>
 	
 	<!--TEMPLATES-->
-	<templates>
-		<playlist location="application/views/templates.xml" />
-	</templates>
+	<templates location="/application/views/templates.xml" />
 </config>

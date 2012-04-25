@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-	<database host="localhost">
+	<database host="localhost" name="rexume">
 		<username>root</username>
 		<password></password>
-		<database>rexume</database>
 	</database>
 </config>
