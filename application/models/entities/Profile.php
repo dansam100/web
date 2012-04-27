@@ -22,52 +22,106 @@
 		
 		/**
 	     * @ManyToOne(targetEntity="Media", inversedBy="profiles")
+		 * @JoinColumn(name="defaultEmail", referencedColumnName="id")
 	     */
 		protected $defaultEmail;
 		/**
 	     * @ManyToOne(targetEntity="Media", inversedBy="profiles")
+		 * @JoinColumn(name="defaultPhone", referencedColumnName="id")
 	     */
 		protected $defaultPhone;
 		/**
 	     * @ManyToOne(targetEntity="Address", inversedBy="profiles")
+		 * @JoinColumn(name="defaultAddress", referencedColumnName="id")
 	     */
 		protected $defaultAddress;
 		/**
+		 * @var User 
+		 *
 	     * @ManyToOne(targetEntity="User", inversedBy="profiles")
+		 * @JoinColumn(name="userId", referencedColumnName="id")
 	     */
 		protected $user;
 		/** @Column(type="datetime") */
 		protected $editTime;
 		/**
-	     * @ManyToMany(targetEntity="Address", inversedBy="profiles")
+		 * @var Address[]
+		 * 
+		 * @ManyToMany(targetEntity="UserAddress", inversedBy="addresses")
+	     * @JoinTable(name="ProfileAddress",
+		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
+     	 *      inverseJoinColumns={@JoinColumn(name="locationId", referencedColumnName="id")}
+ 		 * )
 	     */
 		protected $addresses = null;
 		/**
-	     * @ManyToMany(targetEntity="Experience", inversedBy="profiles")
+	     * @var Experience[]
+		 * 
+		 * @ManyToMany(targetEntity="Experience", inversedBy="profiles")
+		 * @JoinTable(name="ProfileExperience",
+		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
+     	 *      inverseJoinColumns={@JoinColumn(name="experienceId", referencedColumnName="id")}
+ 		 * )
 	     */
 		protected $experiences = null;
 		/**
-	     * @ManyToMany(targetEntity="Degree", inversedBy="profiles")
+	     * @var Degree[]
+		 * 
+		 * @ManyToMany(targetEntity="Degree", inversedBy="profiles")
+		 * @JoinTable(name="ProfileDegree",
+		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
+     	 *      inverseJoinColumns={@JoinColumn(name="degreeId", referencedColumnName="id")}
+ 		 * )
 	     */
 		protected $degrees = null;
 		/**
-	     * @ManyToMany(targetEntity="Media", inversedBy="profiles")
+	     * @var Media[]
+		 * 
+		 * @ManyToMany(targetEntity="Media", inversedBy="profiles")
+		 * @JoinTable(name="ProfileAddress",
+		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
+     	 *      inverseJoinColumns={@JoinColumn(name="locationId", referencedColumnName="id")}
+ 		 * )
 	     */
 		protected $media = null;
 		/**
-	     * @ManyToMany(targetEntity="Skill", inversedBy="profiles")
+	     * @var Skill[]
+		 * 
+		 * @ManyToMany(targetEntity="Skill", inversedBy="profiles")
+		 * @JoinTable(name="ProfileAddress",
+		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
+     	 *      inverseJoinColumns={@JoinColumn(name="skillId", referencedColumnName="id")}
+ 		 * )
 	     */
 		protected $skills = null;
 		/**
-	     * @ManyToMany(targetEntity="Language", inversedBy="profiles")
+	     * @var Language[]
+		 * 
+		 * @ManyToMany(targetEntity="Language", inversedBy="profiles")
+		 * @JoinTable(name="ProfileAddress",
+		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
+     	 *      inverseJoinColumns={@JoinColumn(name="languageId", referencedColumnName="id")}
+ 		 * )
 	     */
 		protected $languages = null;
 		/**
+		 *	@var Language[] 
+		 *
 	     * @ManyToMany(targetEntity="Activity", inversedBy="profiles")
+		 * @JoinTable(name="ProfileAddress",
+		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
+     	 *      inverseJoinColumns={@JoinColumn(name="activityId", referencedColumnName="id")}
+ 		 * )
 	     */
 		protected $activities = null;
 		/**
+		 * @var Category[]
+		 * 
 	     * @ManyToMany(targetEntity="Category", inversedBy="categories")
+		 * @JoinTable(name="ProfileAddress",
+		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
+     	 *      inverseJoinColumns={@JoinColumn(name="categoryId", referencedColumnName="id")}
+ 		 * )
 	     */
 		protected $categories = null;
 		
@@ -94,7 +148,5 @@
 			$user->addProfile($this);
 			$this->user = $user;
 		}
-		
-		
     }
 ?>

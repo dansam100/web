@@ -10,16 +10,66 @@
 		/** @Column(type="string") */
 		protected $description;
 		/**
-	     * @ManyToOne(targetEntity="Degree", inversedBy="achievements")
+	     * @var Degree
+		 * 
+		 * @ManyToOne(targetEntity="Degree", inversedBy="achievements")
+		 * @JoinColumn(name="degreeId", referencedColumnName="id")
 	     */
-		protected $degree;
+		protected $degree = null;
 		/**
-	     * @ManyToOne(targetEntity="Experience", inversedBy="achievements")
+	     * @var Experience
+		 * 
+		 * @ManyToOne(targetEntity="Experience", inversedBy="achievements")
+		 * @JoinColumn(name="experienceId", referencedColumnName="id")
 	     */
-		protected $experience;
+		protected $experience = null;
 		/**
-	     * @ManyToOne(targetEntity="Project", inversedBy="achievements")
+	     * @var Project
+		 * 
+		 * @ManyToOne(targetEntity="Project", inversedBy="achievements")
+		 * @JoinColumn(name="projectId", referencedColumnName="id")
 	     */
-		protected $project;
+		protected $project = null;
+		
+		
+		public function getDescription()
+		{
+			return $this->description;
+		}
+		
+		public function setDescription($description)
+		{
+			$this->description = $description;
+		}
+		
+		public function getProject()
+		{
+			return $this->project;
+		}
+		
+		public function setProject($project)
+		{
+			$this->project = $project;
+		}
+		
+		public function getExperience()
+		{
+			return $this->experience;
+		}
+		
+		public function setExperience($experience)
+		{
+			$this->experience = $experience;
+		}
+		
+		public function getDegree()
+		{
+			return $this->getDegree;
+		}
+		
+		public function setDegree($degree)
+		{
+			$this->degree = $degree;
+		}
     }
 ?>

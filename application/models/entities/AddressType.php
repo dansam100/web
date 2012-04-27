@@ -9,5 +9,10 @@
     	protected $id;
 		/** @Column(type="string") */
 		protected $name;
+		
+		public function getName()
+		{
+			return $this->name;
+		}
     }
 ?>

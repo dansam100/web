@@ -36,8 +36,10 @@
 	     */
 		protected $profiles = null;
 		/**
-	     * @OneToMany(targetEntity="Address", mappedBy="user")
-		 * @var Address[]
+	     * @var UserAddress[]
+		 * 
+		 * @OneToMany(targetEntity="UserAddress", mappedBy="user")
+		 * @var UserAddress[]
 	     */
 		protected $addresses = null;
 		/**
@@ -75,6 +77,11 @@
 		 * @var Category[]
 	     */
 		protected $categories = null;
+		/**
+	     * @OneToMany(targetEntity="Session", mappedBy="user")
+		 * @var Session[]
+	     */
+		protected $sessions = null;
 		
 		
 		public function __construct()
@@ -88,6 +95,7 @@
 			$this->$languages = new ArrayCollection();
 			$this->$activities = new ArrayCollection();
 			$this->$categories = new ArrayCollection();
+			$this->sessions = new ArrayCollection();
 		}
 		
 		
@@ -118,7 +126,17 @@
 		
 		public function addProfile($profile)
 		{
-			$this->profiles[] = $bugs;
+			$this->profiles[] = $profile;
+		}
+		
+		public function getSessions()
+		{
+			return $this->sessions;
+		}
+		
+		public function setSession($session)
+		{
+			$this->sessions[] = $session;
 		}
     }
 ?>
