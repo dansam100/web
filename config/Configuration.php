@@ -1,12 +1,13 @@
 <?php
-	namespace Rexume\Models\Configuration;
+	namespace Rexume\Configuration;
+	require_once "./Bootstrap.php";	
 	
-	class ConfigurationLoaderException extends Exception{}
+	class ConfigurationLoaderException extends \Exception{}
 
 
     class Configuration
     {
-    	const WEB_CONFIG = "../config/web.config.xml";
+    	const WEB_CONFIG = "../../config/web.config.xml";
 		private $xml;
 
 		private $templates;
@@ -14,6 +15,7 @@
     	private $db_host;
     	private $db_user;
     	private $db_pw;
+		private $deployment_mode;
 		
 		
 		public function __construct()
@@ -31,6 +33,7 @@
 	        $this->xml = simplexml_load_file(self::WEB_CONFIG);
 			
 			$this->templates = $this->xml->templates["location"];
+			$this->deployment_mode = $this->xml->deployment["mode"];
 			
 			if(!isset($this->xml->database["configuration"]) && isset($this->xml->database))
 			{	
@@ -41,9 +44,9 @@
 			}
 			elseif(isset($this->xml->database["configuration"])) 
 			{
-				$dbconfig_path = dirname(self::WEB_CONFIG) . $this->xml->database["configuration"];
+				$dbconfig_path = join(DIRECTORY_SEPARATOR, array(dirname(self::WEB_CONFIG), $this->xml->database["configuration"]));
 				if(file_exists($dbconfig_path)){
-					$dbxml = simplexml_load_file($this->xml->database["configuration"]);
+					$dbxml = simplexml_load_file($dbconfig_path);
 					$this->db_name = (string)$dbxml->database["name"];
 		        	$this->db_host = (string)$dbxml->database["host"];
 		        	$this->db_user = (string)$dbxml->database->username;
@@ -61,34 +64,42 @@
 			{
 				return $this->db_host;
 			}
-			return NULL;
+			return null;
 		}
 		
 		function getDatabaseUser()
 		{
-			if(isset($this->$db_user))
+			if(isset($this->db_user))
 			{
-				return $this->$db_user;
+				return $this->db_user;
 			}
-			return NULL;
+			return null;
 		}
 		
 		function getDatabasePassword()
 		{
-			if(isset($this->$db_pw))
+			if(isset($this->db_pw))
 			{
-				return $this->$db_pw;
+				return $this->db_pw;
 			}
-			return NULL;
+			return null;
 		}
 		
 		function getTemplatesPath()
 		{
-			if(isset($this->$templates))
+			if(isset($this->templates))
 			{
-				return $this->$templates;
+				return $this->templates;
 			}
-			return NULL;
+			return null;
+		}
+		
+		function getDeploymentMode()
+		{
+			if(isset($this->deployment_mode))
+			{
+				return $this->deployment_mode;
+			}
+			return null;
 		}
     }
-?>

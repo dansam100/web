@@ -72,7 +72,7 @@
 			return $this->endDate;
 		}
 		
-		public function setStartDate($endDate)
+		public function setEndDate($endDate)
 		{
 			$this->endDate = $endDate;
 		}

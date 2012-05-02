@@ -1,12 +1,13 @@
 <?php
 	namespace Rexume\Models\Auth;
+	require_once(SITE_ROOT . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "Bootstrap.php");
 	
-	use Rexume\Models\Enums as Enum;
+    class AuthenticationException extends \Exception{}
 	
-    class AuthenticationException extends Exception{}
-	
-	//TODO: check if we need to qualify path for namespace here
-	$AUTH_STATUS = new Enum\FlagsEnum("SUCCESS", "NOT_VERIFIED", "INACTIVE", "INVALID_LOGIN", "ERROR");
+	/**
+	 * Authentication state flags
+	 */	
+	$AUTH_STATUS = new \Rexume\Models\Enums\FlagsEnum("SUCCESS", "NOT_VERIFIED", "INACTIVE", "INVALID_LOGIN", "ERROR");
     
     class Authentication
    	{
@@ -32,19 +33,34 @@
 		
 		public function isAdmin()
 		{
-			//TODO: implement check for admin	
+			//GetUser and check for admin-ness
+			$user = $entityManager->find('User', $_SESSION["userId"]);
+			if(isset($user))
+			{
+				return $user->isAdmin();
+			}
 			return false;
 		}
 		
 		public function isVerified()
 		{
-			//TODO: implement check for verifiedness	
+			//GetUser and check for verified-ness
+			$user = $entityManager->find('User', $_SESSION["userId"]);
+			if(isset($user))
+			{
+				return $user->isVerified();
+			}
 			return false;
 		}
 		
 		public function isActive()
 		{
-			//TODO: implement check for activeness	
+			//GetUser and check for verified-ness
+			$user = $entityManager->find('User', $_SESSION["userId"]);
+			if(isset($user))
+			{
+				return $user->isActive();
+			}
 			return false;
 		}
 		
@@ -56,8 +72,15 @@
 				$password = $this->hashData($user_salt . $password);
 				$verification_code = $this->generateSalt();
 				
-				//TODO: create user here
-				$user = NULL;
+				//TODO: wrap create user in something cleaner
+				//create user here
+				$user = new \User();
+				$user->setPassword($password);
+				$user->setEmail($email);
+				$user->setOAuthToken($oAuthToken);
+				$user->isAdmin($isAdmin);
+				$user->isVerified($isVerified);
+				$user->isActive($isActive);
 				
 				//TODO: call verification process
 				
@@ -68,16 +91,16 @@
 		
 		public function login($email, $password)
 		{
-			//TODO: find user based on email address
-			$user = NULL;
+			//find user based on email address
+			$user = $entityManager->getRepository('User')->findOneBy(array('email' => $email));
 			
-			//TODO: proper implementation
+			//create salt for new user
 			$user_salt = $user->getSalt();
 			$password = $this->hashData($password . $user_salt);
 			
 			if($user && $user->getPassword() == $password)
 			{
-				//TODO: fix verification and active checks
+				//verification and active checks
 				if($user->isActive())
 				{
 					if($user->isVerified())
@@ -86,14 +109,21 @@
 						$token = $this->hashData($this->generateSalt() . $_SESSION["HTTP_USER_AGENT"]);
 						
 						//TODO: clear old session value for the user
-						
+						$currentSessions = $entityManager->getRepository('Session')->findBy(array('userId' => $user->id));
+						$entityManager->remove($currentSessions);
 						
 						//re-initialize and save session tokens
 						$_SESSION["token"] = $token;
-						$_SESSION["userId"] = $user->getUniqueId();
+						$_SESSION["userId"] = $user->getId();
 						
-						//TODO: insert new session values for user
-						$sessionCreated = NULL;
+						//TODO: find cleaner way to insert new session values for user
+						//Create the user session object
+						$session = new \Session();
+						$session->setUser($user);
+						$session->setSessionId(session_id());
+						$session->setToken($token);
+						$entityManager->persist($session);
+						$sessionCreated = $entityManager->flush();
 						
 						//return success/failure
 						if($sessionCreated)
@@ -112,12 +142,12 @@
 		
 		public function validateSession()
 		{
-			//TODO: read the user
-			$user = NULL;
+			//read the user
+			$user = $entityManager->find('User', $_SESSION["userId"]);
 			
 			if($user)
 			{
-				//TODO: fix checks to 'getSessionId()' and 'getToken'
+				//Validate session against user's session id and session token values
 				if($user->getSessionId() == session_id() && $_SESSION["token"] == $user->getToken())
 				{
 					$this->invalidateSession();
@@ -128,6 +158,7 @@
 			//return:
 			return false;
 		}
+		
 		
 		public function invalidateSession()
 		{
@@ -141,4 +172,3 @@
 			$_SESSION["token"] = $token;
 		}
    	}
-?>

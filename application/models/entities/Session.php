@@ -47,4 +47,3 @@
 			$this->token = $token;
 		}
     }
-?>

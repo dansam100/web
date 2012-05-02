@@ -13,4 +13,7 @@
 	
 	<!--TEMPLATES-->
 	<templates location="/application/views/templates.xml" />
+	<deployment mode="Development">
+		
+	</deployment>
 </config>

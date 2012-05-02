@@ -1,8 +1,8 @@
 <?php
 	namespace Rexume\Models\Enums;
 
-	/*
-		Example usage:
+	/**
+	 * Example usage:
 		$eFruits = new Enum("APPLE", "ORANGE", "PEACH");
 		echo $eFruits->APPLE . ",";
 		echo $eFruits->ORANGE . ",";

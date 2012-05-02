@@ -10,7 +10,9 @@
 		/** @Column(type="string") */
 		protected $name;
 		/**
-	     * @ManyToOne(targetEntity="Address")
+	     * @var Address
+		 * 
+		 * @ManyToOne(targetEntity="Address")
 		 * @JoinColumn(name="locationId", referencedColumnName="id")
 	     */
 		protected $location;

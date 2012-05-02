@@ -14,8 +14,6 @@
 		/** @Column(type="string") */
 		protected $firstName;
 		/** @Column(type="string") */
-		protected $firstName;
-		/** @Column(type="string") */
 		protected $lastName;
 		/** @Column(type="string") */
 		protected $status;

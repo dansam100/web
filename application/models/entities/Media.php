@@ -39,7 +39,7 @@
 			return $this->type;
 		}
 		
-		public function getType($type)
+		public function setType($type)
 		{
 			$this->type = $type;
 		}

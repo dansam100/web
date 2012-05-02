@@ -16,6 +16,8 @@
 		/** @Column(type="string") */
 		protected $oAuthToken;
 		/** @Column(type="string") */
+		protected $userSalt;
+		/** @Column(type="string") */
 		protected $firstName;
 		/** @Column(type="string") */
 		protected $lastName;
@@ -31,20 +33,24 @@
 		protected $editTime;
 		
 		/**
-	     * @OneToMany(targetEntity="Profile", mappedBy="user")
 		 * @var Profile[]
+		 *
+	     * @OneToMany(targetEntity="Profile", mappedBy="user")
+		 * 
 	     */
 		protected $profiles = null;
 		/**
 	     * @var UserAddress[]
 		 * 
 		 * @OneToMany(targetEntity="UserAddress", mappedBy="user")
-		 * @var UserAddress[]
+		 * 
 	     */
 		protected $addresses = null;
 		/**
-	     * @OneToMany(targetEntity="Profile", mappedBy="users")
-		 * @var Experience[]
+	     * @var Experience[]
+		 * 
+		 * @OneToMany(targetEntity="Profile", mappedBy="users")
+		 * 
 	     */
 		protected $experiences = null;
 		/**
@@ -124,6 +130,16 @@
 			$this->password = $password;
 		}
 		
+		public function getUserSalt()
+		{
+			return $this->userSalt;
+		}
+		
+		public function setUserSalt($salt)
+		{
+			$this->userSalt = $salt;
+		}
+		
 		public function addProfile($profile)
 		{
 			$this->profiles[] = $profile;
@@ -138,5 +154,38 @@
 		{
 			$this->sessions[] = $session;
 		}
+		
+		public function isAdmin($isAdmin = null)
+		{
+			if(isset($isAdmin))
+			{
+				$this->isAdmin = (int)$isAdmin;
+			}
+			else{
+				return ($this->isAdmin == 1);
+			}
+		}
+		
+		public function isVerified($isVerified)
+		{
+			if(isset($isVerified))
+			{
+				$this->isVerified = (int)$isVerified;
+			}
+			else{
+				return ($this->isVerified == 1);
+			}
+		}
+		
+		
+		public function isActive($isActive)
+		{
+			if(isset($isActive))
+			{
+				$this->isActive = (int)$isActive;
+			}
+			else{
+				return ($this->isActive == 1);
+			}
+		}
     }
-?>
