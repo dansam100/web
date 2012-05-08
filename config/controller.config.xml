@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<sitemaps>
+	<map name="login">
+		<model>LoginModel</model>
+		<view>LoginView</view>
+		<controller>LoginController</controller>
+		<default-action>load</default-action>
+	</map>
+</sitemaps>
