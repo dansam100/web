@@ -1,7 +1,4 @@
 <?php
-
-define("DS", DIRECTORY_SEPARATOR);
-
 /** Check if environment is development and display errors **/
 function setReporting() {
 	if (DEVELOPMENT_ENVIRONMENT == true) {
@@ -11,7 +8,7 @@ function setReporting() {
 		error_reporting(E_ALL);
 		ini_set('display_errors','Off');
 		ini_set('log_errors', 'On');
-		ini_set('error_log', ROOT.DS.'tmp'.DS.'logs'.DS.'error.log');
+		ini_set('error_log', SITE_ROOT . DS . 'tmp' . DS . 'logs' . DS . 'error.log');
 	}
 }
 
@@ -22,7 +19,7 @@ function stripSlashesDeep($value) {
 }
 
 function removeMagicQuotes() {
-	if ( get_magic_quotes_gpc() ) {
+	if(get_magic_quotes_gpc()){
 		$_GET    = stripSlashesDeep($_GET   );
 		$_POST   = stripSlashesDeep($_POST  );
 		$_COOKIE = stripSlashesDeep($_COOKIE);
@@ -45,34 +42,37 @@ function unregisterGlobals() {
 
 /** Main Call Function **/
 function callHook() {
-	global $url;
-
+	global $ACCESSED_URL;
+	global $appConfig;
+	
+	//blow up the url and grab relevant information
 	$urlArray = array();
-	$urlArray = explode("/",$url);
-
-	$controller = $urlArray[0];
+	$urlArray = explode("/", $ACCESSED_URL);
+	
+	$siteMap = $appConfig->getSiteMap($urlArray[0]);
 	array_shift($urlArray);
-	$action = $urlArray[0];
+	$action = null;
+	if(isset($urlArray[0])){
+		$action = $urlArray[0];
+	}
+	else $action = $siteMap->getDefaultAction();
+	
 	array_shift($urlArray);
 	$queryString = $urlArray;
-
-	$controllerName = $controller;
-	$controller = ucwords($controller);
-	$model = rtrim($controller, 's');
-	$controller .= 'Controller';
-	$dispatch = new $controller($model,$controllerName,$action);
-
+	$controller = $siteMap->getController();
+	$dispatch = new $controller($siteMap->getModel(), $siteMap->getView(), $action);
 	if ((int)method_exists($controller, $action)) {
 		call_user_func_array(array($dispatch,$action),$queryString);
-	} else {
-		/* Error Generation Code Here */
+	}
+	else {
+		//Error page Generation Code Here
 	}
 }
 
 /** Autoload any classes that are required **/
 function __autoload($className) {
-	if (file_exists(SITE_ROOT . DS . 'lib' . DS . strtolower($className) . '.class.php')){
-		require_once(SITE_ROOT . DS . 'lib' . DS . strtolower($className) . '.class.php');
+	if (file_exists(SITE_ROOT . DS . 'lib' . DS . strtolower($className) . '.php')){
+		require_once(SITE_ROOT . DS . 'lib' . DS . strtolower($className) . '.php');
 	} else if (file_exists(SITE_ROOT . DS . 'application' . DS . 'controllers' . DS . strtolower($className) . '.php')) {
 		require_once(SITE_ROOT . DS . 'application' . DS . 'controllers' . DS . strtolower($className) . '.php');
 	} else if (file_exists(SITE_ROOT . DS . 'application' . DS . 'models' . DS . strtolower($className) . '.php')) {
@@ -85,4 +85,15 @@ function __autoload($className) {
 setReporting();
 removeMagicQuotes();
 unregisterGlobals();
+
+/* PROGRAM STARTS */
+//session_start();
 callHook();
+
+/*
+$authentication = new \Rexume\Models\Auth\Authentication();
+if(!isset($_SESSION['userId']) || !$authentication->validateSession())
+{
+	header("location: login");
+}
+*/

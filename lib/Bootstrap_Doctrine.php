@@ -10,7 +10,9 @@
 	
 	$paths = array("entities");
 	$isDevMode = false;
-	
+	/**
+	 * Contains web.config configuration parameters
+	 */
 	$appConfig = new \Rexume\Configuration\Configuration();
 	
 	$dbParams = array(
@@ -32,4 +34,8 @@
 	
 	//initialize database
 	$config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode);
-	$emtityManager = EntityManager::create($dbParams, $config);
+	
+	/**
+	 * Database manager
+	 */
+	$entityManager = EntityManager::create($dbParams, $config);

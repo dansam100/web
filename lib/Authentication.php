@@ -1,6 +1,7 @@
 <?php
 	namespace Rexume\Models\Auth;
-	require_once(SITE_ROOT . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "Bootstrap.php");
+	require_once(SITE_ROOT . DS . "lib" . DS . "Enum.php");
+	require_once(SITE_ROOT . DS . "lib" . DS . "Bootstrap.php");
 	
     class AuthenticationException extends \Exception{}
 	
@@ -33,6 +34,8 @@
 		
 		public function isAdmin()
 		{
+			global $entityManager;
+			
 			//GetUser and check for admin-ness
 			$user = $entityManager->find('User', $_SESSION["userId"]);
 			if(isset($user))
@@ -44,6 +47,8 @@
 		
 		public function isVerified()
 		{
+			global $entityManager;
+			
 			//GetUser and check for verified-ness
 			$user = $entityManager->find('User', $_SESSION["userId"]);
 			if(isset($user))
@@ -55,6 +60,8 @@
 		
 		public function isActive()
 		{
+			global $entityManager;
+			
 			//GetUser and check for verified-ness
 			$user = $entityManager->find('User', $_SESSION["userId"]);
 			if(isset($user))
@@ -91,6 +98,8 @@
 		
 		public function login($email, $password)
 		{
+			global $entityManager;
+			
 			//find user based on email address
 			$user = $entityManager->getRepository('User')->findOneBy(array('email' => $email));
 			
@@ -142,6 +151,8 @@
 		
 		public function validateSession()
 		{
+			global $entityManager;
+			
 			//read the user
 			$user = $entityManager->find('User', $_SESSION["userId"]);
 			

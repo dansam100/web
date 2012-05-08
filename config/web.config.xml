@@ -10,9 +10,10 @@
 		</database>
 	-->
 	<database configuration="db.config.xml"/>
+	<sitemap configuration="controller.config.xml" />
 	
 	<!--TEMPLATES-->
-	<templates location="/application/views/templates.xml" />
+	<templates location="application/views/templates.xml" />
 	<deployment mode="Development">
 		
 	</deployment>
