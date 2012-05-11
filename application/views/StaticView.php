@@ -2,16 +2,19 @@
     interface IView{
     	function getController();
 		function getModel();
+		function render();
+    }
+    
+    interface IStaticView{
 		function getBody();
 		function setBody($body);
 		function getHeader();
 		function setHeader($header);
 		function getFooter();
 		function setFooter($footer);
-		function render();
     }
 	
-	class View implements IView
+	class StaticView implements IStaticView, IView
 	{
 		private $controller;
 		private $model;

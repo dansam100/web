@@ -1,4 +1,6 @@
 <?php
+	namespace Rexume\Controllers;
+
     interface IController
     {
     	function getModel();
@@ -14,8 +16,8 @@
     	function __construct($model, $view, $action)
 		{
 			$this->action = $action;
-			$this->view = new $view($this, $action);
 			$this->model = new $model;
+			$this->view = new $view($this, $action);
 		}
 		
 		function __destruct()

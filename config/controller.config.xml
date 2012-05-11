@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <sitemaps>
-	<map name="login">
+	<map name="login" default="true">
 		<model>LoginModel</model>
 		<view>LoginView</view>
 		<controller>LoginController</controller>
-		<default-action>load</default-action>
+		<defaultAction></defaultAction>
 	</map>
 </sitemaps>

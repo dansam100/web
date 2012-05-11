@@ -7,3 +7,4 @@
         <?php include "about.inc" ?>
     </fieldset>
 </div>
+</html>

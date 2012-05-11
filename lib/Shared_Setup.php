@@ -45,27 +45,44 @@ function callHook() {
 	global $ACCESSED_URL;
 	global $appConfig;
 	
-	//blow up the url and grab relevant information
-	$urlArray = array();
-	$urlArray = explode("/", $ACCESSED_URL);
-	
-	$siteMap = $appConfig->getSiteMap($urlArray[0]);
-	array_shift($urlArray);
-	$action = null;
-	if(isset($urlArray[0])){
-		$action = $urlArray[0];
+	$siteMap = null;
+	if(isset($ACCESSED_URL))
+	{
+		//blow up the url and grab relevant information
+		$urlArray = explode("/", $ACCESSED_URL);
+		$siteMap = $appConfig->getSiteMap($urlArray[0]);
+		array_shift($urlArray);
 	}
-	else $action = $siteMap->getDefaultAction();
+	else $siteMap = $appConfig->getDefaultSiteMap();
 	
-	array_shift($urlArray);
-	$queryString = $urlArray;
-	$controller = $siteMap->getController();
-	$dispatch = new $controller($siteMap->getModel(), $siteMap->getView(), $action);
-	if ((int)method_exists($controller, $action)) {
-		call_user_func_array(array($dispatch,$action),$queryString);
-	}
-	else {
-		//Error page Generation Code Here
+	if(isset($siteMap))
+	{
+		$authentication = new \Rexume\Models\Auth\Authentication();
+		if(!isset($_SESSION['userId']) || !$authentication->validateSession())
+		{
+			//invalid login. if user is not accessing default site login page, redirect to it
+			if(!$siteMap->isDefault())
+			{
+				header("location: login");
+			}
+		}	
+	
+		$action = null;
+		if(isset($urlArray[0])){
+			$action = $urlArray[0];
+			array_shift($urlArray);
+			$queryString = $urlArray;
+		}
+		else $action = $siteMap->getDefaultAction();
+		
+		$controller = $siteMap->getController();
+		$dispatch = new $controller($siteMap->getModel(), $siteMap->getView(), $action);
+		if (method_exists($dispatch, $action)) {
+			call_user_func_array(array($dispatch, $action), $queryString);
+		}
+		else {
+			//Error page Generation Code Here
+		}
 	}
 }
 
@@ -89,11 +106,3 @@ unregisterGlobals();
 /* PROGRAM STARTS */
 //session_start();
 callHook();
-
-/*
-$authentication = new \Rexume\Models\Auth\Authentication();
-if(!isset($_SESSION['userId']) || !$authentication->validateSession())
-{
-	header("location: login");
-}
-*/

@@ -11,13 +11,15 @@
 		private $model;
 		private $view;
 		private $defaultAction;	
+		private $isDefault;
 		
-		public function __construct($controller, $model = null, $view = null, $defaultAction = null)
+		public function __construct($controller, $model = null, $view = null, $defaultAction = null, $isDefault = false)
 		{
 			$this->controller = $controller;
 			$this->model = $model;
 			$this->view = $view;
 			$this->defaultAction = $defaultAction;
+			$this->isDefault = $isDefault;
 		}
 		
 		public function getController()
@@ -39,6 +41,11 @@
 		{
 			return $this->defaultAction;
 		}
+		
+		public function isDefault()
+		{
+			return $this->isDefault;
+		}
 	}
 
 
@@ -56,6 +63,7 @@
 		private $deployment_mode;
 		private $config_location;
 		private $site_map;
+		private $default_sitemap;
 		
 		
 		public function __construct()
@@ -108,7 +116,13 @@
 				$sitemap_xml = simplexml_load_file($sitemap_config);
 				$site_maps = $sitemap_xml->map;
 				foreach ($site_maps as $map) {
-					$this->site_map[(string)$map['name']] = new SiteMap((string)$map->controller, (string)$map->model, (string)$map->view, (string)$map->defaultAction);
+					$default = false;
+					if(isset($map['default']))
+					{
+						$this->default_sitemap = (string)$map['name'];
+						$default = true;
+					}
+					$this->site_map[(string)$map['name']] = new SiteMap((string)$map->controller, (string)$map->model, (string)$map->view, (string)$map->defaultAction, $default);
 				}
 			}
 	    }
@@ -163,6 +177,15 @@
 			if(isset($this->site_map[$controller]))
 			{
 				return $this->site_map[$controller];
+			}
+			else return null;
+		}
+		
+		public function getDefaultSiteMap()
+		{
+			if(isset($this->site_map[$this->default_sitemap]))
+			{
+				return $this->site_map[$this->default_sitemap];
 			}
 			else return null;
 		}
