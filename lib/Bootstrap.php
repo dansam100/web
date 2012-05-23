@@ -5,6 +5,7 @@
 	define("VIEWS_FOLDER", SITE_ROOT . DS . "application" . DS . "views");
 	define("ENTITIES_FOLDER", MODELS_FOLDER . DS . "entities");
 	require_once(SITE_ROOT . DS . "lib" . DS . "Authentication.php");
+	require_once(SITE_ROOT . DS . "lib" . DS . "LinkedInAuth.php");
     require_once(SITE_ROOT . DS . "lib" . DS . "Util.php");
 	
 	//load all controllers

@@ -1,53 +1,12 @@
 <?php
 	namespace Rexume\Configuration;
 	require_once(SITE_ROOT . DS . "lib" . DS . "Bootstrap.php");
+	require_once("AuthorizationKey.php");
+	require_once("Sitemap.php");
 	
 	define("CONFIG_ROOT", SITE_ROOT . DS . "config");
 	
 	class ConfigurationLoaderException extends \Exception{}
-	
-	class SiteMap{
-		private $controller;
-		private $model;
-		private $view;
-		private $defaultAction;	
-		private $isDefault;
-		
-		public function __construct($controller, $model = null, $view = null, $defaultAction = null, $isDefault = false)
-		{
-			$this->controller = $controller;
-			$this->model = $model;
-			$this->view = $view;
-			$this->defaultAction = $defaultAction;
-			$this->isDefault = $isDefault;
-		}
-		
-		public function getController()
-		{
-			return $this->controller;
-		}
-		
-		public function getModel()
-		{
-			return $this->model;
-		}
-		
-		public function getView()
-		{
-			return $this->view;
-		}
-		
-		public function getDefaultAction()
-		{
-			return $this->defaultAction;
-		}
-		
-		public function isDefault()
-		{
-			return $this->isDefault;
-		}
-	}
-
 
     class Configuration
     {
@@ -64,6 +23,8 @@
 		private $config_location;
 		private $site_map;
 		private $default_sitemap;
+		private $siteKey;
+		private $authentication;
 		
 		
 		public function __construct()
@@ -80,11 +41,12 @@
 	            throw new ConfigurationLoaderException("Web configuration file: '" . $configLocation . " could not be found!");
 				
 	        }
+			//LOAD: the main configuration file
 	        $this->xml = simplexml_load_file($configLocation);
-			
 			$this->templates = SITE_ROOT . DS . $this->xml->templates["location"];
 			$this->deployment_mode = $this->xml->deployment["mode"];
 			
+			//LOAD: the database configuration file/section
 			if(!isset($this->xml->database["configuration"]) && isset($this->xml->database))
 			{	
 		        $this->db_name = (string)$this->xml->database["name"];
@@ -107,6 +69,8 @@
 					throw new ConfigurationLoaderException("Database configuration file: '$dbconfig_path' could not be found.");
 				}
 			}
+			
+			//LOAD: Site map configurations for redirecting to the right controllers and models
 			if(isset($this->xml->sitemap["configuration"])){ 
 				$sitemap_config = join(DS, array(dirname($configLocation), $this->xml->sitemap["configuration"]));
 				if(!file_exists($sitemap_config))
@@ -122,10 +86,49 @@
 						$this->default_sitemap = (string)$map['name'];
 						$default = true;
 					}
-					$this->site_map[(string)$map['name']] = new SiteMap((string)$map->controller, (string)$map->model, (string)$map->view, (string)$map->defaultAction, $default);
+					$this->site_map[(string)$map['name']] = new SiteMap(
+						(string)$map->controller, 
+							(string)$map->model, 
+								(string)$map->view, 
+									(string)$map->defaultAction, $default
+					);
 				}
 			}
+			//LOAD: siteKey for deployment mode
+			$this->siteKey = $this->xml->deployment->siteKey;
+			$auths = $this->xml->deployment->authentications;
+			foreach($auths as $auth)
+			{
+				$this->authentication[(string)$auth['name']] = new AuthorizationKey(
+					(string)$auth['name'], 
+						(string)$auth->apiKey, 
+							(string)$auth->sharedSecret
+				);
+			}
 	    }
+
+		public function getSiteKey()
+		{
+			return $this->siteKey;
+		}
+		
+		public function getAuthorizationKey($name)
+		{
+			if(isset($this->authentication[$name]))
+			{
+				return $this->authentication[$name];
+			}
+			return null;
+		}
+		
+		public function getDatabaseName()
+		{
+			if(isset($this->db_name))
+			{
+				return $this->db_name;
+			}
+			return null;
+		}
 		
 		public function getDatabaseHost()
 		{

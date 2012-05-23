@@ -19,7 +19,7 @@
 	    'driver' => 'pdo_mysql',
 	    'user' => $appConfig->getDatabaseUser(),
 	    'password' => $appConfig->getDatabasePassword(),
-	    'dbname' => $appConfig->getDatabaseHost()
+	    'dbname' => $appConfig->getDatabaseName()
 	);
 	
 	//check development mode

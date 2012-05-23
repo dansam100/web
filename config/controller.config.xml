@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <sitemaps>
 	<map name="login" default="true">
-		<model>LoginModel</model>
-		<view>LoginView</view>
-		<controller>LoginController</controller>
-		<defaultAction></defaultAction>
+		<model>Rexume\Models\LoginModel</model>
+		<view>Rexume\Views\LoginView</view>
+		<controller>Rexume\Controllers\LoginController</controller>
+		<defaultAction>load</defaultAction>
 	</map>
 </sitemaps>

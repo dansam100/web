@@ -15,6 +15,12 @@
 	<!--TEMPLATES-->
 	<templates location="application/views/templates.xml" />
 	<deployment mode="Development">
-		
+		<siteKey></siteKey>
+		<authentications type="oAuth">
+			<authentication name="LinkedIn">
+				<apiKey>6npecl1f70xq</apiKey>
+				<sharedSecret>4qC73dDPWEH09LsN</sharedSecret>
+			</authentication>
+		</authentications>
 	</deployment>
 </config>

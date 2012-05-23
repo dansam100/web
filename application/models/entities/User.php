@@ -23,11 +23,11 @@
 		protected $lastName;
 		/** @Column(type="string") */
 		protected $email;
-		/** @Column(type="boolean") */
+		/** @Column(type="boolean", name="admin") */
 		protected $isAdmin;
-		/** @Column(type="boolean") */
+		/** @Column(type="boolean", name="verified") */
 		protected $isVerified;
-		/** @Column(type="boolean") */
+		/** @Column(type="boolean", name="active") */
 		protected $isActive;
 		/** @Column(type="datetime") */
 		protected $editTime;
@@ -39,6 +39,20 @@
 		 * 
 	     */
 		protected $profiles = null;
+		/**
+		 * @var Category[]
+		 *
+	     * @OneToMany(targetEntity="Category", mappedBy="user")
+		 * 
+	     */
+		protected $categories = null;
+		/**
+	     * @var UserAddress[]
+		 * 
+		 * @OneToMany(targetEntity="UserAddress", mappedBy="user")
+		 * 
+	     */
+		
 		/**
 	     * @var UserAddress[]
 		 * 
@@ -78,11 +92,6 @@
 		 * @var Activity[]
 	     */
 		protected $activities = null;
-		/**
-	     * @OneToMany(targetEntity="Category", mappedBy="user")
-		 * @var Category[]
-	     */
-		protected $categories = null;
 		/**
 	     * @OneToMany(targetEntity="Session", mappedBy="user")
 		 * @var Session[]
@@ -166,7 +175,7 @@
 			}
 		}
 		
-		public function isVerified($isVerified)
+		public function isVerified($isVerified = null)
 		{
 			if(isset($isVerified))
 			{
@@ -178,7 +187,7 @@
 		}
 		
 		
-		public function isActive($isActive)
+		public function isActive($isActive = null)
 		{
 			if(isset($isActive))
 			{

@@ -68,6 +68,7 @@ function callHook() {
 		}	
 	
 		$action = null;
+		$queryString = array();
 		if(isset($urlArray[0])){
 			$action = $urlArray[0];
 			array_shift($urlArray);

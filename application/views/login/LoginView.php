@@ -1,4 +1,6 @@
 <?php
+	namespace Rexume\Views;
+	
 	class LoginView extends StaticView
 	{
 		public function __construct($controller, $action)

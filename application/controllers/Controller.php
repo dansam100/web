@@ -9,9 +9,9 @@
     
     class Controller implements IController
     {
-    	private $model;
-		private $view;
-		private $action;
+    	protected $model;
+		protected $view;
+		protected $action;
 			
     	function __construct($model, $view, $action)
 		{

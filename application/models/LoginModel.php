@@ -1,4 +1,6 @@
 <?php
+	namespace Rexume\Models;
+	
 	require_once("Model.php");
 	class LoginModel extends Model
 	{

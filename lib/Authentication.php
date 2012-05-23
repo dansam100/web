@@ -14,10 +14,11 @@
    	{
    		private $siteKey;
 		
-		public function __construct()
+		public function __construct($siteKey = null)
 		{
-			//TODO: get site key from configuration?	
-			$this->siteKey = "REXUMESITETEST";
+			global $appConfig;
+			
+			$this->siteKey = $appConfig->getSiteKey();
 		}
 		
 		
@@ -96,6 +97,11 @@
 		}
 		
 		
+		public function doLogin($loginModel)
+		{
+			$this->login($loginModel->getEmail(), $loginModel->getPassword());
+		}
+		
 		public function login($email, $password)
 		{
 			global $entityManager;
@@ -104,51 +110,54 @@
 			$user = $entityManager->getRepository('User')->findOneBy(array('email' => $email));
 			
 			//create salt for new user
-			$user_salt = $user->getSalt();
-			$password = $this->hashData($password . $user_salt);
-			
-			if($user && $user->getPassword() == $password)
+			if($user)
 			{
-				//verification and active checks
-				if($user->isActive())
+				$user_salt = $user->getSalt();
+				$password = $this->hashData($password . $user_salt);
+				
+				if($user && $user->getPassword() == $password)
 				{
-					if($user->isVerified())
+					//verification and active checks
+					if($user->isActive())
 					{
-						//create session
-						$token = $this->hashData($this->generateSalt() . $_SESSION["HTTP_USER_AGENT"]);
-						
-						//TODO: clear old session value for the user
-						$currentSessions = $entityManager->getRepository('Session')->findBy(array('userId' => $user->id));
-						$entityManager->remove($currentSessions);
-						
-						//re-initialize and save session tokens
-						$_SESSION["token"] = $token;
-						$_SESSION["userId"] = $user->getId();
-						
-						//TODO: find cleaner way to insert new session values for user
-						//Create the user session object
-						$session = new \Session();
-						$session->setUser($user);
-						$session->setSessionId(session_id());
-						$session->setToken($token);
-						$entityManager->persist($session);
-						$sessionCreated = $entityManager->flush();
-						
-						//return success/failure
-						if($sessionCreated)
+						if($user->isVerified())
 						{
-							$AUTH_STATUS->SUCCESS;
+							//create session
+							$token = $this->hashData($this->generateSalt() . $_SESSION["HTTP_USER_AGENT"]);
+							
+							//TODO: clear old session value for the user
+							$currentSessions = $entityManager->getRepository('Session')->findBy(array('userId' => $user->id));
+							$entityManager->remove($currentSessions);
+							
+							//re-initialize and save session tokens
+							$_SESSION["token"] = $token;
+							$_SESSION["userId"] = $user->getId();
+							
+							//TODO: find cleaner way to insert new session values for user
+							//Create the user session object
+							$session = new \Session();
+							$session->setUser($user);
+							$session->setSessionId(session_id());
+							$session->setToken($token);
+							$entityManager->persist($session);
+							$sessionCreated = $entityManager->flush();
+							
+							//return success/failure
+							if($sessionCreated)
+							{
+								$AUTH_STATUS->SUCCESS;
+							}
+							else return $AUTH_STATUS->ERROR;
 						}
-						else return $AUTH_STATUS->ERROR;
+						else return $AUTH_STATUS->NOT_VERIFIED;
 					}
-					else return $AUTH_STATUS->NOT_VERIFIED;
+					else return $AUTH_STATUS->INACTIVE;
 				}
-				else return $AUTH_STATUS->INACTIVE;
+				else return $AUTH_STATUS->INVALID_LOGIN;
 			}
-			else return $AUTH_STATUS->INVALID_LOGIN;
+			else return $AUTH_STATUS->ERROR;
 		}
 
-		
 		public function validateSession()
 		{
 			global $entityManager;

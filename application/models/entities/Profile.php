@@ -103,7 +103,7 @@
 	     */
 		protected $languages = null;
 		/**
-		 *	@var Language[] 
+		 *	@var Activity[] 
 		 *
 	     * @ManyToMany(targetEntity="Activity", inversedBy="profiles")
 		 * @JoinTable(name="ProfileAddress",
@@ -116,7 +116,7 @@
 		 * @var Category[]
 		 * 
 	     * @ManyToMany(targetEntity="Category", inversedBy="categories")
-		 * @JoinTable(name="ProfileAddress",
+		 * @JoinTable(name="ProfileCategory",
 		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
      	 *      inverseJoinColumns={@JoinColumn(name="categoryId", referencedColumnName="id")}
  		 * )

@@ -1,4 +1,6 @@
 <?php
+    namespace Rexume\Views;
+    
     interface IView{
     	function getController();
 		function getModel();
@@ -16,9 +18,9 @@
 	
 	class StaticView implements IStaticView, IView
 	{
-		private $controller;
-		private $model;
-		private $action;
+		protected $controller;
+		protected $model;
+		protected $action;
 		
 		private $header = "includes/header.inc";
 		private $footer = "includes/footer.inc";
