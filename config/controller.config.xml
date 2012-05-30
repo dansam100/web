@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <sitemaps>
-	<map name="login" default="true">
-		<model>Rexume\Models\LoginModel</model>
-		<view>Rexume\Views\LoginView</view>
-		<controller>Rexume\Controllers\LoginController</controller>
-		<defaultAction>simple</defaultAction>
-	</map>
-	<map name="linkedin" default="true">
-		<model>Rexume\Models\LoginModel</model>
-		<view>Rexume\Views\LoginView</view>
-		<controller>Rexume\Controllers\LoginController</controller>
-		<defaultAction>linkedin</defaultAction>
-	</map>
+    <map name="login" default="true">
+        <model>Rexume\Models\LoginModel</model>
+        <view>Rexume\Views\LoginView</view>
+        <controller>Rexume\Controllers\LoginController</controller>
+        <defaultAction>simple</defaultAction>
+    </map>
 </sitemaps>

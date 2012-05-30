@@ -63,7 +63,8 @@ function callHook() {
 			//invalid login. if user is not accessing default site login page, redirect to it
 			if(!$siteMap->isDefault())
 			{
-				header("location: login");
+				//TODO: fix navigation so that it goes to root/controller at all times
+                header("location: login");
 			}
 		}	
 	

@@ -10,5 +10,4 @@
 	}
 	
 	require_once(SITE_ROOT . DS . "lib" . DS . "Bootstrap.php");
-	
 ?>
