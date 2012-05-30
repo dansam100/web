@@ -15,12 +15,20 @@
 	<!--TEMPLATES-->
 	<templates location="application/views/templates.xml" />
 	<deployment mode="Development">
-		<siteKey></siteKey>
-		<authentications type="oAuth">
-			<authentication name="LinkedIn">
-				<apiKey>6npecl1f70xq</apiKey>
-				<sharedSecret>4qC73dDPWEH09LsN</sharedSecret>
-			</authentication>
-		</authentications>
+		<siteKey>R3XUM3_T3ST_51T3</siteKey>
+		<authentication name="LinkedIn" type="oAuth">
+			<apiRoot>https://api.linkedin.com</apiRoot>
+			<requestToken>/uas/oauth/requestToken</requestToken>
+			<authorizeToken>/uas/oauth/authenticate</authorizeToken>
+			<accessToken>/uas/oauth/accessToken</accessToken>
+			<scope>/v1/people/~</scope>
+			<callback>http://localhost/rexume/linkedin</callback>
+			<apiKey>6npecl1f70xq</apiKey>
+			<sharedSecret>4qC73dDPWEH09LsN</sharedSecret>
+		</authentication>
 	</deployment>
+	
+	<protocol type="REST" name="LinkedIn">
+		<profile>:(id,first-name,last-name,email,head-line,summary)</profile>
+	</protocol>
 </config>

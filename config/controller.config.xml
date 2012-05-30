@@ -4,6 +4,12 @@
 		<model>Rexume\Models\LoginModel</model>
 		<view>Rexume\Views\LoginView</view>
 		<controller>Rexume\Controllers\LoginController</controller>
-		<defaultAction>load</defaultAction>
+		<defaultAction>simple</defaultAction>
+	</map>
+	<map name="linkedin" default="true">
+		<model>Rexume\Models\LoginModel</model>
+		<view>Rexume\Views\LoginView</view>
+		<controller>Rexume\Controllers\LoginController</controller>
+		<defaultAction>linkedin</defaultAction>
 	</map>
 </sitemaps>

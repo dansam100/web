@@ -9,8 +9,20 @@
     
     class Controller implements IController
     {
+    	/**
+		 * The controller model
+		 * @var IModel
+		 */
     	protected $model;
+		/**
+		 * The controller view
+		 * @var IView
+		 */
 		protected $view;
+		/**
+		 * The default action of the controller
+		 * @var string
+		 */
 		protected $action;
 			
     	function __construct($model, $view, $action)
@@ -25,11 +37,19 @@
 			$this->view->render();
 		}
 		
+		/**
+		 * The controller view
+		 * @return IView
+		 */
 		function getView()
 		{
 			return $this->view;
 		}
 		
+		/**
+		 * The controller model
+		 * @return IModel
+		 */
 		function getModel()
 		{
 			return $this->model;

@@ -6,8 +6,14 @@
 	
 	define("CONFIG_ROOT", SITE_ROOT . DS . "config");
 	
+	/**
+	 * Exception thrown when loading invalid configuration files
+	 */
 	class ConfigurationLoaderException extends \Exception{}
-
+	
+	/**
+	 * Loader for web.config configuration parameters
+	 */
     class Configuration
     {
     	const WEB_CONFIG = "web.config.xml";
@@ -44,6 +50,7 @@
 			//LOAD: the main configuration file
 	        $this->xml = simplexml_load_file($configLocation);
 			$this->templates = SITE_ROOT . DS . $this->xml->templates["location"];
+			//TODO: make deployments loadable by type
 			$this->deployment_mode = $this->xml->deployment["mode"];
 			
 			//LOAD: the database configuration file/section
@@ -95,14 +102,23 @@
 				}
 			}
 			//LOAD: siteKey for deployment mode
-			$this->siteKey = $this->xml->deployment->siteKey;
-			$auths = $this->xml->deployment->authentications;
+			$deployment = $this->xml->xpath("deployment[@mode='$this->deployment_mode']");
+			$this->siteKey = $deployment[0]->siteKey;
+			
+			//Get authentication style configs
+			$auths = $this->xml->xpath("deployment[@mode='$this->deployment_mode']/authentication");
 			foreach($auths as $auth)
 			{
 				$this->authentication[(string)$auth['name']] = new AuthorizationKey(
 					(string)$auth['name'], 
-						(string)$auth->apiKey, 
-							(string)$auth->sharedSecret
+					(string)$auth->apiKey, 
+					(string)$auth->sharedSecret,
+					(string)$auth->apiRoot,
+					(string)$auth->requestToken,
+					(string)$auth->authorizeToken,
+					(string)$auth->accessToken,
+					(string)$auth->scope,
+					(string)$auth->callback
 				);
 			}
 	    }

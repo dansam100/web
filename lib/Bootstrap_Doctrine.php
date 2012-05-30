@@ -11,6 +11,7 @@
 	$paths = array("entities");
 	$isDevMode = false;
 	/**
+	 * @var Configuration
 	 * Contains web.config configuration parameters
 	 */
 	$appConfig = new \Rexume\Configuration\Configuration();
@@ -26,9 +27,11 @@
 	if($appConfig->getDeploymentMode() == "Development")
 	{
 		define("DEVELOPMENT_ENVIRONMENT", true);
+		$isDevMode = true;
 	}
 	else {
 		define("DEVELOPMENT_ENVIRONMENT", false);
+		$isDevMode = false;
 	}
 	
 	

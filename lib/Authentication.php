@@ -22,7 +22,7 @@
 		}
 		
 		
-		private function generateSalt($length = 32)
+		protected function generateSalt($length = 32)
 		{
 			$salt = bin2hex(mcrypt_create_iv($length, MCRYPT_DEV_URANDOM));
 			return $salt;
@@ -97,12 +97,7 @@
 		}
 		
 		
-		public function doLogin($loginModel)
-		{
-			$this->login($loginModel->getEmail(), $loginModel->getPassword());
-		}
-		
-		public function login($email, $password)
+		public function login($email, $password, $oauthId = null)
 		{
 			global $entityManager;
 			
@@ -113,9 +108,10 @@
 			if($user)
 			{
 				$user_salt = $user->getSalt();
+				$user_oauth_token = $user->getOAuthId();
 				$password = $this->hashData($password . $user_salt);
 				
-				if($user && $user->getPassword() == $password)
+				if($user && ($user->getPassword() == $password || $user->getOAuthId() == $oauthId))
 				{
 					//verification and active checks
 					if($user->isActive())
