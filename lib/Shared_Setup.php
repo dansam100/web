@@ -58,7 +58,7 @@ function callHook() {
 	if(isset($siteMap))
 	{
 		$authentication = new \Rexume\Models\Auth\Authentication();
-		if(!isset($_SESSION['userId']) || !$authentication->validateSession())
+		if(!(isset($_SESSION['userId']) && $authentication->validateSession()))
 		{
 			//invalid login. if user is not accessing default site login page, redirect to it
 			if(!$siteMap->isDefault())

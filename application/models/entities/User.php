@@ -14,15 +14,21 @@
 		/** @Column(type="string") */
 		protected $password;
 		/** @Column(type="string") */
-		protected $oAuthToken;
+		protected $oauthToken;
+        /** @Column(type="string") */
+        protected $oauthSecret;
 		/** @Column(type="string") */
+        protected $memberId;
+        /** @Column(type="string") */
+        protected $verification;
+        /** @Column(type="string") */
 		protected $userSalt;
 		/** @Column(type="string") */
 		protected $firstName;
 		/** @Column(type="string") */
 		protected $lastName;
-		/** @Column(type="string") */
-		protected $email;
+		/** @Column(type="string", name="email") */
+		protected $emailAddress;
 		/** @Column(type="boolean", name="admin") */
 		protected $isAdmin;
 		/** @Column(type="boolean", name="verified") */
@@ -102,53 +108,94 @@
 		public function __construct()
 		{
 			$this->profiles = new ArrayCollection();
-			$this->$addresses = new ArrayCollection();
-			$this->$experiences = new ArrayCollection();
-			$this->$degrees = new ArrayCollection();
-			$this->$media = new ArrayCollection();
-			$this->$skills = new ArrayCollection();
-			$this->$languages = new ArrayCollection();
-			$this->$activities = new ArrayCollection();
-			$this->$categories = new ArrayCollection();
+			$this->addresses = new ArrayCollection();
+			$this->experiences = new ArrayCollection();
+			$this->degrees = new ArrayCollection();
+			$this->media = new ArrayCollection();
+			$this->skills = new ArrayCollection();
+			$this->languages = new ArrayCollection();
+			$this->activities = new ArrayCollection();
+			$this->categories = new ArrayCollection();
 			$this->sessions = new ArrayCollection();
 		}
-		
 		
 		public function getId()
 		{
 			return $this->id;
 		}
 		
-		public function getUserName()
+		public function userName($username = null)
 		{
-			return $this->username;
+			if(isset($username))
+            {
+                $this->username = $username;
+            }
+            return $this->username;
+        }
+        
+        public function email($emailAddress = null)
+		{
+			if(isset($emailAddress))
+            {
+                $this->emailAddress = $emailAddress;
+            }
+            return $this->emailAddress;
 		}
 		
-		public function setUserName($username)
+		public function password($password = null)
 		{
-			$this->username = $username;
+			if(isset($password))
+            {
+                $this->password = $password;
+            }
+            return $this->password;
 		}
 		
-		public function getPassword()
+		public function userSalt($userSalt = null)
 		{
-			return $this->password;
+			if(isset($userSalt))
+            {
+                $this->userSalt = $userSalt;
+            }
+            return $this->userSalt;
 		}
-		
-		public function setPassword($password)
+        
+        public function verificationCode($verification = null)
 		{
-			$this->password = $password;
+			if(isset($verification))
+            {
+                $this->verification = $verification;
+            }
+            return $this->verification;
 		}
-		
-		public function getUserSalt()
-		{
-			return $this->userSalt;
-		}
-		
-		public function setUserSalt($salt)
-		{
-			$this->userSalt = $salt;
-		}
-		
+        
+        public function memberId($memberId = null)
+        {
+            if(isset($memberId))
+            {
+                $this->memberId = $memberId;
+            }
+            return $this->memberId;
+        }
+        
+		public function oauthToken($oauthToken = null)
+        {
+            if(isset($oauthToken))
+            {
+                $this->oauthToken = $oauthToken;
+            }
+            return $this->oauthToken;
+        }
+        
+        public function oauthSecret($oauthSecret = null)
+        {
+            if(isset($oauthSecret))
+            {
+                $this->oauthSecret = $oauthSecret;
+            }
+            return $this->oauthSecret;
+        }
+        
 		public function addProfile($profile)
 		{
 			$this->profiles[] = $profile;
@@ -170,9 +217,7 @@
 			{
 				$this->isAdmin = (int)$isAdmin;
 			}
-			else{
-				return ($this->isAdmin == 1);
-			}
+            return ($this->isAdmin == 1);
 		}
 		
 		public function isVerified($isVerified = null)
@@ -181,9 +226,7 @@
 			{
 				$this->isVerified = (int)$isVerified;
 			}
-			else{
-				return ($this->isVerified == 1);
-			}
+            return ($this->isVerified == 1);
 		}
 		
 		
@@ -193,8 +236,6 @@
 			{
 				$this->isActive = (int)$isActive;
 			}
-			else{
-				return ($this->isActive == 1);
-			}
+            return ($this->isActive == 1);
 		}
     }

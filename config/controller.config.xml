@@ -6,4 +6,11 @@
         <controller>Rexume\Controllers\LoginController</controller>
         <defaultAction>simple</defaultAction>
     </map>
+    <!--Match all invalid URLS-->
+    <map name="*">
+        <model>Rexume\Views\NavigationModel</model>
+        <view>Rexume\Views\NavigationView</view>
+        <controller>Rexume\Controllers\NavigationController</controller>
+        <defaultAction>error</defaultAction>
+    </map>
 </sitemaps>

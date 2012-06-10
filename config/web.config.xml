@@ -22,13 +22,65 @@
 			<authorizeToken>/uas/oauth/authenticate</authorizeToken>
 			<accessToken>/uas/oauth/accessToken</accessToken>
 			<scope>/v1/people/~</scope>
-			<callback>http://localhost/rexume/linkedin</callback>
+			<callback>http://localhost/login/linkedin</callback>
 			<apiKey>6npecl1f70xq</apiKey>
 			<sharedSecret>4qC73dDPWEH09LsN</sharedSecret>
 		</authentication>
 	</deployment>
 	
 	<protocol type="REST" name="LinkedIn">
-		<profile>:(id,first-name,last-name,email,head-line,summary)</profile>
+		<query>:(id,first-name,last-name,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts)</query>
+        <mappings>
+            <mapping source="person" target="profile">
+                <map source="id" target="memberId"/>
+                <map source="first-name" target="firstName"/>
+                <map source="last-name" target="lastName"/>
+                <map source="headline" target="status"/>
+                <map source="summary" target="objective"/>
+                <map source="interest" target="${activity}"/>
+                <map source="positions" target="${experience}"/>
+                <map source="volunteer" target="${volunteer}"/>
+                <map source="languages" target="${language}"/>
+                <map source="phone-numbers" target="${media}"/>
+                <map source="im-accounts" target="${media}"/>
+                <map source="skills" target="${skill}"/>
+                <map source="educations" target="${degree}"/>
+                <map source="twitter-accounts" target="${media}"/>
+                <map source="main-address" target="${address}"/>
+            </mapping>
+            <mapping name="experience">
+                <map source="title" target="position"/>
+                <map source="summary" target="description"/>
+                <map source="start-date" target="startDate"/>
+                <map source="end-date" target="endDate"/>
+                <map source="is-current" target="current"/>
+                <map source="company" target="${company}"/>
+            </mapping>
+            <mapping name="company">
+                <map source="name" target="name"/>
+                <map source="industry" target="industry"/>
+            </mapping>
+            <mapping name="language">
+                <map source="language/name" target="name"/>
+            </mapping>
+            <mapping name="skill">
+                <map source="skill/name" target="name"/>
+            </mapping>
+            <mapping name="degree">
+                <map source="school-name" target="school"/>
+                <map source="field-of-study" target="program"/>
+                <map source="degree" target="status"/>
+                <map source="start-date" target="startDate">
+                </map>
+                <map source="end-date" target="endDate"/>
+                <map source="notes" target="description"/>
+                <!--map source="activities" target="${project}"/-->
+            </mapping>
+            <mapping name="volunteer" class="experience">
+                <map source="role" target="name"/>
+                <map source="cause/name" target="description"/>
+                <map source="organization/name" target="status"/>
+            </mapping>
+        </mappings>
 	</protocol>
 </config>

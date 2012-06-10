@@ -1,15 +1,14 @@
 <?php
 	$email = "";	
 	$controller = $this->getController();
-	
 	if(isset($_GET['email']))
 	{
-		$email = $_GET['email'];
+        $email = $_GET['email'];
 	}
 ?>
 <div id="body">
 	<h1>Rexume</h1>
-	<form action="login/doLogin" method="post">
+	<form action="/login/doLogin" method="post">
 		<div id="row" class="error">
 			<?php echo $controller->getError(); ?>
 		</div>

@@ -35,4 +35,3 @@
 			$this->description = $description;
 		}
 	}
-?>
