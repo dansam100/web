@@ -10,6 +10,7 @@ require_once("ProtocolMapping.php");
 class Protocol {
     private $name;
     private $type;
+    private $query;
     private $definitions;
     
     /**
@@ -18,9 +19,10 @@ class Protocol {
      * @param string $type the target 
      * @param ProtocolMapping[] $definitions the mapping assocations related to the protocol
      */
-    public function __construct($name, $type, $definitions = null) {
+    public function __construct($name, $type, $query = null, $definitions = null) {
         $this->type = $type;
         $this->name = $name;
+        $this->query = $query;
         $this->definitions = $definitions;
     }
     
@@ -39,5 +41,10 @@ class Protocol {
             }
         }
         return null;
-    }   
+    }
+    
+    public function getQuery()
+    {
+        return $this->query;
+    }
 }

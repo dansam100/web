@@ -133,7 +133,7 @@ class Configuration
             }
             $protocol_xml = simplexml_load_file($protocols_config);
             $protocols = $protocol_xml->protocol;
-            
+            //parse xml and create protocol and protocol mapping definitions
             foreach ($protocols as $protocol) {
                 $definitions = array();
                 foreach($protocol->mappings->mapping as $mapping){
@@ -144,8 +144,9 @@ class Configuration
                 }
                 $this->protocol[(string)$map['source']] = new Protocol(
                     (string)$protocol['name'], 
-                        (string)$protocol['type'], 
-                            $definitions
+                        (string)$protocol['type'],
+                            $protocol->query,
+                                $definitions
                 );
             }
         }

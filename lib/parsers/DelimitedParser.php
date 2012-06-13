@@ -1,5 +1,5 @@
 <?php
-namespace \Rexume\Parsers;
+namespace Rexume\Parsers;
 
 /**
  * Description of DelimitedParser

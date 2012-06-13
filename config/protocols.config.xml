@@ -16,11 +16,11 @@
                 <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser">
                     <bind source="month" target="month"/>
                     <bind source="year" target="year"/>
-                </map>
+                </bind>
                 <bind source="end-date" target="endDate" parser="Rexume\Parsers\XmlDateParser">
                     <bind source="month" target="month"/>
                     <bind source="year" target="year"/>
-                </map>
+                </bind>
                 <bind source="is-current" target="current"/>
                 <bind source="summary" target="activities" parser="Rexume\Parsers\NewLineDelimiter"/>
             </mapping>
@@ -61,7 +61,7 @@
                 <bind source="degree" target="status"/>
                 <bind source="start-date" target="startDate" parser="Rexume\Configuration\XmlDateParser">
                     <bind source="year" target="year" />
-                </map>
+                </bind>
                 <bind source="end-date" target="endDate"/>
                 <bind source="notes" target="description"/>
             </mapping>

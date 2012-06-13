@@ -10,9 +10,9 @@ require_once(LIBRARIES_FOLDER . DS . "Authentication.php");
 require_once(LIBRARIES_FOLDER . DS . "LinkedInAuth.php");
 require_once(LIBRARIES_FOLDER . DS . "Util.php");
 
-//load all libraries
+//load all parsers
 foreach (directory_list_files(LIBRARIES_FOLDER . DS . "parsers", "php") as $value) {
-    require_once(LIBRARIES_FOLDER . DS . "$value");
+    require_once(LIBRARIES_FOLDER . DS . "parsers" . DS . "$value");
 }
 
 //load all controllers
