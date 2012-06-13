@@ -4,10 +4,16 @@ define("CONTROLLERS_FOLDER", SITE_ROOT . DS . "application" . DS . "controllers"
 define("MODELS_FOLDER", SITE_ROOT . DS . "application" . DS . "models");
 define("VIEWS_FOLDER", SITE_ROOT . DS . "application" . DS . "views");
 define("ENTITIES_FOLDER", MODELS_FOLDER . DS . "entities");
+define("LIBRARIES_FOLDER", SITE_ROOT . DS . "lib");
 
-require_once(SITE_ROOT . DS . "lib" . DS . "Authentication.php");
-require_once(SITE_ROOT . DS . "lib" . DS . "LinkedInAuth.php");
-require_once(SITE_ROOT . DS . "lib" . DS . "Util.php");
+require_once(LIBRARIES_FOLDER . DS . "Authentication.php");
+require_once(LIBRARIES_FOLDER . DS . "LinkedInAuth.php");
+require_once(LIBRARIES_FOLDER . DS . "Util.php");
+
+//load all libraries
+foreach (directory_list_files(LIBRARIES_FOLDER . DS . "parsers", "php") as $value) {
+    require_once(LIBRARIES_FOLDER . DS . "$value");
+}
 
 //load all controllers
 foreach (directory_list_files(CONTROLLERS_FOLDER, "php") as $value) {

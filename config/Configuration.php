@@ -3,6 +3,7 @@ namespace Rexume\Configuration;
 require_once(SITE_ROOT . DS . "lib" . DS . "Bootstrap.php");
 require_once("AuthorizationKey.php");
 require_once("Sitemap.php");
+require_once("Protocol.php");
 
 define("CONFIG_ROOT", SITE_ROOT . DS . "config");
 
@@ -101,11 +102,12 @@ class Configuration
                 );
             }
         }
+        
         //LOAD: siteKey for deployment mode
         $deployment = $this->xml->xpath("deployment[@mode='$this->deployment_mode']");
         $this->siteKey = $deployment[0]->siteKey;
 
-        //Get authentication style configs
+        //LOAD: Get authentication style configs
         $auths = $this->xml->xpath("deployment[@mode='$this->deployment_mode']/authentication");
         foreach($auths as $auth)
         {
@@ -121,8 +123,34 @@ class Configuration
                 (string)$auth->callback
             );
         }
+        
+        //LOAD: Load protocols for parsing data
+        if(isset($this->xml->protocols["configuration"])){
+            $protocols_config = join(DS, array(dirname($configLocation), $this->xml->protocols["configuration"]));
+            if(!file_exists($sitemap_config))
+            {
+                throw new ConfigurationLoaderException("Protcols configuration file: '" . $protocols_config . " could not be found!");
+            }
+            $protocol_xml = simplexml_load_file($protocols_config);
+            $protocols = $protocol_xml->protocol;
+            
+            foreach ($protocols as $protocol) {
+                $definitions = array();
+                foreach($protocol->mappings->mapping as $mapping){
+                    $definitions[] = new ProtocolMapping((string)$mapping['source'], 
+                        (string)$mapping['target'], 
+                            array_map('createMapping', $mapping->xpath('bind'))
+                    );
+                }
+                $this->protocol[(string)$map['source']] = new Protocol(
+                    (string)$protocol['name'], 
+                        (string)$protocol['type'], 
+                            $definitions
+                );
+            }
+        }
     }
-
+    
     public function getSiteKey()
     {
         return $this->siteKey;

@@ -110,7 +110,6 @@ function getConfiguration()
 	return $appConfig = new \Rexume\Configuration\Configuration();
 }
 
-
 function getWebContent($url)
 {
 	$page = null;

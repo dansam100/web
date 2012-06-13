@@ -10,10 +10,23 @@ use Doctrine\ORM\EntityManager;
 
 $paths = array("entities");
 $isDevMode = false;
+
+function createMapping(SimpleXmlElement $item)
+{
+    $bindings = array_map("createMapping", $item->xpath('bind'));
+    return new \Rexume\Configuration\ProtocolMapping
+    (
+        (string)$item['source'],
+        (string)$item['target'],
+        $bindings,
+        (string)$item['parser']
+    );
+}
+
 /**
-    * @var Configuration
-    * Contains web.config configuration parameters
-    */
+* @var Configuration
+* Contains web.config configuration parameters
+*/
 $appConfig = new \Rexume\Configuration\Configuration();
 
 $dbParams = array(
@@ -39,6 +52,6 @@ else {
 $config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode);
 
 /**
-    * Database manager
-    */
+* Database manager
+*/
 $entityManager = EntityManager::create($dbParams, $config);

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocols>
+    <protocol type="REST" name="LinkedIn">
+        <query>:(id,first-name,last-name,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts)</query>
+        <mappings>
+            <mapping source="person" target="profile">
+                <bind source="id" target="memberId"/>
+                <bind source="first-name" target="firstName"/>
+                <bind source="last-name" target="lastName"/>
+                <bind source="headline" target="status"/>
+                <bind source="summary" target="objective"/>
+            </mapping>
+            <mapping source="position" target="experience">
+                <bind source="title" target="position"/>
+                <bind source="summary" target="description"/>
+                <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser">
+                    <bind source="month" target="month"/>
+                    <bind source="year" target="year"/>
+                </map>
+                <bind source="end-date" target="endDate" parser="Rexume\Parsers\XmlDateParser">
+                    <bind source="month" target="month"/>
+                    <bind source="year" target="year"/>
+                </map>
+                <bind source="is-current" target="current"/>
+                <bind source="summary" target="activities" parser="Rexume\Parsers\NewLineDelimiter"/>
+            </mapping>
+            <mapping source="twitter-accounts" target="media">
+                <bind source="provider-account-id" target="value"/>
+                <bind source="provider-account-name" target="name"/>
+                <bind source="" target="type" default="twitter"/>
+            </mapping>
+            <mapping source="im-accounts" target="media">
+                <bind source="im-account-type" target="type"/>
+                <bind source="im-account-type" target="name"/>
+                <bind source="im-account-name" target="value"/>
+            </mapping>
+            <mapping source="main-address" target="address">
+                <bind source="." target="value" />
+            </mapping>
+            <mapping source="phone-numbers" target="media">
+                <bind source="" target="name" default="phone"/>
+                <bind source="phone-number" target="value"/>
+                <bind source="phone-type" target="type"/>
+            </mapping>
+            <mapping source="interest" target="activity">
+                <bind source="." target="description"/>
+            </mapping>
+            <mapping source="company" target="company">
+                <bind source="name" target="name"/>
+                <bind source="industry" target="industry"/>
+            </mapping>
+            <mapping source="languages" target="language">
+                <bind source="language/name" target="name"/>
+            </mapping>
+            <mapping source="skills" target="skill">
+                <bind source="skill/name" target="name"/>
+            </mapping>
+            <mapping source="educations" target="degree">
+                <bind source="school-name" target="school"/>
+                <bind source="field-of-study" target="program"/>
+                <bind source="degree" target="status"/>
+                <bind source="start-date" target="startDate" parser="Rexume\Configuration\XmlDateParser">
+                    <bind source="year" target="year" />
+                </map>
+                <bind source="end-date" target="endDate"/>
+                <bind source="notes" target="description"/>
+            </mapping>
+            <mapping source="volunteer" target="experience">
+                <bind source="role" target="name"/>
+                <bind source="cause/name" target="description"/>
+                <bind source="organization/name" target="status"/>
+            </mapping>
+        </mappings>
+    </protocol>
+</protocols>
