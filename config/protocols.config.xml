@@ -1,75 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocols>
-    <protocol type="REST" name="LinkedIn">
-        <query>:(id,first-name,last-name,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts)</query>
-        <mappings>
-            <mapping source="person" target="profile">
+    <read name="LinkedIn" type="REST" parser="XMLSimpleParser">
+        <definition contenttype="Authentication" scope="/v1/people/~">
+            <query>:(id,first-name,last-name,main-address,headline,summary)</query>
+            <mapping source="person" target="User">
                 <bind source="id" target="memberId"/>
+                <bind source="id" target="userName"/>
+                <bind source="first-name" target="firstName"/>
+                <bind source="last-name" target="lastName"/>
+            </mapping>
+        </definition>
+        <definition contenttype="Data" scope="/v1/people/~">
+            <query>:(id,first-name,last-name,main-address,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts)</query>
+            <mapping source="person" target="Profile">
                 <bind source="first-name" target="firstName"/>
                 <bind source="last-name" target="lastName"/>
                 <bind source="headline" target="status"/>
                 <bind source="summary" target="objective"/>
             </mapping>
-            <mapping source="position" target="experience">
+            <mapping source="position" target="Experience">
                 <bind source="title" target="position"/>
                 <bind source="summary" target="description"/>
-                <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser">
+                <bind source="start-date" target="startDate" parser="XmlDateParser">
                     <bind source="month" target="month"/>
                     <bind source="year" target="year"/>
                 </bind>
-                <bind source="end-date" target="endDate" parser="Rexume\Parsers\XmlDateParser">
+                <bind source="end-date" target="endDate" parser="XmlDateParser">
                     <bind source="month" target="month"/>
                     <bind source="year" target="year"/>
                 </bind>
                 <bind source="is-current" target="current"/>
-                <bind source="summary" target="activities" parser="Rexume\Parsers\NewLineDelimiter"/>
+                <bind source="summary" target="activities" parser="NewLineDelimiter"/>
             </mapping>
-            <mapping source="twitter-accounts" target="media">
+            <mapping source="twitter-account" target="Media">
                 <bind source="provider-account-id" target="value"/>
                 <bind source="provider-account-name" target="name"/>
                 <bind source="" target="type" default="twitter"/>
             </mapping>
-            <mapping source="im-accounts" target="media">
+            <mapping source="im-account" target="Media">
                 <bind source="im-account-type" target="type"/>
                 <bind source="im-account-type" target="name"/>
                 <bind source="im-account-name" target="value"/>
             </mapping>
-            <mapping source="main-address" target="address">
-                <bind source="." target="value" />
-            </mapping>
-            <mapping source="phone-numbers" target="media">
-                <bind source="" target="name" default="phone"/>
+            <mapping source="main-address" target="Address" parser="LinkedInAddressParser"/>
+            <mapping source="phone-number" target="media">
+                <bind source="phone-type" target="name" default="phone"/>
                 <bind source="phone-number" target="value"/>
                 <bind source="phone-type" target="type"/>
             </mapping>
-            <mapping source="interest" target="activity">
+            <mapping source="interest" target="Activity">
                 <bind source="." target="description"/>
             </mapping>
-            <mapping source="company" target="company">
+            <mapping source="company" target="Company">
+                <read name="LinkedIn" type="REST">
+                    <definition contentstype="Data" scope="/v1/companies/">
+                        <query>${id}</query> 
+                        <mapping source="address" target="Address">
+                            <bind source="street1" target="street1" />
+                            <bind source="street2" target="street2"/>
+                            <bind source="city" target="city"/>
+                            <bind source="postal-code" target="postalCode"/>
+                        </mapping>
+                    </definition>
+                </read>
                 <bind source="name" target="name"/>
                 <bind source="industry" target="industry"/>
             </mapping>
-            <mapping source="languages" target="language">
-                <bind source="language/name" target="name"/>
+            <mapping source="language" target="Language">
+                <bind source="name" target="name"/>
             </mapping>
-            <mapping source="skills" target="skill">
-                <bind source="skill/name" target="name"/>
+            <mapping source="skill" target="Skill">
+                <bind source="name" target="name"/>
             </mapping>
-            <mapping source="educations" target="degree">
+            <mapping source="education" target="Degree">
                 <bind source="school-name" target="school"/>
                 <bind source="field-of-study" target="program"/>
                 <bind source="degree" target="status"/>
-                <bind source="start-date" target="startDate" parser="Rexume\Configuration\XmlDateParser">
+                <bind source="start-date" target="startDate" parser="XmlDateParser">
                     <bind source="year" target="year" />
                 </bind>
                 <bind source="end-date" target="endDate"/>
                 <bind source="notes" target="description"/>
             </mapping>
-            <mapping source="volunteer" target="experience">
-                <bind source="role" target="name"/>
+            <mapping source="volunteer" target="Experience">
+                <bind source="role" target="position"/>
                 <bind source="cause/name" target="description"/>
+                <bind source="cause/name" target="department"/>
                 <bind source="organization/name" target="status"/>
             </mapping>
-        </mappings>
-    </protocol>
+        </definition>
+    </read>
 </protocols>

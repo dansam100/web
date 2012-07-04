@@ -1,15 +1,13 @@
 <?php
 namespace Rexume\Configuration;
-require_once(SITE_ROOT . DS . "lib" . DS . "Bootstrap.php");
+require_once(LIBRARIES_FOLDER . DS . "Bootstrap.php");
 require_once("AuthorizationKey.php");
 require_once("Sitemap.php");
-require_once("Protocol.php");
-
-define("CONFIG_ROOT", SITE_ROOT . DS . "config");
+require_once("ProtocolDefinition.php");
 
 /**
-    * Exception thrown when loading invalid configuration files
-    */
+* Exception thrown when loading invalid configuration files
+*/
 class ConfigurationLoaderException extends \Exception{}
 
 /**
@@ -17,7 +15,11 @@ class ConfigurationLoaderException extends \Exception{}
     */
 class Configuration
 {
+    use ProtocolParser;
+    
     const WEB_CONFIG = "web.config.xml";
+    
+    private static $appConfig;
 
     private $xml;
 
@@ -32,21 +34,34 @@ class Configuration
     private $default_sitemap;
     private $siteKey;
     private $authentication;
-
+    private $protocol;
 
     public function __construct()
     {
         $this->site_map = array();
-        $this->config_location = CONFIG_ROOT . DS . self::WEB_CONFIG;
-        $this->LoadConfig($this->config_location);
+        $this->config_location = CONFIG_FOLDER . DS . self::WEB_CONFIG;
+        $this->loadConfig($this->config_location);
     }
 
-    function LoadConfig($configLocation)
+    /**
+     * Returns an instance that contains web.config configuration parameters
+     * @return \Rexume\Configuration\Configuration
+     */
+    public static function getInstance()
+    {
+        if(isset(self::$appConfig)){
+            return self::$appConfig;
+        }
+        else{
+            return self::$appConfig = new Configuration();
+        }
+    }
+
+    function loadConfig($configLocation)
     {
         if(!file_exists($configLocation))
         {
             throw new ConfigurationLoaderException("Web configuration file: '" . $configLocation . " could not be found!");
-
         }
         //LOAD: the main configuration file
         $this->xml = simplexml_load_file($configLocation);
@@ -132,31 +147,44 @@ class Configuration
                 throw new ConfigurationLoaderException("Protcols configuration file: '" . $protocols_config . " could not be found!");
             }
             $protocol_xml = simplexml_load_file($protocols_config);
-            $protocols = $protocol_xml->protocol;
-            //parse xml and create protocol and protocol mapping definitions
-            foreach ($protocols as $protocol) {
-                $definitions = array();
-                foreach($protocol->mappings->mapping as $mapping){
-                    $definitions[] = new ProtocolMapping((string)$mapping['source'], 
-                        (string)$mapping['target'], 
-                            array_map('createMapping', $mapping->xpath('bind'))
-                    );
-                }
-                $this->protocol[(string)$map['source']] = new Protocol(
-                    (string)$protocol['name'], 
-                        (string)$protocol['type'],
-                            $protocol->query,
-                                $definitions
-                );
-            }
+            $this->protocol = $this->parseProtocols($protocol_xml);
         }
     }
     
+    /**
+     * The unique site key for the current deployment
+     * @return string
+     */
     public function getSiteKey()
     {
         return $this->siteKey;
     }
-
+    
+    /**
+     * Gets a protocol definition configured for use when requesting information regarding user details
+     * @param string $name The name of the protocol to fetch
+     * @return ProtocolDefinition the protocol definition matching the data type
+     */
+    public function getDataProtocol($name)
+    {
+        return $this->protocol[$name]['Data'];
+    }
+    
+    /**
+     * Gets a protocol definition configured for use during authentication of a user
+     * @param string $name The name of the protocol to fetch
+     * @return ProtocolDefinition the protocol definition matching the authentication type
+     */
+    public function getAuthenticationProtocol($name)
+    {
+        return $this->protocol[$name]['Authentication'];
+    }
+    
+    /**
+     * Gets the set oAuth keys for a given provider specified by the name
+     * @param string $name The name of the oAuth protocol to get the key for
+     * @return AuthorizationKey
+     */
     public function getAuthorizationKey($name)
     {
         if(isset($this->authentication[$name]))
@@ -165,7 +193,11 @@ class Configuration
         }
         return null;
     }
-
+    
+    /**
+     * Gets the configured database host name
+     * @return string
+     */
     public function getDatabaseName()
     {
         if(isset($this->db_name))
@@ -174,7 +206,11 @@ class Configuration
         }
         return null;
     }
-
+    
+    /**
+     * Gets the configured database host name
+     * @return string
+     */
     public function getDatabaseHost()
     {
         if(isset($this->db_host))
@@ -183,7 +219,11 @@ class Configuration
         }
         return null;
     }
-
+    
+    /**
+     * Gets the configured database user
+     * @return string
+     */
     public function getDatabaseUser()
     {
         if(isset($this->db_user))
@@ -192,7 +232,11 @@ class Configuration
         }
         return null;
     }
-
+    
+    /**
+     * Gets the configured database password
+     * @return string
+     */
     public function getDatabasePassword()
     {
         if(isset($this->db_pw))
@@ -201,7 +245,11 @@ class Configuration
         }
         return null;
     }
-
+    
+    /**
+     * Finds the path to the template folder for views
+     * @return string
+     */
     public function getTemplatesPath()
     {
         if(isset($this->templates))
@@ -210,7 +258,11 @@ class Configuration
         }
         return null;
     }
-
+    
+    /**
+     * the configured deployment mode
+     * @return string
+     */
     public function getDeploymentMode()
     {
         if(isset($this->deployment_mode))
@@ -219,7 +271,12 @@ class Configuration
         }
         return null;
     }
-
+    
+    /**
+     * Finds and returns the configured controller for the requested page
+     * @param string $controller The name of the accessed controller
+     * @return SiteMap
+     */
     public function getSiteMap($controller)
     {
         if(isset($this->site_map[$controller]))
@@ -228,7 +285,11 @@ class Configuration
         }
         else return null;
     }
-
+    
+    /**
+     * Finds and returns the default sitemap
+     * @return SiteMap the default sitemap of the controller
+     */
     public function getDefaultSiteMap()
     {
         if(isset($this->site_map[$this->default_sitemap]))

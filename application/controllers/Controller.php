@@ -10,20 +10,26 @@ interface IController
 class Controller implements IController
 {
     /**
-        * The controller model
-        * @var IModel
-        */
+    * The controller model
+    * @var IModel
+    */
     protected $model;
     /**
-        * The controller view
-        * @var IView
-        */
+    * The controller view
+    * @var IView
+    */
     protected $view;
     /**
-        * The default action of the controller
-        * @var string
-        */
+    * The default action of the controller
+    * @var string
+    */
     protected $action;
+    
+    /**
+     * The error thrown by the controller
+     * @var string
+     */
+    protected $error;
 
     function __construct($model, $view, $action)
     {

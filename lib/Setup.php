@@ -43,7 +43,7 @@ function unregisterGlobals() {
 /** Main Call Function **/
 function callHook() {
 	global $ACCESSED_URL;
-	$appConfig = getConfiguration();
+	$appConfig = \Rexume\Configuration\Configuration::getInstance();
 	
 	$siteMap = null;
 	if(isset($ACCESSED_URL))
@@ -89,6 +89,7 @@ function callHook() {
 }
 
 /** Autoload any classes that are required **/
+/*
 function __autoload($className) {
 	if (file_exists(SITE_ROOT . DS . 'lib' . DS . strtolower($className) . '.php')){
 		require_once(SITE_ROOT . DS . 'lib' . DS . strtolower($className) . '.php');
@@ -97,18 +98,10 @@ function __autoload($className) {
 	} else if (file_exists(SITE_ROOT . DS . 'application' . DS . 'models' . DS . strtolower($className) . '.php')) {
 		require_once(SITE_ROOT . DS . 'application' . DS . 'views' . DS . strtolower($className) . '.php');
 	} else {
-		/* Error Generation Code Here */
+		// Error Generation Code Here
 	}
 }
-
-/**
- * @var Configuration
- * Contains web.config configuration parameters
- */
-function getConfiguration()
-{
-	return $appConfig = new \Rexume\Configuration\Configuration();
-}
+*/
 
 function getWebContent($url)
 {

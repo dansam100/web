@@ -19,7 +19,7 @@
         protected $oauthSecret;
 		/** @Column(type="string") */
         protected $memberId;
-        /** @Column(type="string") */
+        /** @Column(type="string", name="verificationCode") */
         protected $verification;
         /** @Column(type="string") */
 		protected $userSalt;
@@ -28,7 +28,7 @@
 		/** @Column(type="string") */
 		protected $lastName;
 		/** @Column(type="string", name="email") */
-		protected $emailAddress;
+		protected $email;
 		/** @Column(type="boolean", name="admin") */
 		protected $isAdmin;
 		/** @Column(type="boolean", name="verified") */
@@ -52,14 +52,7 @@
 		 * 
 	     */
 		protected $categories = null;
-		/**
-	     * @var UserAddress[]
-		 * 
-		 * @OneToMany(targetEntity="UserAddress", mappedBy="user")
-		 * 
-	     */
-		
-		/**
+        /**
 	     * @var UserAddress[]
 		 * 
 		 * @OneToMany(targetEntity="UserAddress", mappedBy="user")

@@ -17,60 +17,62 @@ class LoginController extends \Rexume\Controllers\Controller
 
     public function simple()
     {
-        $authentication = new \Rexume\Models\Auth\Authentication();			
-        if(isset($_SESSION['userId']) && $authentication->validateSession())
+        $authentication = new \Rexume\Models\Auth\Authentication();
+        if($authentication->validateSession())
         {
-            header("location: home"); //redirect to home screen
-        }	
+            header("location: /home"); //redirect to home screen
+        }
     }
 
 
-    public function doLogin($oauth = false)
+    public function doLogin()
     {
-        global $AUTH_SUCCESS;
         $authentication = new \Rexume\Models\Auth\Authentication();			
         //only login if the user is not already logged in
-        if(isset($_SESSION['userId']) && $authentication->validateSession()){		
-            //authenticate the user using Auth object
-            $email = null; $password = null;	//initialize vars
-            $authentication = new \Rexume\Models\Auth\Authentication();
-            if($oauth)
-            {
-                $token = $this->model->getOAuthToken();
-                $secret = $this->model->getOAuthSecret();
-                //TODO: create the user with the right details
-                $authSuccess = $authentication->login($email, $password, $token, $secret);
-            }
-            else{
-                $email = $this->model->getEmail();
-                $password = $this->model->getPassword();
-                $authSuccess = $authentication->login($email, $password);
-            }
-            if($AUTH_SUCCESS->SUCCESS == $authSuccess){
-                header("location: home"); //redirect to home screen
+        if(!$authentication->validateSession())
+        {		
+            //authenticate the user using Auth object            
+            $email = $this->model->getEmail();
+            $password = $this->model->getPassword();
+            $auth_success = $authentication->login($email, $password);
+            if(\Rexume\Models\Auth\AuthenticationStatus::get()->SUCCESS == $auth_success){
+                header("location: /home"); //redirect to home screen
             }
             else {
-                header("location: login"); //invalid login. if user is not accessing default site login page, redirect to it
+                $this->error = "Invalid login"; //invalid login. if user is not accessing default site login page, redirect to it
             }
         }
+        else header("location: /home");
     }
 
     public function linkedin()
     {
         //authenticate the user using the linkedin oAuth object
         $authentication = new \Rexume\Models\Auth\LinkedInAuth();
-        $loginModel = $authentication->getAuthentication();
-
-        //use the returned login model to authenticate the user
-        if(isset($loginModel))
-        {
-            $this->model = $loginModel;
-            $this->doLogin($oauth = true);
+        //only login if the user is not already logged in
+        if(!$authentication->validateSession()){    
+            $login_model = $authentication->getAuthentication();
+            //use the returned login model to authenticate the user
+            if(isset($login_model))
+            {
+                $this->model = $login_model;
+                $access_token = $this->model->getOAuthToken();
+                $access_secret = $this->model->getOAuthSecret();
+                $auth_success = $authentication->authenticate($access_token, $access_secret);
+                if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->SUCCESS)
+                {
+                    header("location: /home");
+                }
+                else{
+                    $this->error = "Invalid login";
+                }
+            }
         }
+        else header("location: /home");
     }
 
     public function getError()
     {
-        return "TESTING ERROR MESSAGE";
+        return $this->error;
     }
 }
