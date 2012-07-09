@@ -36,7 +36,7 @@ class ProtocolDefinition {
         $this->query = $query;
         $this->contenttype = $contenttype;
         $this->definitions = $definitions;
-        if(isset($parser)){
+        if(!empty($parser)){
             $this->parser = $parser;
         }
         $this->results = array();
@@ -59,6 +59,11 @@ class ProtocolDefinition {
         return null;
     }
     
+    /**
+     * Parses xml data containing relevant information
+     * @param string $data the xml data
+     * @return \Rexume\Models\Entity[] The results of the parse operation
+     */
     public function parseOne(/*string*/ $data)
     {
         $parser_name = $this->parser;
@@ -90,7 +95,7 @@ class ProtocolDefinition {
     
     /**
      * 
-     * @return \Entity[] array of parsed result types
+     * @return \Rexume\Models\Entity[] array of parsed result types
      */
     public function getResults()
     {
@@ -133,6 +138,11 @@ class ProtocolDefinition {
  */
 trait ProtocolParser
 {
+    /**
+     * Parses a mapping xml definition for a given protocol
+     * @param \SimpleXmlElement $mapping the list of mappings to parse
+     * @return \Rexume\Configuration\ProtocolMapping The created protocol mapping
+     */
     function createMapping(\SimpleXmlElement $mapping)
     {
         $bind_xml = $mapping->xpath('bind');
@@ -159,6 +169,11 @@ trait ProtocolParser
         );
     }
     
+    /**
+     * Parses a protocol xml file into respective protocol
+     * @param \SimpleXMLElement $protocol_xml the xml defintion for a protocol
+     * @return ProtocolDefintion[] a collection of parsed protocols
+     */
     public function parseProtocols($protocol_xml)
     {
         $readprotocols = $protocol_xml->read;
@@ -166,12 +181,11 @@ trait ProtocolParser
         //parse xml and create protocol and protocol mapping definitions
         foreach ($readprotocols as $readprotocol) {
             foreach($readprotocol->definition as $protocoldef){
-                $parser = null;
                 $protocol = $this->parseProtocol(
                         (string)$readprotocol['name'], 
                         (string)$readprotocol['type'], 
                         $protocoldef,
-                        null
+                        (string)$readprotocol['parser']
                     );
                 if(!(array_key_exists($protocol->getName(), $result))){
                     $result[$protocol->getName()] = array();
@@ -183,6 +197,14 @@ trait ProtocolParser
         return $result;
     }
     
+    /**
+     * Parses the xml configuration file to create protocol definitions used to read and parse data
+     * @param string $name the name of the authentication scheme (eg: "LinkedIn", "Twitter", etc)
+     * @param string $type the type represents the protocol type (eg: "REST", "FILE", etc)
+     * @param \SimpleXMLElement $protocoldef the definition xml
+     * @param string $parser the name of the parser class to use
+     * @return \Rexume\Configuration\ProtocolDefinition the created protocol defintion
+     */
     public function parseProtocol($name, $type, $protocoldef, $parser)
     {
         $definitions = array_map(array($this, 'createMapping'), $protocoldef->xpath("mapping"));

@@ -6,6 +6,12 @@
         <controller>Rexume\Controllers\LoginController</controller>
         <defaultAction>simple</defaultAction>
     </map>
+    <map name="verify">
+        <model>Rexume\Models\VerificationModel</model>
+        <view>Rexume\Views\VerificationView</view>
+        <controller>Rexume\Controllers\VerificationController</controller>
+        <defaultAction>display</defaultAction>
+    </map>
     <!--Match all invalid URLS-->
     <map name="*">
         <model>Rexume\Views\NavigationModel</model>

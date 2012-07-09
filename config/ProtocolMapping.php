@@ -49,8 +49,8 @@ class ProtocolMapping{
         foreach($this->bindings as $binding){
             $target = $binding->target;
             $value =  $content->xpath($binding->source);
-            if(isset($value)){
-                if(isset($this->parser)){
+            if(!empty($value)){
+                if(!empty($this->parser)){
                     $parser = new $this->parser($binding->bindings);
                     $result->$target = $parser->parse($value[0]);
                 }

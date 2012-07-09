@@ -49,26 +49,35 @@ class LoginController extends \Rexume\Controllers\Controller
     {
         //authenticate the user using the linkedin oAuth object
         $authentication = new \Rexume\Models\Auth\LinkedInAuth();
-        //only login if the user is not already logged in
-        if(!$authentication->validateSession()){    
-            $login_model = $authentication->getAuthentication();
-            //use the returned login model to authenticate the user
-            if(isset($login_model))
-            {
-                $this->model = $login_model;
-                $access_token = $this->model->getOAuthToken();
-                $access_secret = $this->model->getOAuthSecret();
-                $auth_success = $authentication->authenticate($access_token, $access_secret);
-                if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->SUCCESS)
+        try{
+            //only login if the user is not already logged in
+            if(!$authentication->validateSession()){    
+                $login_model = $authentication->getAuthentication();
+                //use the returned login model to authenticate the user
+                if(isset($login_model))
                 {
-                    header("location: /home");
-                }
-                else{
-                    $this->error = "Invalid login";
+                    $this->model = $login_model;
+                    $access_token = $this->model->getOAuthToken();
+                    $access_secret = $this->model->getOAuthSecret();
+                    $auth_success = $authentication->authenticate($access_token, $access_secret);
+                    if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->SUCCESS)
+                    {
+                        header("location: /home");
+                    }
+                    else if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->NOT_VERIFIED){
+                        header("location: /verify?protocol=$authentication->getName()");
+                    }
+                    else{
+                        $this->error = "Invalid login";
+                    }
                 }
             }
+            else header("location: /home");
         }
-        else header("location: /home");
+        catch(Exception $e){
+            //log the erorr and continue
+            throw $e;
+        }
     }
 
     public function getError()

@@ -275,13 +275,17 @@ class Configuration
     /**
      * Finds and returns the configured controller for the requested page
      * @param string $controller The name of the accessed controller
-     * @return SiteMap
+     * @return SiteMap the site map
      */
     public function getSiteMap($controller)
     {
         if(isset($this->site_map[$controller]))
         {
             return $this->site_map[$controller];
+        }
+        else if(isset($this->site_map['*']))
+        {
+            return $this->site_map['*'];
         }
         else return null;
     }

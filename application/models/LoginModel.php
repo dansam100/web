@@ -18,8 +18,8 @@ class LoginModel extends Model
     {
         $this->email = $email;
         $this->password = $password;
-        $this->oauthToken = $oauthToken;
-        $this->oauthSecret = $oauthSecret;
+        $this->token = $oauthToken;
+        $this->secret = $oauthSecret;
     }
 
     public function setEmail($email)

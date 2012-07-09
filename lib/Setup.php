@@ -103,23 +103,6 @@ function __autoload($className) {
 }
 */
 
-function getWebContent($url)
-{
-	$page = null;
-	if(ini_get('allow_url_fopen')) {
-		$page = file_get_contents($url);
-	}
-	else{
-	    $ch = curl_init();
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	    curl_setopt($ch, CURLOPT_URL, $url);
-	    $page = curl_exec($ch);
-	    curl_close($ch);
-	}
-	
-	return $page;
-}
-
 setReporting();
 removeMagicQuotes();
 unregisterGlobals();
