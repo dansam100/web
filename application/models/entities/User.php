@@ -111,8 +111,12 @@
 			$this->categories = new ArrayCollection();
 			$this->sessions = new ArrayCollection();
 		}
-		
-		public function getId()
+        
+        public function __set($name, $value) {
+            $this->$name = $value;
+        }
+
+        public function getId()
 		{
 			return $this->id;
 		}
@@ -126,13 +130,31 @@
             return $this->username;
         }
         
-        public function email($emailAddress = null)
+        public function firstName($firstName = null)
 		{
-			if(isset($emailAddress))
+			if(isset($firstName))
             {
-                $this->emailAddress = $emailAddress;
+                $this->firstName = $firstName;
             }
-            return $this->emailAddress;
+            return $this->firstName;
+        }
+        
+        public function lastName($lastName = null)
+		{
+			if(isset($lastName))
+            {
+                $this->lastName = $lastName;
+            }
+            return $this->lastName;
+        }
+        
+        public function email($email = null)
+		{
+			if(isset($email))
+            {
+                $this->email = $email;
+            }
+            return $this->email;
 		}
 		
 		public function password($password = null)

@@ -1,11 +1,9 @@
 <?php
 namespace Rexume\Controllers;
 
-use Rexume\Controllers;
-
 require_once("Controller.php");
 
-class LoginController extends \Rexume\Controllers\Controller
+class LoginController extends Controller
 {	
     public function __construct($model, $view, $action)
     {

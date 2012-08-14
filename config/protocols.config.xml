@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocols>
-    <read name="LinkedIn" type="REST" parser="XMLSimpleParser">
-        <definition contenttype="Authentication" scope="/v1/people/~">
-            <query>:(id,first-name,last-name,main-address,headline,summary)</query>
+    <definition name="LinkedIn" type="REST" parser="XMLSimpleParser">
+        <read contenttype="Authentication" scope="https://api.linkedin.com/v1/people/~">
+            <query>:(id,first-name,last-name)</query>
             <mapping source="person" target="User">
                 <bind source="id" target="memberId"/>
                 <bind source="id" target="userName"/>
                 <bind source="first-name" target="firstName"/>
                 <bind source="last-name" target="lastName"/>
             </mapping>
-        </definition>
-        <definition contenttype="Data" scope="/v1/people/~">
+        </read>
+        <read contenttype="Data" scope="https://api.linkedin.com/v1/people/~">
             <query>:(id,first-name,last-name,main-address,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts)</query>
             <mapping source="person" target="Profile">
                 <bind source="first-name" target="firstName"/>
@@ -42,8 +42,10 @@
                 <bind source="im-account-type" target="name"/>
                 <bind source="im-account-name" target="value"/>
             </mapping>
-            <mapping source="main-address" target="Address" parser="LinkedInAddressParser"/>
-            <mapping source="phone-number" target="media">
+            <mapping source="main-address" target="Address">
+                <bind source="." target="address" parser="LinkedInAddressParser" />
+            </mapping>
+            <mapping source="phone-number" target="Media">
                 <bind source="phone-type" target="name" default="phone"/>
                 <bind source="phone-number" target="value"/>
                 <bind source="phone-type" target="type"/>
@@ -52,8 +54,8 @@
                 <bind source="." target="description"/>
             </mapping>
             <mapping source="company" target="Company">
-                <read name="LinkedIn" type="REST">
-                    <definition contentstype="Data" scope="/v1/companies/">
+                <definition name="LinkedIn" type="REST">
+                    <read contentstype="Data" scope="/v1/companies/">
                         <query>${id}</query> 
                         <mapping source="address" target="Address">
                             <bind source="street1" target="street1" />
@@ -61,8 +63,8 @@
                             <bind source="city" target="city"/>
                             <bind source="postal-code" target="postalCode"/>
                         </mapping>
-                    </definition>
-                </read>
+                    </read>
+                </definition>
                 <bind source="name" target="name"/>
                 <bind source="industry" target="industry"/>
             </mapping>
@@ -88,6 +90,6 @@
                 <bind source="cause/name" target="department"/>
                 <bind source="organization/name" target="status"/>
             </mapping>
-        </definition>
-    </read>
+        </read>
+    </definition>
 </protocols>

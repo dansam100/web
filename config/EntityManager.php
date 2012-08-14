@@ -37,22 +37,50 @@ class DB {
     {
         try{
             $repository = self::getInstance()->getRepository($entityType);
-            if($repository)
+            if(!empty($repository))
             {
-                return $repository->findByOne($where);
+                return $repository->findOneBy($where);
             }
         }
         catch(Exception $e)
         {
-            log($e);
+            //swallow
+            throw $e;
         }
         return null;
     }
     
-    public function save($entity)
+    public static function remove($entities)
+    {
+        try
+        {
+            $entityManager = self::getInstance();
+            if(is_array($entities)){
+                foreach($entities as $entity){
+                    $entityManager->remove($entity);
+                }
+            }
+            else{
+                $entityManager->remove($entities);
+            }
+            return $entityManager->flush();
+        }
+        catch(Exception $e){
+            //swallow
+            throw $e;
+        }
+        return -1;
+    }
+    
+    /**
+     * Persists any initialized or changed object to the database
+     * @param Entity $entity any type of entity to save
+     * @return integer success code
+     */
+    public static function save($entity)
     {
         $entityManager = self::getInstance();
         $entityManager->persist($entity);
-        $entity->flush();
+        return $entityManager->flush();
     }
 }

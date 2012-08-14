@@ -16,8 +16,7 @@ class ProtocolDefinition {
     protected $contenttype;
     protected $definitions;
     protected $parser = 'XMLSimpleParser';
-    
-    private $results;
+    protected $map;
     
     /**
      *
@@ -35,11 +34,19 @@ class ProtocolDefinition {
         $this->scope = $scope;
         $this->query = $query;
         $this->contenttype = $contenttype;
-        $this->definitions = $definitions;
+        $this->map = array();
         if(!empty($parser)){
             $this->parser = $parser;
         }
-        $this->results = array();
+        $this->definitions = $definitions;
+        foreach($this->definitions as $mapping){
+            $map[$mapping->getSource()] = $mapping->getTarget();
+            $protocol = $mapping->getProtocol();
+            if(!empty($protocol) && empty($protocol->parser))
+            {
+                $protocol->parser = $this->parser;
+            }
+        }       
     }
     
     /**
@@ -62,44 +69,37 @@ class ProtocolDefinition {
     /**
      * Parses xml data containing relevant information
      * @param string $data the xml data
-     * @return \Rexume\Models\Entity[] The results of the parse operation
+     * @return \Rexume\Models\Entity The results of the parse operation
      */
     public function parseOne(/*string*/ $data)
     {
         $parser_name = $this->parser;
-        $callback = array($this, 'parseData');
+        $callback = array($this, 'getMappingBySource');
         $parser = new $parser_name($data, $callback);
-        $this->clearResults();
-        $parser->beginParse();
-        $results = $this->getResults();
+        $results = $parser->parse();
         //return the first item in the list
         return (count($results) > 0) ? $results[0] : null;
     }
     
-    public function parseData(\SimpleXMLIterator $content)
-    {
-        if($content)
-        {
-            $mapping = $this->getMappingBySource($content->getName());
-            if($mapping)
-            {
-                $this->results[] = $mapping->parse($content);
-            }
-        }
-    }
-    
-    public function clearResults()
-    {
-        $this->results = array();
-    }
-    
     /**
-     * 
-     * @return \Rexume\Models\Entity[] array of parsed result types
+     * Parses xml data containing relevant information
+     * @param string $data the xml data
+     * @return \Rexume\Models\Entity[] The results of the parse operation
      */
-    public function getResults()
+    public function parse(/*string*/ $data)
     {
-        return $this->results;
+        $parser_name = $this->parser;
+        $callback = array($this, 'getMappingBySource');
+        $parser = new $parser_name($data, $callback);
+        return $parser->parse();
+    }
+    
+    public function createQueryFromTokens($query, $tokens)
+    {
+        foreach($tokens as $tokenKey => $tokenValue){
+            $query = preg_replace($tokenKey, $tokenValue, $query);
+        }
+        return $query;
     }
     
     /**
@@ -130,6 +130,16 @@ class ProtocolDefinition {
     {
         return $this->scope;
     }
+    
+    public function getSourceBindings()
+    {
+        return array_keys($this->map);
+    }
+    
+    public function getTargetBindings()
+    {
+        return array_values($this->map);
+    }
 }
 
 
@@ -152,12 +162,12 @@ trait ProtocolParser
         }
         if($mapping->read){
             $protocol = $this->parseProtocol
-                    (
-                        (string)$mapping->read['name'], 
-                        (string)$mapping->read['type'], 
-                        $mapping->read->definition,
-                        null
-                    );
+                (
+                    (string)$mapping->read['name'], 
+                    (string)$mapping->read['type'], 
+                    $mapping->read->definition,
+                    (string)$mapping->read['parser']
+                );
         }
         return new \Rexume\Configuration\ProtocolMapping
         (
@@ -176,16 +186,16 @@ trait ProtocolParser
      */
     public function parseProtocols($protocol_xml)
     {
-        $readprotocols = $protocol_xml->read;
+        $protocolDefs = $protocol_xml->definition;
         $result = array();
         //parse xml and create protocol and protocol mapping definitions
-        foreach ($readprotocols as $readprotocol) {
-            foreach($readprotocol->definition as $protocoldef){
+        foreach ($protocolDefs as $protocolDef) {
+            foreach($protocolDefs->read as $readDef){
                 $protocol = $this->parseProtocol(
-                        (string)$readprotocol['name'], 
-                        (string)$readprotocol['type'], 
-                        $protocoldef,
-                        (string)$readprotocol['parser']
+                        (string)$protocolDef['name'], 
+                        (string)$protocolDef['type'], 
+                        $readDef,
+                        (string)$protocolDef['parser']
                     );
                 if(!(array_key_exists($protocol->getName(), $result))){
                     $result[$protocol->getName()] = array();
@@ -205,18 +215,18 @@ trait ProtocolParser
      * @param string $parser the name of the parser class to use
      * @return \Rexume\Configuration\ProtocolDefinition the created protocol defintion
      */
-    public function parseProtocol($name, $type, $protocoldef, $parser)
+    public function parseProtocol($name, $type, $readDef, $parser)
     {
-        $definitions = array_map(array($this, 'createMapping'), $protocoldef->xpath("mapping"));
+        $definitions = array_map(array($this, 'createMapping'), $readDef->xpath("mapping"));
         return new ProtocolDefinition
         (
             $name, 
             $type,
-            (string)$protocoldef['contenttype'],
-            (string)$protocoldef['scope'],
-            (string)$protocoldef->query,
+            (string)$readDef['contenttype'],
+            (string)$readDef['scope'],
+            (string)$readDef->query,
             $definitions,
-            $parser 
+            $parser
         );
     }
 }

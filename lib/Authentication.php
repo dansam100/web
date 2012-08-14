@@ -3,6 +3,9 @@ namespace Rexume\Models\Auth;
 require_once(LIBRARIES_FOLDER . DS . "Enum.php");
 require_once(LIBRARIES_FOLDER . DS . "Bootstrap.php");
 
+/**
+ * Exception thrown during authentication
+ */
 class AuthenticationException extends \Exception
 {
     public function __construct($message, $code, $previous) {
@@ -58,10 +61,10 @@ class Authentication
 
     /**
      * Generates a random IV used for encryption
-     * @param type $length The length of IV to create
+     * @param int $length The length of IV to create
      * @return string
      */
-    protected function generateSalt($length = 32)
+    protected function generateSalt($length = 16)
     {
         $salt = bin2hex(mcrypt_create_iv($length, MCRYPT_DEV_URANDOM));
         return $salt;
@@ -76,12 +79,24 @@ class Authentication
     {
         return hash_hmac('sha512', $data, $this->siteKey);
     }
+    
+    function generateString($length, $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
+    {
+        $str = '';
+        $count = strlen($charset);
+        while ($length--)
+        {
+            $str .= $charset[mt_rand(0, $count-1)];
+        }
+        return $str;
+    }
 
     public function isAdmin()
     {
-        $entityManager = \DB::getInstance();
-        //GetUser and check for admin-ness
-        $user = $entityManager->find('User', $_SESSION["userId"]);
+        $user = \DB::getOne('User', array(
+                'user' => $_SESSION['userId']
+            )
+        );
         if(isset($user))
         {
             return $user->isAdmin();
@@ -91,10 +106,10 @@ class Authentication
 
     public function isVerified()
     {
-       $entityManager = \DB::getInstance();
-
-        //GetUser and check for verified-ness
-        $user = $entityManager->find('User', $_SESSION["userId"]);
+       $user = \DB::getOne('User', array(
+                'user' => $_SESSION['userId']
+            )
+        );
         if(isset($user))
         {
             return $user->isVerified();
@@ -104,10 +119,10 @@ class Authentication
 
     public function isActive()
     {
-        $entityManager = \DB::getInstance();
-
-        //GetUser and check for verified-ness
-        $user = $entityManager->find('User', $_SESSION["userId"]);
+        $user = \DB::getOne('User', array(
+                'user' => $_SESSION['userId']
+            )
+        );
         if(isset($user))
         {
             return $user->isActive();
@@ -115,27 +130,37 @@ class Authentication
         return false;
     }
 
-    public function createUser($email, $password, $memberId = null, $oauthToken = null, $oauthSecret = null, $isVerified = 0, $isActive = 1, $isAdmin = 0)
+    public function createUser($username, $password, $firstName, $lastName, $email = null, $memberId = null, $oauthToken = null, $oauthSecret = null, $isVerified = 0, $isActive = 1, $isAdmin = 0)
     {
-        $verification_code = $this->generateSalt();
-        if(!isset($memberId))
+        $verification_code = $this->generateString(16);
+        if(empty($memberId))
         {
-            $memberId = $this->generateSalt(10);
+            $memberId = $this->generateString(10);
         }
         $user = new \User();
-        if(isset($email) && isset($password))
+        if(!empty($username))
+        {
+            $user->userName($username);
+        }
+        if(!empty($password))
         {
             $user_salt = $this->generateSalt();
             $password = $this->hashData($user_salt . $password);
             $user->password($password);
-            $user->email($email);
-        }        
-        if(isset($oauthSecret) && isset($oauthToken))
+            $user->userSalt($user_salt);
+        }
+        if(!empty($oauthSecret) && !empty($oauthToken))
         {
             //TODO: wrap create user in something cleaner
             $user->oauthToken($oauthToken);
             $user->oauthSecret($oauthSecret);
         }
+        else{
+            throw new Exception("Invalid parameters passed to '" . __FUNCTION__ ."'");
+        }
+        $user->email($email);
+        $user->firstName($firstName);
+        $user->lastName($lastName);
         $user->isAdmin($isAdmin);
         $user->isVerified($isVerified);
         $user->isActive($isActive);
@@ -146,10 +171,10 @@ class Authentication
         
         //Save user
         try{
-            \DB::getInstance()->save($user);
+            \DB::save($user);
         }
         catch (Exception $e){
-            throw new AuthenticationException("Unable to create user!", AuthenticationStatus::get()->ERROR, $e);
+            throw new AuthenticationException("Unable to create user", AuthenticationStatus::get()->ERROR, $e);
         }
         
         //return:
@@ -163,89 +188,88 @@ class Authentication
     public function loginUser($user)
     {
         if(!empty($user)){
-            return $this->login($user->email(), $user->password(), $user->memberId());
+            return $this->login($user->userName(), $user->password(), $user->memberId());
         }
         return AuthenticationStatus::get()->ERROR;
     }
 
     /**
      * Logs a given user in using the $email and password or a member id
-     * @param type $email The email to login as
-     * @param type $password The authentication password to use
-     * @param type $memberId An alternative to the password for oAuth authentications
+     * @param string $username The email to login as
+     * @param string $password The authentication password to use
+     * @param string $memberId An alternative to the password for oAuth authentications
      * @return FlagsEnum the success code of the login
      */
-    public function login($email, $password, $memberId = "")
+    public function login($username, $password, $memberId = nullw)
     {
-        $entityManager = \DB::getInstance();
-        //find user based on email address
-        $user = null;
-        if(isset($email)){
-            $entityManager->getRepository('User')->findOneBy(array('email' => $email));
-        }
-        else{
-            $entityManager->getRepository('User')->findOneBy(array('memberId' => $memberId));
-        }
-        //create salt for new user
-        if($user)
+        try
         {
-            $user_salt = $user->getSalt();
-            $user_member_id = $user->getMemberId();
-            $password = $this->hashData($password . $user_salt);
-
-            if($user->getPassword() == $password || $user_member_id == $memberId)
+            $entityManager = \DB::getInstance();
+            //find user based on email address
+            $user = null;
+            if(isset($username)){
+                $user = $entityManager->getRepository('User')->findOneBy(array('username' => $username));
+            }
+            else{
+                $user = $entityManager->getRepository('User')->findOneBy(array('memberId' => $memberId));
+            }
+            //create salt for new user
+            if(isset($user))
             {
-                //verification and active checks
-                if($user->isActive())
+                $user_salt = $user->userSalt();
+                $user_password = $this->hashData($password . $user_salt);
+
+                if($user->memberId() == $memberId || $user->password() == $user_password)
                 {
-                    //create session
-                    $token = $this->hashData($this->generateSalt() . $_SESSION['HTTP_USER_AGENT']);
-
-                    //TODO: clear old session value for the user
-                    $currentSessions = $entityManager->getRepository('Session')->findBy(array('userId' => $user->id));
-                    $entityManager->remove($currentSessions);
-
-                    //TODO: find cleaner way to insert new session values for user
-                    //Create the user session object
-                    $session = new \Session();
-                    $session->setUser($user);
-                    $session->setSessionId(session_id());
-                    $session->setToken($token);
-                    $entityManager->persist($session);
-                    $sessionCreated = $entityManager->flush();
-
-                    //return success/failure
-                    if($sessionCreated)
+                    //verification and active checks
+                    if($user->isActive())
                     {
+                        //create session
+                        $token = $this->hashData($this->generateSalt() . $_SERVER['HTTP_USER_AGENT']);
+                        //TODO: support multiple sessions later?
+                        //clear old session value for the user
+                        $currentSessions = $entityManager->getRepository('Session')->findBy(array('user' => $user));
+                        \DB::remove($currentSessions);
+
+                        //TODO: find cleaner way to insert new session values for user
+                        //Create the user session object
+                        $session = new \Session();
+                        $session->user($user);
+                        $session->sessionId(session_id());
+                        $session->token($token);
+                        //save the session
+                        \DB::save($session);
                         //re-initialize and save session tokens
                         $_SESSION['token'] = $token;
                         $_SESSION['userId'] = $user->getId();
                         //return:
                         return $user->isVerified() ? AuthenticationStatus::get()->SUCCESS : AuthenticationStatus::get()->NOT_VERIFIED;
                     }
-                    else return AuthenticationStatus::get()->ERROR;
+                    else return AuthenticationStatus::get()->INACTIVE;
                 }
-                else return AuthenticationStatus::get()->INACTIVE;
+                else return AuthenticationStatus::get()->INVALID_LOGIN;
             }
-            else return AuthenticationStatus::get()->INVALID_LOGIN;
+            else return AuthenticationStatus::get()->ERROR;
         }
-        else return AuthenticationStatus::get()->ERROR;
+        catch (\Exception $e)
+        {
+            throw new AuthenticationException("Error during login", AuthenticationStatus::get()->ERROR, $e);
+        }
     }
 
     public function validateSession()
     {
-        $entityManager = \DB::getInstance();
         if(isset($_SESSION['token']) && isset($_SESSION['userId']))
         {
             //read the session object
-            $session = $entityManager->getRepository('Session')->findOneBy(
+            $session = \DB::getOne('Session',
                 array(
-                    'userId' => session_id(), 
+                    'sessionId' => session_id(), 
                     'token' => $_SESSION['token'], 
-                    'userId' => $_SESSION['userId']
+                    'user' => $_SESSION['userId']
                 )
             );
-            if($session)
+            if(isset($session))
             {
                 //Validate session against user's session id and session token values
                 return $this->invalidateSession();
@@ -257,40 +281,40 @@ class Authentication
 
     public function invalidateSession()
     {
-        $entityManager = \DB::getInstance();
         //regenerate the session id
         session_regenerate_id();
         //read the session object
-        $session = $entityManager->getRepository('Session')->findOneBy(
+        $session = \DB::getOne('Session',
             array(
                 'sessionId' => session_id(), 
                 'token' => $_SESSION['token'], 
-                'userId' => $_SESSION['userId']
+                'user' => $_SESSION['userId']
             )
         );
-        //create a new token for the user
-        $token = $this->hashData($this->generateSalt() . $_SESSION['HTTP_USER_AGENT']);
-        $session->setToken($token);
-        $entityManager->persist($session);
-        $sessionCreated = $entityManager->flush();
-        //update the token. if the flush fails, the user will have to login again
-        if($sessionCreated)
+        if(isset($session))
         {
+            //create a new token for the user
+            $token = $this->hashData($this->generateSalt() . $_SERVER['HTTP_USER_AGENT']);
+            $session->token($token);
+            \DB::save($session);
+            //update the token. if the flush fails, the user will have to login again
             $_SESSION['token'] = $token;    //replace the session token
         }
         //return:
         return true;
     }
     
-    public function currentUser()
+    /**
+     * Gets the currently logged in user
+     * @return \User the currently logged in user
+     */
+    public static function currentUser()
     {
-        $entityManager = \DB::getInstance();
         if(isset($_SESSION['token']) && isset($_SESSION['userId']))
         {
             //read the user object
-            $user = $entityManager->getRepository('User')->findOneBy(
-                array(
-                    'userId' => $_SESSION['userId']
+            $user = \DB::getOne('User', array(
+                    'user' => $_SESSION['userId']
                 )
             );
             return $user;

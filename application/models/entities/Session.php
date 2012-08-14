@@ -17,33 +17,31 @@
 		/** @Column(type="string") */
 		protected $token;
 		
-		public function getUser()
+		
+		public function user($user = null)
 		{
-			return $this->user;
+			if(isset($user))
+            {
+                $this->user = $user;
+            }
+            return $this->user;
 		}
 		
-		public function setUser($user)
+		public function sessionId($sessionId = null)
 		{
-			$this->user = $user;
+			if(isset($sessionId))
+            {
+                $this->sessionId = $sessionId;
+            }
+            return $this->sessionId;
 		}
 		
-		public function getSessionId()
+		public function token($token = null)
 		{
-			return $this->sessionId;
-		}
-		
-		public function setSessionId($sessionId)
-		{
-			$this->sessionId = $sessionId;
-		}
-		
-		public function getToken()
-		{
-			return $this->token;
-		}
-		
-		public function setToken($token)
-		{
-			$this->token = $token;
+            if(isset($token))
+            {
+                $this->token = $token;
+            }
+            return $this->token;
 		}
     }

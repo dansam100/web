@@ -59,6 +59,11 @@ function directory_find_files($dir, $ext = '*')
     return $result; 
 }
 
+/**
+ * Gets the URL using CURL or fget.
+ * @param string $url the url to access
+ * @return string the parsed page
+ */
 function getWebContent($url)
 {
 	$page = null;
@@ -75,3 +80,10 @@ function getWebContent($url)
 	
 	return $page;
 }
+
+function getTokens($input, $regex)
+{
+    $result = array();
+    preg_match('/' . $regex . '/', $input, $result);
+    return $result;
+} 

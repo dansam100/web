@@ -18,16 +18,22 @@ if (!class_exists("Doctrine\Common\Version", false))
     Setup::registerAutoloadGit(LIBRARIES_FOLDER . DS . "doctrine2-orm");
 }
 
-//include other classes
-require_once(CONFIG_FOLDER . DS . 'Configuration.php');
-require_once(LIBRARIES_FOLDER . DS . "Authentication.php");
-require_once(LIBRARIES_FOLDER . DS . "LinkedInAuth.php");
-require_once(CONFIG_FOLDER . DS . 'EntityManager.php');
-
 //load all parsers
 foreach (directory_list_files(LIBRARIES_FOLDER . DS . 'parsers', 'php') as $value) {
     require_once(LIBRARIES_FOLDER . DS . "parsers" . DS . "$value");
 }
+
+//load all parsers
+foreach (directory_list_files(LIBRARIES_FOLDER . DS . 'readers', 'php') as $value) {
+    require_once(LIBRARIES_FOLDER . DS . "readers" . DS . "$value");
+}
+
+//include other classes
+require_once(LIBRARIES_FOLDER . DS . "oauth_simple". DS . "php" . DS . "OAuthSimple.php");
+require_once(CONFIG_FOLDER . DS . 'Configuration.php');
+require_once(LIBRARIES_FOLDER . DS . "Authentication.php");
+require_once(LIBRARIES_FOLDER . DS . "LinkedInAuth.php");
+require_once(CONFIG_FOLDER . DS . 'EntityManager.php');
 
 //load all controllers
 foreach (directory_list_files(CONTROLLERS_FOLDER, 'php') as $value) {

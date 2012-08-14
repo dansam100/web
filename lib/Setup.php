@@ -1,10 +1,12 @@
 <?php
 /** Check if environment is development and display errors **/
-function setReporting() {
-	if (DEVELOPMENT_ENVIRONMENT == true) {
+function setReporting()
+{
+	if(DEVELOPMENT_ENVIRONMENT) {
 		error_reporting(E_ALL);
 		ini_set('display_errors','On');
-	} else {
+	} 
+    else {
 		error_reporting(E_ALL);
 		ini_set('display_errors','Off');
 		ini_set('log_errors', 'On');
@@ -13,12 +15,14 @@ function setReporting() {
 }
 
 /** Check for Magic Quotes and remove them **/
-function stripSlashesDeep($value) {
+function stripSlashesDeep($value)
+{
 	$value = is_array($value) ? array_map('stripSlashesDeep', $value) : stripslashes($value);
 	return $value;
 }
 
-function removeMagicQuotes() {
+function removeMagicQuotes()
+{
 	if(get_magic_quotes_gpc()){
 		$_GET    = stripSlashesDeep($_GET   );
 		$_POST   = stripSlashesDeep($_POST  );
@@ -28,7 +32,7 @@ function removeMagicQuotes() {
 
 /** Check register globals and remove them **/
 function unregisterGlobals() {
-    if (ini_get('register_globals')) {
+    if(ini_get('register_globals')) {
         $array = array('_SESSION', '_POST', '_GET', '_COOKIE', '_REQUEST', '_SERVER', '_ENV', '_FILES');
         foreach ($array as $value) {
             foreach ($GLOBALS[$value] as $key => $var) {
@@ -88,25 +92,10 @@ function callHook() {
 	}
 }
 
-/** Autoload any classes that are required **/
-/*
-function __autoload($className) {
-	if (file_exists(SITE_ROOT . DS . 'lib' . DS . strtolower($className) . '.php')){
-		require_once(SITE_ROOT . DS . 'lib' . DS . strtolower($className) . '.php');
-	} else if (file_exists(SITE_ROOT . DS . 'application' . DS . 'controllers' . DS . strtolower($className) . '.php')) {
-		require_once(SITE_ROOT . DS . 'application' . DS . 'controllers' . DS . strtolower($className) . '.php');
-	} else if (file_exists(SITE_ROOT . DS . 'application' . DS . 'models' . DS . strtolower($className) . '.php')) {
-		require_once(SITE_ROOT . DS . 'application' . DS . 'views' . DS . strtolower($className) . '.php');
-	} else {
-		// Error Generation Code Here
-	}
-}
-*/
-
 setReporting();
 removeMagicQuotes();
 unregisterGlobals();
 
 /* PROGRAM STARTS */
-//session_start();
+session_start();
 callHook();

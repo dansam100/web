@@ -1,11 +1,11 @@
 <?php
 namespace Rexume\Models\Auth;
-require_once(LIBRARIES_FOLDER . DS . "Authentication.php");
-require_once(LIBRARIES_FOLDER . DS . "oauth_simple". DS . "php" . DS . "OAuthSimple.php");
+use Rexume\Readers;
 
 class LinkedInAuth extends Authentication
 {
     private $oauthObject;
+    use \Rexume\Readers\OAuthBase;
 
     public function __construct()
     {
@@ -16,7 +16,7 @@ class LinkedInAuth extends Authentication
 
     /**
         * Gets the oAuth access token for the requesting user
-        * @return LoginModel
+        * @return LoginModel containing the login model
         */	
     public function getAuthentication()
     {
@@ -72,54 +72,56 @@ class LinkedInAuth extends Authentication
                     return new \Rexume\Models\LoginModel(null, null, $access_token, $access_token_secret);
                 }
                 else{
-                    throw new AuthenticationException("Unable to get access token with LinkedIn oAuth request", AuthenticationStatus::get()->ERROR, $e);
+                    throw new AuthenticationException("Unable to get access token with LinkedIn oAuth request", AuthenticationStatus::get()->ERROR);
                 }
             }
         }
         catch(\Rexume\Models\Auth\AuthenticationException $ae){
-            throw $e;
+            throw $ae;
         }
         catch(Exception $e){
             throw new AuthenticationException("Unknown error encountered during authentication", AuthenticationStatus::get()->ERROR, $e);
         }
     }
 
-
+    /**
+     * Called to authenticate the user using linked in tokens acquired in the previous step
+     * @param string $accessToken
+     * @param string $accessTokenSecret
+     * @return string The success code, whether login is successful or not
+     * @throws \Rexume\Models\Auth\AuthenticationException when authentication fails. this exception encapsulates the actual exception thrown
+     */
     public function authenticate($accessToken, $accessTokenSecret)
     {
-        try{
-            $auth_key = \Rexume\Configuration\Configuration::getInstance()->getAuthorizationKey($this->name);
+        try
+        {
             //get data request protocol for linkedin
             $protocol = \Rexume\Configuration\Configuration::getInstance()->getAuthenticationProtocol($this->name);
-
             //construct url
-            $url = $auth_key->getApiRoot() . $protocol->getScope() . $protocol->getQuery();
-
-            //recreate request with new signatures
-            $this->oauthObject->reset();
-            //get the default signatures //append access token signatures
-            $signatures = $this->getSignatures();
-            $signatures['oauth_token'] = $accessToken;
-            $signatures['oauth_secret'] = $accessTokenSecret;
-
-            $result = $this->oauthObject->sign(array(/* 'action' => 'POST', */ 'path' => $url, 'signatures'=> $signatures));
-            $page = \getWebContent($result['signed_url']);
-            //TODO: get email address and/or member id
-            $email = null; $password = null;
-            //get the required id from the xml content
+            $url = $protocol->getScope();
+            $query = $protocol->getQuery();
+            //perform the read operation
+            $reader = new \Rexume\Readers\OAuthReader($this->name);
+            $page = $reader->read($url, $query, $accessToken, $accessTokenSecret);
             $data = $protocol->parseOne($page);
-            if(isset($data)){
-                //for LinkedIn, we want the member id
-                $member_id = $data->memberId();
+            if(isset($data))
+            {
+                $member_id = $data->memberId(); //for LinkedIn, we want the member id
                 if(isset($member_id)){
                     //see if we already have a user like this
-                    $user = \DB::getOne('User', array("memberId" => $member_id));
+                    $user = \DB::getOne('User', array('memberId' => $member_id));
                     if(empty($user)){
+                        $password = null; $email = null;
+                        //generate a fake username for the new user
+                        $username = $this->generateString(strlen($member_id));
                         //create a user using the member id and authenticate
-                        $user = parent::createUser($email, $password, $member_id, $accessToken, $accessTokenSecret, $isVerified = 1);
+                        $user = $this->createUser($username, $password, $data->firstName(), $data->lastName(), $email, $member_id, $accessToken, $accessTokenSecret, $isVerified = 0);
                     }
-                    if($user){
-                        return parent::loginUser($user);
+                    if(isset($user)){
+                        return $this->loginUser($user);
+                    }
+                    else{
+                        throw new AuthenticationException("Unable to create or find user", AuthenticationStatus::get()->ERROR, $e);
                     }
                 }
             }
@@ -131,73 +133,5 @@ class LinkedInAuth extends Authentication
         {
             throw new AuthenticationException("Unknown error encountered during authentication", AuthenticationStatus::get()->ERROR, $e);
         }
-    }
-
-    /**
-     * Gets the default signatures required to make an oAuth acessToken call
-     * @return array An array of signed keys
-     */
-    protected function constructAccessSignature($oauthToken, $oauthSecret, $oauthVerifier)
-    {
-        $auth_key = \Rexume\Configuration\Configuration::getInstance()->getAuthorizationKey($this->name);
-        $signatures = $this->getSignatures();
-
-        // Fetch the cookie and amend our signature array with the request
-        // token and secret.
-        $signatures['oauth_secret'] = $oauthSecret;
-        $signatures['oauth_token'] = $oauthToken;
-
-        return array(
-            //'action' => 'POST',
-            'path'      => $auth_key->getAccessTokenUrl(),
-            'parameters'=> array(
-                'oauth_token' => $oauthToken,
-                'oauth_verifier' => $oauthVerifier),
-            'signatures'=> $signatures
-        );
-    }
-
-    /**
-     * Constructs the default signatures required to make an oAuth authoriseToken call
-     * @return array An array of signed keys
-     */
-    protected function constructAuthorizationSignature($oauthToken)
-    {
-        $auth_key = \Rexume\Configuration\Configuration::getInstance()->getAuthorizationKey($this->name);
-        $signatures = $this->getSignatures();
-
-        return array(
-            'path'       => $auth_key->getAuthorizeTokenUrl(),
-            'parameters' => array('oauth_token' => $oauthToken),
-            'signatures' => $signatures
-        );
-    }
-    
-    /**
-     * Constructs the default signatures required to make an oAuth requestToken call
-     * @return array An array of signed keys
-     */
-    protected function constructRequestSignature()
-    {			
-        $auth_key = \Rexume\Configuration\Configuration::getInstance()->getAuthorizationKey($this->name);
-        $signatures = $this->getSignatures();
-        return array(
-            'path' => $auth_key->getRequestTokenUrl(),
-            'parameters' => array('oauth_callback' => $auth_key->getCallback()),
-            'signatures'=> $signatures
-        );
-    }
-
-    /**
-     * Gets the default signatures required to make an oAuth call
-     * @return array An array of signed keys
-     */
-    protected function getSignatures()
-    {
-        $auth_key = \Rexume\Configuration\Configuration::getInstance()->getAuthorizationKey($this->name);
-        return array(
-            'consumer_key' => $auth_key->getApiKey(), 
-            'shared_secret' => $auth_key->getSharedSecret()
-        );
     }
 }
