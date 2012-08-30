@@ -21,7 +21,7 @@ class AuthenticationStatus
     private static $auth_status;
     private $statuses;
     public function __construct() {
-        $this->statuses = new \Rexume\Models\Enums\FlagsEnum("SUCCESS", "NOT_VERIFIED", "INACTIVE", "INVALID_LOGIN", "ERROR");;
+        $this->statuses = new \Rexume\Models\Enums\FlagsEnum("SUCCESS", "NOT_VERIFIED", "INACTIVE", "INVALID_LOGIN", "ERROR");
     }
     
     public function __get(/*string*/ $name)
@@ -129,7 +129,24 @@ class Authentication
         }
         return false;
     }
-
+    
+    /**
+     * 
+     * @param string $username
+     * @param string $password
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     * @param string $memberId
+     * @param string $oauthToken
+     * @param string $oauthSecret
+     * @param boolean $isVerified
+     * @param boolean $isActive
+     * @param boolean $isAdmin
+     * @return \User the created user
+     * @throws Exception on failure to create and persist user
+     * @throws AuthenticationException
+     */
     public function createUser($username, $password, $firstName, $lastName, $email = null, $memberId = null, $oauthToken = null, $oauthSecret = null, $isVerified = 0, $isActive = 1, $isAdmin = 0)
     {
         $verification_code = $this->generateString(16);
@@ -306,7 +323,7 @@ class Authentication
     
     /**
      * Gets the currently logged in user
-     * @return \User the currently logged in user
+     * @return User the currently logged in user
      */
     public static function currentUser()
     {
@@ -314,7 +331,7 @@ class Authentication
         {
             //read the user object
             $user = \DB::getOne('User', array(
-                    'user' => $_SESSION['userId']
+                    'id' => $_SESSION['userId']
                 )
             );
             return $user;

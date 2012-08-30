@@ -36,7 +36,7 @@ class OAuthReader {
             $url = $scope . $query;
             if(empty($accessToken) || empty($accessTokenSecret))
             {
-                $current_user = Rexume\Models\Auth\Authentication::currentUser();
+                $current_user = \Rexume\Models\Auth\Authentication::currentUser();
                 if(!empty($current_user))
                 {
                     $accessToken = $current_user->oauthToken();

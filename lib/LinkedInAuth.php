@@ -33,6 +33,7 @@ class LinkedInAuth extends Authentication
                 // "load" that web page into a string variable.
                 $page = getWebContent($result['signed_url']);
                 // We parse the string for the request token and the matching token secret
+                $returned_items = array();
                 parse_str($page, $returned_items);
                 if(isset($returned_items['oauth_token']) && isset($returned_items['oauth_token_secret']))
                 {

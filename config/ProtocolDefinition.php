@@ -73,10 +73,7 @@ class ProtocolDefinition {
      */
     public function parseOne(/*string*/ $data)
     {
-        $parser_name = $this->parser;
-        $callback = array($this, 'getMappingBySource');
-        $parser = new $parser_name($data, $callback);
-        $results = $parser->parse();
+        $results = $this->parse($data);
         //return the first item in the list
         return (count($results) > 0) ? $results[0] : null;
     }
@@ -94,6 +91,12 @@ class ProtocolDefinition {
         return $parser->parse();
     }
     
+    /**
+     * 
+     * @param string $query
+     * @param array $tokens
+     * @return string
+     */
     public function createQueryFromTokens($query, $tokens)
     {
         foreach($tokens as $tokenKey => $tokenValue){
@@ -191,7 +194,8 @@ trait ProtocolParser
         //parse xml and create protocol and protocol mapping definitions
         foreach ($protocolDefs as $protocolDef) {
             foreach($protocolDefs->read as $readDef){
-                $protocol = $this->parseProtocol(
+                $protocol = $this->parseProtocol
+                    (
                         (string)$protocolDef['name'], 
                         (string)$protocolDef['type'], 
                         $readDef,
@@ -211,7 +215,7 @@ trait ProtocolParser
      * Parses the xml configuration file to create protocol definitions used to read and parse data
      * @param string $name the name of the authentication scheme (eg: "LinkedIn", "Twitter", etc)
      * @param string $type the type represents the protocol type (eg: "REST", "FILE", etc)
-     * @param \SimpleXMLElement $protocoldef the definition xml
+     * @param \SimpleXMLElement $readDef the definition xml
      * @param string $parser the name of the parser class to use
      * @return \Rexume\Configuration\ProtocolDefinition the created protocol defintion
      */

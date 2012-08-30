@@ -12,11 +12,17 @@
         <controller>Rexume\Controllers\VerificationController</controller>
         <defaultAction>display</defaultAction>
     </map>
+    <map name="home">
+        <model>Rexume\Models\HomeScreenModel</model>
+        <view>Rexume\Views\HomeScreenView</view>
+        <controller>Rexume\Controllers\HomeScreenController</controller>
+        <defaultAction>display</defaultAction>
+    </map>
     <!--Match all invalid URLS-->
     <map name="*">
-        <model>Rexume\Views\NavigationModel</model>
+        <model>Rexume\Models\NavigationModel</model>
         <view>Rexume\Views\NavigationView</view>
         <controller>Rexume\Controllers\NavigationController</controller>
-        <defaultAction>error</defaultAction>
+        <defaultAction>pageNotFound</defaultAction>
     </map>
 </sitemaps>

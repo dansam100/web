@@ -48,13 +48,15 @@ class ProtocolMapping{
      */
     public function parse($content, $bind_callback)
     {
+        //@var Entity resulting entity to return
         $result = new $this->target;
         //for the case where a protocol is defined in a mapping, do another read if necessary and parse the contents
         $protocol = $this->getProtocol();
         if(!empty($protocol)){
             //parse the query into tokens to find parameters and supply those parameters
-            $tokens = getTokens($protocol->getQuery(), '${(*)}');
-            $query = $protocol->createQueryFromTokens($protocol->getQuery(), $this->parseValues($tokens, $content, $bind_callback));
+            $tokens = getTokens($protocol->getQuery(), '\${(*)}');
+            $query = $protocol->createQueryFromTokens($protocol->getQuery(),
+                    $this->parseValues($tokens, $content, $bind_callback));
             //create a reader object and retrieve the contents
             $reader = new \Rexume\Readers\OAuthReader($protocol->getName());
             $subcontent = $reader->read($protocol->getScope(), $query);

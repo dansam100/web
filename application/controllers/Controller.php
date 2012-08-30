@@ -34,8 +34,14 @@ class Controller implements IController
     function __construct($model, $view, $action)
     {
         $this->action = $action;
-        $this->model = new $model;
-        $this->view = new $view($this, $action);
+        if(!empty($model))
+        {
+            $this->model = new $model;
+        }
+        if(!empty($view))
+        {
+            $this->view = new $view($this, $action);
+        }
     }
 
     function __destruct()

@@ -5,6 +5,12 @@ require_once("Controller.php");
 
 class LoginController extends Controller
 {	
+    /**
+     * Overridden to set email and password on the model
+     * @param LoginModel $model The model behind the login screen
+     * @param LoginView $view The login view controls
+     * @param string $action the action to invoke on the screen
+     */
     public function __construct($model, $view, $action)
     {
         parent::__construct($model, $view, $action);
@@ -29,18 +35,29 @@ class LoginController extends Controller
         //only login if the user is not already logged in
         if(!$authentication->validateSession())
         {		
-            //authenticate the user using Auth object            
-            $email = $this->model->getEmail();
-            $password = $this->model->getPassword();
-            $auth_success = $authentication->login($email, $password);
-            if(\Rexume\Models\Auth\AuthenticationStatus::get()->SUCCESS == $auth_success){
-                header("location: /home"); //redirect to home screen
+            try{
+                //authenticate the user using Auth object            
+                $email = $this->model->getEmail();
+                $password = $this->model->getPassword();
+                $auth_success = $authentication->login($email, $password);
+                if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->SUCCESS)
+                {
+                    header("location: /rexume/home");
+                }
+                else if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->NOT_VERIFIED){
+                    header("location: /verify?protocol=$authentication->getName()");
+                }
+                else{
+                    $this->error = "Invalid login";
+                }
             }
-            else {
-                $this->error = "Invalid login"; //invalid login. if user is not accessing default site login page, redirect to it
+            catch(\Exception $e)
+            {
+                 $this->error = "Login failed"; //invalid login. if user is not accessing default site login page, redirect to it
+                 throw $e;
             }
         }
-        else header("location: /home");
+        else header("location: /rexume/home");
     }
 
     public function linkedin()
@@ -60,20 +77,23 @@ class LoginController extends Controller
                     $auth_success = $authentication->authenticate($access_token, $access_secret);
                     if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->SUCCESS)
                     {
-                        header("location: /home");
+                        //header("location: /rexume/home");
+                        header("location: /rexume/verify?protocol=" . $authentication->getName());
                     }
                     else if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->NOT_VERIFIED){
-                        header("location: /verify?protocol=$authentication->getName()");
+                        header("location: /verify?protocol=" . $authentication->getName());
                     }
                     else{
                         $this->error = "Invalid login";
                     }
                 }
             }
-            else header("location: /home");
+            else //header("location: /rexume/home");
+                header("location: /rexume/verify?protocol=" . $authentication->getName());
         }
         catch(Exception $e){
-            //log the erorr and continue
+            //log the error and continue
+            $this->error = "Login failed"; //invalid login. if user is not accessing default site login page, redirect to it
             throw $e;
         }
     }

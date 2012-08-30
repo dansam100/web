@@ -34,7 +34,7 @@ class LoginModel extends Model
 
     public function setPassword($password)
     {
-        $this->email = $password;
+        $this->password = $password;
     }
 
     public function getPassword()
