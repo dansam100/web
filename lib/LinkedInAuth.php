@@ -119,6 +119,9 @@ class LinkedInAuth extends Authentication
                         $user = $this->createUser($username, $password, $data->firstName(), $data->lastName(), $email, $member_id, $accessToken, $accessTokenSecret, $isVerified = 0);
                     }
                     if(isset($user)){
+                        $user->oauthToken($accessToken);
+                        $user->oauthSecret($accessTokenSecret);
+                        \DB::save($user);
                         return $this->loginUser($user);
                     }
                     else{

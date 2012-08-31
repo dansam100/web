@@ -126,14 +126,14 @@
 		
 		public function __construct()
 		{
-			$this->$addresses = new ArrayCollection();
-			$this->$experiences = new ArrayCollection();
-			$this->$degrees = new ArrayCollection();
-			$this->$media = new ArrayCollection();
-			$this->$skills = new ArrayCollection();
-			$this->$languages = new ArrayCollection();
-			$this->$activities = new ArrayCollection();
-			$this->$categories = new ArrayCollection();
+			$this->addresses = new ArrayCollection();
+			$this->experiences = new ArrayCollection();
+			$this->degrees = new ArrayCollection();
+			$this->media = new ArrayCollection();
+			$this->skills = new ArrayCollection();
+			$this->languages = new ArrayCollection();
+			$this->activities = new ArrayCollection();
+			$this->categories = new ArrayCollection();
 		}
 		
 		public function getUser()
