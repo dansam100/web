@@ -1,9 +1,10 @@
 <?php
+    require_once("Entity.php");
     //entities/Achievement.php
     /**
 	 * @Entity @Table(name="achievement")
 	 */
-    class Achievement
+    class Achievement extends Entity
     {
     	/** @Id @Column(type="integer") @GeneratedValue */
     	protected $id;
@@ -32,43 +33,44 @@
 		protected $project = null;
 		
 		
-		public function getDescription()
+        public function getId()
+        {
+            return $this->id;
+        }
+        
+        public function description($description = null)
 		{
-			return $this->description;
-		}
-		
-		public function setDescription($description)
+			if(isset($description))
+            {
+                $this->description = $description;
+            }
+            return $this->description;
+        }
+        
+        public function project($project = null)
 		{
-			$this->description = $description;
-		}
-		
-		public function getProject()
+			if(isset($project))
+            {
+                $this->project = $project;
+            }
+            return $this->project;
+        }
+        
+        public function experience($experience = null)
 		{
-			return $this->project;
-		}
-		
-		public function setProject($project)
+			if(isset($experience))
+            {
+                $this->experience = $experience;
+            }
+            return $this->experience;
+        }
+        
+        public function degree($degree = null)
 		{
-			$this->project = $project;
-		}
-		
-		public function getExperience()
-		{
-			return $this->experience;
-		}
-		
-		public function setExperience($experience)
-		{
-			$this->experience = $experience;
-		}
-		
-		public function getDegree()
-		{
-			return $this->getDegree;
-		}
-		
-		public function setDegree($degree)
-		{
-			$this->degree = $degree;
-		}
+			if(isset($degree))
+            {
+                $this->degree = $degree;
+            }
+            return $this->degree;
+        }
     }

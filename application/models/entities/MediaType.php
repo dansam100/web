@@ -3,7 +3,7 @@
     /**
 	 * @Entity @Table(name="mediatype")
 	 */
-    class MediaType
+    class MediaType extends Entity
     {
 		/** @Id @Column(type="integer") @GeneratedValue */
     	protected $id;

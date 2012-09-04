@@ -3,93 +3,105 @@
     <definition name="LinkedIn" type="REST" parser="XMLSimpleParser">
         <read contenttype="Authentication" scope="https://api.linkedin.com/v1/people/~">
             <query>:(id,first-name,last-name)</query>
-            <mapping source="person" target="User">
+            <object source="person" target="User">
                 <bind source="id" target="memberId"/>
                 <bind source="id" target="userName"/>
                 <bind source="first-name" target="firstName"/>
                 <bind source="last-name" target="lastName"/>
-            </mapping>
+            </object>
         </read>
         <read contenttype="Data" scope="https://api.linkedin.com/v1/people/~">
             <query>:(id,first-name,last-name,main-address,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts)</query>
-            <mapping source="person" target="Profile">
-                <bind source="first-name" target="firstName"/>
+            <object source="person" target="User">
+                <bind source="id" target="memberId"/>
+                <bind source="id" target="userName"/>
+                <bind source="first-name" target="firstName" type="string"/>
                 <bind source="last-name" target="lastName"/>
+                <bind source="main-address" target="defaultAddress" type="Address"/>
                 <bind source="headline" target="status"/>
                 <bind source="summary" target="objective"/>
-            </mapping>
-            <mapping source="position" target="Experience">
-                <bind source="title" target="position"/>
-                <bind source="summary" target="description"/>
-                <bind source="start-date" target="startDate" parser="XmlDateParser">
-                    <bind source="month" target="month"/>
-                    <bind source="year" target="year"/>
-                </bind>
-                <bind source="end-date" target="endDate" parser="XmlDateParser">
-                    <bind source="month" target="month"/>
-                    <bind source="year" target="year"/>
-                </bind>
-                <bind source="is-current" target="current"/>
-                <bind source="summary" target="activities" parser="NewLineDelimiter"/>
-            </mapping>
-            <mapping source="twitter-account" target="Media">
-                <bind source="provider-account-id" target="value"/>
-                <bind source="provider-account-name" target="name"/>
-                <bind source="" target="type" default="twitter"/>
-            </mapping>
-            <mapping source="im-account" target="Media">
-                <bind source="im-account-type" target="type"/>
-                <bind source="im-account-type" target="name"/>
-                <bind source="im-account-name" target="value"/>
-            </mapping>
-            <mapping source="main-address" target="Address">
-                <bind source="." target="address" parser="LinkedInAddressParser" />
-            </mapping>
-            <mapping source="phone-number" target="Media">
-                <bind source="phone-type" target="name" default="phone"/>
-                <bind source="phone-number" target="value"/>
-                <bind source="phone-type" target="type"/>
-            </mapping>
-            <mapping source="interest" target="Activity">
-                <bind source="." target="description"/>
-            </mapping>
-            <mapping source="company" target="Company">
-                <definition name="LinkedIn" type="REST">
-                    <read contentstype="Data" scope="/v1/companies/">
-                        <query>${id}</query> 
-                        <mapping source="address" target="Address">
-                            <bind source="street1" target="street1" />
-                            <bind source="street2" target="street2"/>
-                            <bind source="city" target="city"/>
-                            <bind source="postal-code" target="postalCode"/>
-                        </mapping>
-                    </read>
-                </definition>
-                <bind source="name" target="name"/>
-                <bind source="industry" target="industry"/>
-            </mapping>
-            <mapping source="language" target="Language">
-                <bind source="name" target="name"/>
-            </mapping>
-            <mapping source="skill" target="Skill">
-                <bind source="name" target="name"/>
-            </mapping>
-            <mapping source="education" target="Degree">
-                <bind source="school-name" target="school"/>
-                <bind source="field-of-study" target="program"/>
-                <bind source="degree" target="status"/>
-                <bind source="start-date" target="startDate" parser="XmlDateParser">
-                    <bind source="year" target="year" />
-                </bind>
-                <bind source="end-date" target="endDate"/>
-                <bind source="notes" target="description"/>
-            </mapping>
-            <mapping source="volunteer" target="Experience">
-                <bind source="role" target="position"/>
-                <bind source="cause/name" target="description"/>
-                <bind source="cause/name" target="department"/>
-                <bind source="organization/name" target="status"/>
-            </mapping>
+                <bind source="interest" target="activities" type="Activity" />
+                <bind source="education" target="educations" target="Education"/>
+                <bind source="position" target="experiences" type="Experience"/>
+                <bind source="volunteer" target="experiences" type="Experience"/>
+                <bind source="language" target="languages" type="Language"/>
+                <bind source="phone-number" target="media" type="Media"/>
+                <bind source="im-account" target="media" type="Media"/>
+            </object>
+            <mappings>
+                <mapping name="position" type="Experience">
+                    <bind source="title" target="position"/>
+                    <bind source="summary" target="description"/>
+                    <bind source="start-date" target="startDate" parser="XmlDateParser">
+                        <bind source="month" target="month"/>
+                        <bind source="year" target="year"/>
+                    </bind>
+                    <bind source="end-date" target="endDate" parser="XmlDateParser" type="date">
+                        <bind source="month" target="month"/>
+                        <bind source="year" target="year"/>
+                    </bind>
+                    <bind source="is-current" target="current" type="boolean" />
+                    <bind source="summary" target="activities" parser="NewLineDelimiter" type="Activity"/>
+                </mapping>
+                <mapping name="twitter-account" type="Media">
+                    <bind source="provider-account-id" target="value"/>
+                    <bind source="provider-account-name" target="name"/>
+                    <bind source="" target="type" default="twitter"/>
+                </mapping>
+                <mapping name="im-account" type="Media">
+                    <bind source="im-account-type" target="type"/>
+                    <bind source="im-account-type" target="name"/>
+                    <bind source="im-account-name" target="value"/>
+                </mapping>
+                <mapping name="main-address" type="Address">
+                    <bind source="." target="address" parser="LinkedInAddressParser" />
+                </mapping>
+                <mapping name="phone-number" type="Media">
+                    <bind source="phone-type" target="name" default="phone"/>
+                    <bind source="phone-number" target="value"/>
+                    <bind source="phone-type" target="type"/>
+                </mapping>
+                <mapping name="interest" type="Activity">
+                    <bind source="." target="description"/>
+                </mapping>
+                <mapping name="company" type="Company">
+                    <definition name="LinkedIn" type="REST">
+                        <read contentstype="Data" scope="/v1/companies/">
+                            <query>${id}</query> 
+                            <object source="address" target="Address">
+                                <bind source="street1" target="street1" />
+                                <bind source="street2" target="street2"/>
+                                <bind source="city" target="city"/>
+                                <bind source="postal-code" target="postalCode"/>
+                            </object>
+                        </read>
+                    </definition>
+                    <bind source="name" type="name"/>
+                    <bind source="industry" target="industry"/>
+                </mapping>
+                <mapping name="language" type="Language">
+                    <bind source="name" target="name"/>
+                </mapping>
+                <mapping name="skill" type="Skill">
+                    <bind source="name" target="name"/>
+                </mapping>
+                <mapping name="education" type="Degree">
+                    <bind source="school-name" target="school"/>
+                    <bind source="field-of-study" target="program"/>
+                    <bind source="degree" target="status"/>
+                    <bind source="start-date" target="startDate" parser="XmlDateParser">
+                        <bind source="year" target="year" />
+                    </bind>
+                    <bind source="end-date" target="endDate"/>
+                    <bind source="notes" target="description"/>
+                </mapping>
+                <mapping name="volunteer" type="Experience">
+                    <bind source="role" target="position"/>
+                    <bind source="cause/name" target="description"/>
+                    <bind source="cause/name" target="department"/>
+                    <bind source="organization/name" target="status"/>
+                </mapping>
+            </mappings>
         </read>
     </definition>
 </protocols>

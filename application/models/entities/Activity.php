@@ -1,9 +1,9 @@
-<?php
+<?php   
 	//entities/Activity.php
 	/**
 	 * @Entity @Table(name="activity")
 	 */
-	class Activity
+	class Activity extends Entity
 	{
 		/** @Id @Column(type="integer") @GeneratedValue */
 		protected $id;

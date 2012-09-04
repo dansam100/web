@@ -3,7 +3,7 @@
     /**
 	 * @Entity @Table(name="duration")
 	 */
-   	class Duration
+   	class Duration extends Entity
    	{
    		/** @Id @Column(type="integer") @GeneratedValue */
    		protected $id;

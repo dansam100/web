@@ -3,7 +3,7 @@
     /**
 	 * @Entity @Table(name="experiencetype")
 	 */
-    class ExperienceType
+    class ExperienceType extends Entity
     {
     	/** @Id @Column(type="integer") @GeneratedValue */
     	protected $id;

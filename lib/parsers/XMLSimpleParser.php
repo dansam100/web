@@ -82,7 +82,11 @@ class XMLSimpleParser {
      */
     public function getValue(\SimpleXMLElement $content, $source)
     {
-        return (string)$content->xpath($source)[0];
+        $result =  $content->xpath($source);
+        if(!empty($result)){
+            return (string)$result[0];
+        }
+        return null;
     }
 }
 

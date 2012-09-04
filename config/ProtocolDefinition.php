@@ -14,6 +14,7 @@ class ProtocolDefinition {
     protected $query;
     protected $scope;
     protected $contenttype;
+    protected $objects;
     protected $definitions;
     protected $parser = 'XMLSimpleParser';
     protected $map;
@@ -25,10 +26,11 @@ class ProtocolDefinition {
      * @param string $contenttype The content type for the protocol
      * @param string $scope the scope to perform operations on
      * @param string $query the query fields to pass into the request
+     * @param ProtocolObject[] $objects the objects to create
      * @param ProtocolMapping[] $definitions the mapping assocations related to the protocol
      * @param Parser $parser The parser to use for reading data contents
      */
-    public function __construct($name, $type, $contenttype, $scope = null, $query = null, $definitions = null, $parser = null) {
+    public function __construct($name, $type, $contenttype, $scope = null, $query = null, $objects = null, $definitions = null, $parser = null) {
         $this->type = $type;
         $this->name = $name;
         $this->scope = $scope;
@@ -38,15 +40,20 @@ class ProtocolDefinition {
         if(!empty($parser)){
             $this->parser = $parser;
         }
-        $this->definitions = $definitions;
-        foreach($this->definitions as $mapping){
+        $this->definitions = array();
+        foreach($definitions as $mapping){
+            array_push($this->definitions, $mapping);
             $map[$mapping->getSource()] = $mapping->getTarget();
             $protocol = $mapping->getProtocol();
             if(!empty($protocol) && empty($protocol->parser))
             {
                 $protocol->parser = $this->parser;
             }
-        }       
+        }
+        $this->objects = array();
+        foreach($objects as $object){
+            array_push($this->objects, $object);
+        }
     }
     
     /**
@@ -221,7 +228,7 @@ trait ProtocolParser
      */
     public function parseProtocol($name, $type, $readDef, $parser)
     {
-        $definitions = array_map(array($this, 'createMapping'), $readDef->xpath("mapping"));
+        $definitions = array_map(array($this, 'createMapping'), $readDef->xpath("object"));
         return new ProtocolDefinition
         (
             $name, 

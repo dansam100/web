@@ -5,7 +5,7 @@
 	/**
 	 * @Entity @Table(name="user")
 	 */
-    class User
+    class User extends Entity
     {
     	/** @Id @Column(type="integer") @GeneratedValue */
     	protected $id;
@@ -111,10 +111,6 @@
 			$this->categories = new ArrayCollection();
 			$this->sessions = new ArrayCollection();
 		}
-        
-        public function __set($name, $value) {
-            $this->$name = $value;
-        }
 
         public function getId()
 		{

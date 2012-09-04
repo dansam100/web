@@ -5,7 +5,7 @@
 	/**
 	 * @Entity @Table(name="profile")
 	 */
-    class Profile
+    class Profile extends Entity
     {
     	/** @Id @Column(type="integer") @GeneratedValue */
     	protected $id;

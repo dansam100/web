@@ -3,7 +3,7 @@
     /**
 	 * @Entity @Table(name="useraddress")
 	 */
-    class UserAddress
+    class UserAddress extends Entity
     {
     	/** @Id @Column(type="integer") @GeneratedValue */
     	protected $id;
