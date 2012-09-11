@@ -12,7 +12,7 @@
         </read>
         <read contenttype="Data" scope="https://api.linkedin.com/v1/people/~">
             <query>:(id,first-name,last-name,main-address,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts)</query>
-            <object source="person" target="User">
+            <object name="person" type="User">
                 <bind source="id" target="memberId"/>
                 <bind source="id" target="userName"/>
                 <bind source="first-name" target="firstName" type="string"/>

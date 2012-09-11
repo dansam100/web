@@ -104,10 +104,10 @@ class LinkedInAuth extends Authentication
             //perform the read operation
             $reader = new \Rexume\Readers\OAuthReader($this->name);
             $page = $reader->read($url, $query, $accessToken, $accessTokenSecret);
-            $data = $protocol->parseOne($page);
-            if(isset($data))
+            $user = $protocol->parseOne($page);
+            if(isset($user))
             {
-                $member_id = $data->memberId(); //for LinkedIn, we want the member id
+                $member_id = $user->memberId(); //for LinkedIn, we want the member id
                 if(isset($member_id)){
                     //see if we already have a user like this
                     $user = \DB::getOne('User', array('memberId' => $member_id));
@@ -116,7 +116,7 @@ class LinkedInAuth extends Authentication
                         //generate a fake username for the new user
                         $username = $this->generateString(strlen($member_id));
                         //create a user using the member id and authenticate
-                        $user = $this->createUser($username, $password, $data->firstName(), $data->lastName(), $email, $member_id, $accessToken, $accessTokenSecret, $isVerified = 0);
+                        $user = $this->createUser($username, $password, $user->firstName(), $user->lastName(), $email, $member_id, $accessToken, $accessTokenSecret, $isVerified = 0);
                     }
                     if(isset($user)){
                         $user->oauthToken($accessToken);

@@ -15,7 +15,7 @@ class ProtocolDefinition {
     protected $scope;
     protected $contenttype;
     protected $objects;
-    protected $definitions;
+    protected $mappings;
     protected $parser = 'XMLSimpleParser';
     protected $map;
     
@@ -27,33 +27,20 @@ class ProtocolDefinition {
      * @param string $scope the scope to perform operations on
      * @param string $query the query fields to pass into the request
      * @param ProtocolObject[] $objects the objects to create
-     * @param ProtocolMapping[] $definitions the mapping assocations related to the protocol
-     * @param Parser $parser The parser to use for reading data contents
+     * @param ProtocolMapping[] $mappings the mapping assocations related to the protocol
+     * @param IParser $parser The parser to use for reading data contents
      */
-    public function __construct($name, $type, $contenttype, $scope = null, $query = null, $objects = null, $definitions = null, $parser = null) {
+    public function __construct($name, $type, $contenttype, $scope = null, $query = null, $objects = null, $mappings = null, $parser = null) {
         $this->type = $type;
         $this->name = $name;
         $this->scope = $scope;
         $this->query = $query;
         $this->contenttype = $contenttype;
-        $this->map = array();
         if(!empty($parser)){
             $this->parser = $parser;
         }
-        $this->definitions = array();
-        foreach($definitions as $mapping){
-            array_push($this->definitions, $mapping);
-            $map[$mapping->getSource()] = $mapping->getTarget();
-            $protocol = $mapping->getProtocol();
-            if(!empty($protocol) && empty($protocol->parser))
-            {
-                $protocol->parser = $this->parser;
-            }
-        }
-        $this->objects = array();
-        foreach($objects as $object){
-            array_push($this->objects, $object);
-        }
+        $this->mappings = $mappings;
+        $this->objects = $objects;
     }
     
     /**
@@ -61,13 +48,30 @@ class ProtocolDefinition {
      * @param string $name
      * @return ProtocolMapping The resulting mapping 
      */
-    public function getMappingBySource($name)
+    public function getMappingByName($name)
     {
-        foreach($this->definitions as $definition)
+        foreach($this->mappings as $mapping)
         {
-            if($definition->getSource() == $name)
+            if($mapping->name() == $name)
             {
-                return $definition;
+                return $mapping;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     *
+     * @param string $name
+     * @return ProtocolMapping The resulting mapping 
+     */
+    public function getObjectByName($name)
+    {
+        foreach($this->objects as $object)
+        {
+            if($object->name() == $name)
+            {
+                return $object;
             }
         }
         return null;
@@ -93,9 +97,9 @@ class ProtocolDefinition {
     public function parse(/*string*/ $data)
     {
         $parser_name = $this->parser;
-        $callback = array($this, 'getMappingBySource');
-        $parser = new $parser_name($data, $callback);
-        return $parser->parse();
+        $callback = array($this, 'getMappingByName');
+        $parser = new $parser_name($this->objects);
+        return $parser->parse($data, $callback);
     }
     
     /**
@@ -116,37 +120,37 @@ class ProtocolDefinition {
      * 
      * @return string protocol request query string
      */
-    public function getQuery()
+    public function query()
     {
         return $this->query;
     }
     
-    public function getName()
+    public function name()
     {
         return $this->name;
     }
     
-    public function getType()
+    public function type()
     {
         return $this->type;
     }
     
-    public function getContentType()
+    public function contentType()
     {
         return $this->contenttype;
     }
     
-    public function getScope()
+    public function scope()
     {
         return $this->scope;
     }
     
-    public function getSourceBindings()
+    public function sources()
     {
         return array_keys($this->map);
     }
     
-    public function getTargetBindings()
+    public function targets()
     {
         return array_values($this->map);
     }
@@ -158,6 +162,13 @@ class ProtocolDefinition {
  */
 trait ProtocolParser
 {
+    function createBinding(\SimpleXmlElement $bind)
+    {
+        $bindings = array_map(array($this, 'createBinding'), $bind->xpath('bind'));
+        return new \Rexume\Configuration\ProtocolBind((string)$bind['source'], (string)$bind['target'], $bindings, (string)$bind['parser']);
+    }
+    
+    
     /**
      * Parses a mapping xml definition for a given protocol
      * @param \SimpleXmlElement $mapping the list of mappings to parse
@@ -168,7 +179,7 @@ trait ProtocolParser
         $bind_xml = $mapping->xpath('bind');
         $bindings = array(); $protocol = array();
         if($bind_xml){
-            $bindings = array_map(array($this, 'createMapping'), $bind_xml);
+            $bindings = array_map(array($this, 'createBinding') , $bind_xml);
         }
         if($mapping->read){
             $protocol = $this->parseProtocol
@@ -179,10 +190,10 @@ trait ProtocolParser
                     (string)$mapping->read['parser']
                 );
         }
-        return new \Rexume\Configuration\ProtocolMapping
+        return new \Rexume\Configuration\ProtocolObject
         (
-            (string)$mapping['source'],
-            (string)$mapping['target'],
+            (string)$mapping['name'],
+            (string)$mapping['type'],
             $protocol,
             $bindings,
             (string)$mapping['parser']
@@ -208,11 +219,11 @@ trait ProtocolParser
                         $readDef,
                         (string)$protocolDef['parser']
                     );
-                if(!(array_key_exists($protocol->getName(), $result))){
-                    $result[$protocol->getName()] = array();
+                if(!(array_key_exists($protocol->name(), $result))){
+                    $result[$protocol->name()] = array();
                 }
                 
-                $result[$protocol->getName()][$protocol->getContentType()] = $protocol;
+                $result[$protocol->name()][$protocol->contentType()] = $protocol;
             }
         }
         return $result;
@@ -228,7 +239,8 @@ trait ProtocolParser
      */
     public function parseProtocol($name, $type, $readDef, $parser)
     {
-        $definitions = array_map(array($this, 'createMapping'), $readDef->xpath("object"));
+        $mappings = array_map(array($this, 'createMapping'), $readDef->xpath('object'));
+        $objects = array_map(array($this, 'createMapping'), $readDef->xpath('mapping'));
         return new ProtocolDefinition
         (
             $name, 
@@ -236,7 +248,8 @@ trait ProtocolParser
             (string)$readDef['contenttype'],
             (string)$readDef['scope'],
             (string)$readDef->query,
-            $definitions,
+            $objects,
+            $mappings,
             $parser
         );
     }

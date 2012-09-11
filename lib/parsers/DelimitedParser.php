@@ -1,6 +1,6 @@
 <?php
 namespace Rexume\Parsers;
-
+use Rexume\Configuration;
 /**
  * Description of DelimitedParser
  *
@@ -8,9 +8,14 @@ namespace Rexume\Parsers;
  */
 class DelimitedParser
 {
-    private $delimiter;
-    private $mappings;
-    public function __construct($mappings, \string $delimiter = null) {
+    protected $delimiter;
+    protected $mappings;
+    /**
+     * 
+     * @param ProtocolBind[] $mappings
+     * @param string $delimiter
+     */
+    public function __construct($mappings, $delimiter = null) {
         $this->delimiter = $delimiter;
         $this->mappings = $mappings;
     }

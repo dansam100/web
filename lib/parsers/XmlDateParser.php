@@ -1,5 +1,6 @@
 <?php
 namespace Rexume\Parsers;
+use Rexume\Configuration;
 /**
  * Date parser for xml structure.
  * 
@@ -17,7 +18,11 @@ class XmlDateParser {
     private $month;
     private $day;
     
-    public function __construct(array $mappings) {
+    /**
+     * 
+     * @param ProtocolBind[] $mappings
+     */
+    public function __construct($mappings) {
         $this->year = 1970;
         $this->month = 1;
         $this->day = 1;

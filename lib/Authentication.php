@@ -298,8 +298,6 @@ class Authentication
 
     public function invalidateSession()
     {
-        //regenerate the session id
-        session_regenerate_id();
         //read the session object
         $session = \DB::getOne('Session',
             array(
@@ -310,11 +308,10 @@ class Authentication
         );
         if(isset($session))
         {
-            //create a new token for the user
-            $token = $this->hashData($this->generateSalt() . $_SERVER['HTTP_USER_AGENT']);
+            session_regenerate_id();    //regenerate the session id
+            $token = $this->hashData($this->generateSalt() . $_SERVER['HTTP_USER_AGENT']);  //create a new token for the user
             $session->token($token);
-            \DB::save($session);
-            //update the token. if the flush fails, the user will have to login again
+            \DB::save($session);    //update the token. if the flush fails, the user will have to login again
             $_SESSION['token'] = $token;    //replace the session token
         }
         //return:

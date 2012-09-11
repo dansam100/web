@@ -7,69 +7,85 @@
 class XMLSimpleParser {
     /**
      *
-     * @var string xml contents
+     * @var ProtocolObject[] 
      */
-    private $xml_doc;
-    /**
-     *
-     * @var SimpleXMLIterator
-     */
-    private $parser;
-    /**
-     *
-     * @var callback call back to get the mapping related node
-     */
-    private $callback;
+    private $mappings;
     /**
      *
      * @var mixed results of the parse operation
      */
     private $results;
-    
-    public function __construct($xml, $bind_callback = null) {
-        $this->xml_doc = $xml;
-        $this->callback = $bind_callback;
-        $this->parser = new \SimpleXMLIterator($xml);
+    /**
+     * Ctor
+     * @param ProtocolObject[] $mappings 
+     */
+    public function __construct($mappings) {
+        $this->mappings = $mappings;
         $this->results = array();
     }
     
-    public function parse()
+    /**
+     * 
+     * @param \SimpleXMLElement $data
+     * @param type $callback
+     * @return type
+     */
+    public function parse(\SimpleXMLElement $data, $callback)
     {
+        $callback = $callback;
+        $parser = new \SimpleXMLIterator($data);
         //process the root node
-        if(isset($this->callback))
+        if(isset($callback))
         {
-            $mapping = call_user_func($this->callback, $this->parser->getName());
-            if(!empty($mapping))
+            $mappingObject = null;
+            foreach($this->mappings as $mapping)
             {
-                $this->results[] = $this->invoke_parser($mapping, $this->parser);
+                if(strcmp($mapping->name(), $parser->getName()) == 0){
+                    $mappingObject = $mapping;
+                    break;
+                }
+            }
+            if(!empty($mappingObject))
+            {
+                $this->results[] = $this->invokeParser($mappingObject, $parser);
             }
         }
         //process children
-        $this->start($this->parser);
+        $this->start($parser, $callback);
         return $this->results;
     }
     
-    private function invoke_parser($mapping, \SimpleXMLElement $content)
+    /**
+     * 
+     * @param type $mapping
+     * @param \SimpleXMLElement $content
+     */
+    private function invokeParser($mapping, \SimpleXMLElement $content)
     {
         $callback = array($this, 'getValue');
         $this->results[] = $mapping->parse($content, $callback);
     }
     
-    private function start(\SimpleXMLIterator $node)
+    /**
+     * 
+     * @param \SimpleXMLIterator $node
+     * @param type $callback
+     */
+    private function start(\SimpleXMLIterator $node, $callback)
     {
         for($node->rewind(); $node->valid(); $node->next())
         {
-            if(isset($this->callback))
+            if(isset($callback))
             {
-                $mapping = call_user_func($this->callback, $node->key());
+                $mapping = call_user_func($callback, $node->key());
                 if(!empty($mapping))
                 {
-                    $this->results[] = $this->invoke_parser($mapping, $node->current());
+                    $this->results[] = $this->invokeParser($mapping, $node->current());
                 }
             }
             if($node->hasChildren())
             {
-                $this->start($node->current());
+                $this->start($node->current(), $callback);
             }
         }
     }
