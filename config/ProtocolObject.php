@@ -49,7 +49,7 @@ class ProtocolObject
     public function parse($content, $callback)
     {
         //@var Entity resulting entity to return
-        $result = new $this->target;
+        $result = new $this->type;
         //for the case where a protocol is defined in a mapping, do another read if necessary and parse the contents
         $protocol = $this->protocol();
         if(!empty($protocol)){
@@ -69,15 +69,15 @@ class ProtocolObject
         //main parsing
         foreach($this->bindings as $binding){
             $output = null;
-            $target = $binding->target;
+            $target = $binding->target();
             $mapping = $this->parent->getMappingByName($target);
-            $value = $callback->parseValue($content, $binding->source);
+            $value = $callback->parseValue($content, $binding->source());
             if(!empty($value)){
                 if(isset($mapping)){
                     $output = $mapping->parse($value, $callback);
                 }
                 elseif(!empty($this->parser)){
-                    $local_parser = new $this->parser($binding->bindings);
+                    $local_parser = new $this->parser($binding->bindings());
                     $output = $local_parser->parse($value);
                 }
                 if(!empty($output)){

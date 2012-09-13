@@ -209,6 +209,7 @@ trait ProtocolParser
         (
             (string)$mapping['name'],
             (string)$mapping['type'],
+            null,
             $protocol,
             $bindings,
             (string)$mapping['parser']
@@ -254,8 +255,8 @@ trait ProtocolParser
      */
     public function parseProtocol($name, $type, $readDef, $parser)
     {
-        $mappings = array_map(array($this, 'createMapping'), $readDef->xpath('object'));
-        $objects = array_map(array($this, 'createMapping'), $readDef->xpath('mapping'));
+        $objects = array_map(array($this, 'createMapping'), $readDef->xpath('object'));
+        $mappings = array_map(array($this, 'createMapping'), $readDef->xpath('mapping'));
         return new ProtocolDefinition
         (
             $name, 

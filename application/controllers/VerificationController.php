@@ -32,10 +32,10 @@ class VerificationController extends Controller
     {
         //get data request protocol for linkedin
         $protocol   = \Rexume\Configuration\Configuration::getInstance()->getDataProtocol($this->protocol());
-        $url        = $protocol->getScope();
-        $query      = $protocol->getQuery();
+        $url        = $protocol->scope();
+        $query      = $protocol->query();
         $reader     = new \Rexume\Readers\OAuthReader($this->protocol());
-        $page       = $reader->read($url, $query, $this->model->getOAuthToken(), $this->model->getOAuthTokenSecret());
+        $page       = $reader->read($url, $query, $this->model->oauthToken(), $this->model->oauthTokenSecret());
         $dataArray  = $protocol->parse($page);
         
         foreach($dataArray as $entity)

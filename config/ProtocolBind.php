@@ -20,4 +20,19 @@ class ProtocolBind
     {
         
     }
+    
+    public function source()
+    {
+        return $this->source;
+    }
+    
+    public function target()
+    {
+        return $this->target;
+    }
+    
+    public function bindings()
+    {
+        return $this->bindings;
+    }
 }
