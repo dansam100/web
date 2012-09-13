@@ -1,6 +1,6 @@
 <?php
 namespace Rexume\Configuration;
-require_once("ProtocolDefinition.php");
+require_once("ProtocolObject.php");
 
 /**
  * ProtocolMapping.php

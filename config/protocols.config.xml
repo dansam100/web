@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocols>
-    <definition name="LinkedIn" type="REST" parser="XMLSimpleParser">
+    <definition name="LinkedIn" type="REST" parser="Rexume\Parsers\XMLSimpleParser">
         <read contenttype="Authentication" scope="https://api.linkedin.com/v1/people/~">
             <query>:(id,first-name,last-name)</query>
             <object source="person" target="User">
@@ -21,7 +21,7 @@
                 <bind source="headline" target="status"/>
                 <bind source="summary" target="objective"/>
                 <bind source="interest" target="activities" type="Activity" />
-                <bind source="education" target="educations" target="Education"/>
+                <bind source="education" target="educations" type="Education"/>
                 <bind source="position" target="experiences" type="Experience"/>
                 <bind source="volunteer" target="experiences" type="Experience"/>
                 <bind source="language" target="languages" type="Language"/>

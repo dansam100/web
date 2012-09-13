@@ -1,14 +1,15 @@
 <?php
 namespace Rexume\Configuration;
-use Rexume\Parsers;
 require_once("ProtocolMapping.php");
+require_once( "ProtocolBind.php");
 
 /**
  * Description of Protocol
  *
  * @author sam.jr
  */
-class ProtocolDefinition {
+class ProtocolDefinition implements \Rexume\Parsers\IValueParser
+{
     protected $name;
     protected $type;
     protected $query;
@@ -16,7 +17,7 @@ class ProtocolDefinition {
     protected $contenttype;
     protected $objects;
     protected $mappings;
-    protected $parser = 'XMLSimpleParser';
+    protected $parser = 'Rexume\Parsers\XMLSimpleParser';
     protected $map;
     
     /**
@@ -39,12 +40,20 @@ class ProtocolDefinition {
         if(!empty($parser)){
             $this->parser = $parser;
         }
-        $this->mappings = $mappings;
-        $this->objects = $objects;
+        $this->mappings = array();
+        foreach($mappings as $mapping){
+            $mapping->parent($this);
+            $this->mappings[] = $mapping;
+        }
+        $this->objects = array();
+        foreach($objects as $object){
+            $object->parent($this);
+            $this->objects[] = $object;
+        }
     }
     
     /**
-     *
+     * Get a ProtocolMapping related by name
      * @param string $name
      * @return ProtocolMapping The resulting mapping 
      */
@@ -61,11 +70,11 @@ class ProtocolDefinition {
     }
     
     /**
-     *
+     * Gets a given ProtocolObject by name
      * @param string $name
      * @return ProtocolMapping The resulting mapping 
      */
-    public function getObjectByName($name)
+    public function getValue($name)
     {
         foreach($this->objects as $object)
         {
@@ -97,13 +106,22 @@ class ProtocolDefinition {
     public function parse(/*string*/ $data)
     {
         $parser_name = $this->parser;
-        $callback = array($this, 'getMappingByName');
         $parser = new $parser_name($this->objects);
-        return $parser->parse($data, $callback);
+        return $parser->parse($data, $this);
     }
     
     /**
-     * 
+     * Overrides and implements the interface
+     * @param ProtocolObject $content
+     * @param string $key
+     * @throws Exception It is not implemented yet
+     */
+    public function parseValue($content, $key) {
+        throw new Exception("Not implemented for " . $content . "and key:" . $key);
+    }
+    
+    /**
+     * Constructs a string based query from a list of tokens
      * @param string $query
      * @param array $tokens
      * @return string
@@ -176,11 +194,8 @@ trait ProtocolParser
      */
     function createMapping(\SimpleXmlElement $mapping)
     {
-        $bind_xml = $mapping->xpath('bind');
-        $bindings = array(); $protocol = array();
-        if($bind_xml){
-            $bindings = array_map(array($this, 'createBinding') , $bind_xml);
-        }
+        $protocol = array();
+        $bindings = array_map(array($this, 'createBinding') , $mapping->xpath('bind'));
         if($mapping->read){
             $protocol = $this->parseProtocol
                 (

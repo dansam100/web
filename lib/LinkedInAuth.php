@@ -99,8 +99,8 @@ class LinkedInAuth extends Authentication
             //get data request protocol for linkedin
             $protocol = \Rexume\Configuration\Configuration::getInstance()->getAuthenticationProtocol($this->name);
             //construct url
-            $url = $protocol->getScope();
-            $query = $protocol->getQuery();
+            $url = $protocol->scope();
+            $query = $protocol->query();
             //perform the read operation
             $reader = new \Rexume\Readers\OAuthReader($this->name);
             $page = $reader->read($url, $query, $accessToken, $accessTokenSecret);
