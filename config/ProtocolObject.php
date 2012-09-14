@@ -6,6 +6,10 @@ class ProtocolObject
     private $name;
     private $type;
     private $protocol;
+    /**
+     * A list of name/value bindings
+     * @var ProtocolBind[]
+     */
     private $bindings;
     
     /**
@@ -21,15 +25,17 @@ class ProtocolObject
      * @param ProtocolDefinition $parent The parent definition that houses the protocol object
      * @param ProtocolDefinition $protocol the read protocol associated with this binding
      * @param ProtocolBind[] $bindings the mapping associations related to the protocol
-     * @param IParser $parser a parser to use for the interpreting the bind value
      */
-    public function __construct($name, $type, $parent = null, $protocol = null, $bindings = null) 
+    public function __construct($name, $type, $parent = null, $protocol = null, $bindings = array()) 
     {
         $this->name = $name;
         $this->type = $type;
         $this->parent = $parent;
         $this->protocol = $protocol;
-        $this->bindings = $bindings;
+        $this->bindings = array();
+        foreach($bindings as $binding){
+            $this->bindings[$binding->source()] = $binding;
+        }
     }
     
     public function parent($parent = null)
@@ -76,9 +82,8 @@ class ProtocolObject
                 if(isset($mapping)){
                     $output = $mapping->parse($value, $callback);
                 }
-                elseif(!empty($this->parser)){
-                    $local_parser = new $this->parser($binding->bindings());
-                    $output = $local_parser->parse($value);
+                else{
+                    $output = $binding->parse($value);
                 }
                 if(!empty($output)){
                     if(is_array($output)){   //treat arrays specially
@@ -107,15 +112,15 @@ class ProtocolObject
      * Parses a list of supplied sources and returns their respective values in a keyed array
      * @param array $sources the source variables to match
      * @param mixed $content The content to match against
-     * @param callback $bind_callback parser callback for intepreting node values
+     * @param IParser $callback parser callback for intepreting node values
      */
-    public function parseValues($sources, $content, $bind_callback)
+    public function parseValues($sources, $content, $callback)
     {
         $result = array();
         foreach($sources as $source)
         {
-            if(is_callable($bind_callback)){
-                $result[$source] = call_user_func_array($bind_callback, array($content, $source));
+            if(isset($callback)){
+                $result[$source] = $callback->parseValue($content, $source);
             }
         }
         return $result;

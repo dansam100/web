@@ -18,7 +18,6 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
     protected $objects;
     protected $mappings;
     protected $parser = 'Rexume\Parsers\XMLSimpleParser';
-    protected $map;
     
     /**
      *
@@ -31,7 +30,7 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
      * @param ProtocolMapping[] $mappings the mapping assocations related to the protocol
      * @param IParser $parser The parser to use for reading data contents
      */
-    public function __construct($name, $type, $contenttype, $scope = null, $query = null, $objects = null, $mappings = null, $parser = null) {
+    public function __construct($name, $type, $contenttype, $scope = null, $query = null, $objects = array(), $mappings = array(), $parser = null) {
         $this->type = $type;
         $this->name = $name;
         $this->scope = $scope;
@@ -43,12 +42,12 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
         $this->mappings = array();
         foreach($mappings as $mapping){
             $mapping->parent($this);
-            $this->mappings[] = $mapping;
+            $this->mappings[$mapping->name()] = $mapping;
         }
         $this->objects = array();
         foreach($objects as $object){
             $object->parent($this);
-            $this->objects[] = $object;
+            $this->objects[$object->name()] = $object;
         }
     }
     
@@ -59,12 +58,8 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
      */
     public function getMappingByName($name)
     {
-        foreach($this->mappings as $mapping)
-        {
-            if($mapping->name() == $name)
-            {
-                return $mapping;
-            }
+        if(!empty($this->mappings[$name])){
+            return $this->mappings[$name];
         }
         return null;
     }
@@ -76,12 +71,8 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
      */
     public function getValue($name)
     {
-        foreach($this->objects as $object)
-        {
-            if($object->name() == $name)
-            {
-                return $object;
-            }
+        if(!empty($this->objects[$name])){
+            return $this->objects[$name];
         }
         return null;
     }
@@ -165,12 +156,12 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
     
     public function sources()
     {
-        return array_keys($this->map);
+        return array_keys($this->objects);
     }
     
     public function targets()
     {
-        return array_values($this->map);
+        return array_values($this->objects);
     }
 }
 
@@ -195,7 +186,7 @@ trait ProtocolParser
     function createMapping(\SimpleXmlElement $mapping)
     {
         $protocol = array();
-        $bindings = array_map(array($this, 'createBinding') , $mapping->xpath('bind'));
+        $bindings = array_map(array($this, 'createBinding'), $mapping->xpath('bind'));
         if($mapping->read){
             $protocol = $this->parseProtocol
                 (
