@@ -77,12 +77,17 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
         return null;
     }
     
+    public function parseForUser(\User $user, $data)
+    {
+        
+    }
+    
     /**
      * Parses xml data containing relevant information
      * @param string $data the xml data
      * @return \Rexume\Models\Entity The results of the parse operation
      */
-    public function parseOne(/*string*/ $data)
+    public function parseOne($data)
     {
         $results = $this->parse($data);
         //return the first item in the list
@@ -94,7 +99,7 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
      * @param string $data the xml data
      * @return \Rexume\Models\Entity[] The results of the parse operation
      */
-    public function parse(/*string*/ $data)
+    public function parse($data)
     {
         $parser_name = $this->parser;
         $parser = new $parser_name($this->objects);
@@ -173,8 +178,14 @@ trait ProtocolParser
 {
     function createBinding(\SimpleXmlElement $bind)
     {
-        $bindings = array_map(array($this, 'createBinding'), $bind->xpath('bind'));
-        return new \Rexume\Configuration\ProtocolBind((string)$bind['source'], (string)$bind['target'], $bindings, (string)$bind['parser']);
+        return new \Rexume\Configuration\ProtocolBind
+        (
+            (string)$bind['source'], 
+            (string)$bind['target'], 
+            (string)$bind['type'], 
+            (string)$bind['parser'],
+            array_map(array($this, 'createBinding'), $bind->xpath('bind'))
+        );
     }
     
     
@@ -189,12 +200,12 @@ trait ProtocolParser
         $bindings = array_map(array($this, 'createBinding'), $mapping->xpath('bind'));
         if($mapping->read){
             $protocol = $this->parseProtocol
-                (
-                    (string)$mapping->read['name'], 
-                    (string)$mapping->read['type'], 
-                    $mapping->read->definition,
-                    (string)$mapping->read['parser']
-                );
+            (
+                (string)$mapping->read['name'], 
+                (string)$mapping->read['type'], 
+                $mapping->read->definition,
+                (string)$mapping->read['parser']
+            );
         }
         return new \Rexume\Configuration\ProtocolObject
         (
@@ -233,6 +244,7 @@ trait ProtocolParser
                 $result[$protocol->name()][$protocol->contentType()] = $protocol;
             }
         }
+        //var_dump($result['LinkedIn']['Data']->targets()[0]->bindings());
         return $result;
     }
     

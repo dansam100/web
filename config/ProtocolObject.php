@@ -3,14 +3,14 @@ namespace Rexume\Configuration;
 
 class ProtocolObject
 {
-    private $name;
-    private $type;
-    private $protocol;
+    protected $name;
+    protected $type;
+    protected $protocol;
     /**
      * A list of name/value bindings
      * @var ProtocolBind[]
      */
-    private $bindings;
+    protected $bindings;
     
     /**
      * The parent definition that houses the protocol object
@@ -85,11 +85,17 @@ class ProtocolObject
                 else{
                     $output = $binding->parse($value);
                 }
+                $type = gettype($result->$target);
                 if(!empty($output)){
                     if(is_array($output)){   //treat arrays specially
-                        if(is_array($result->$target)){   //add arrays entry by entry
-                            foreach($output as $entry){
-                                array_push($result->$target, $entry);
+                        if(is_array($result->$target) || gettype($result->$target) == "ArrayCollection"){   //add arrays entry by entry
+                            if(is_array($output)){
+                                foreach($output as $entry){
+                                    array_push($result->$target, $entry);
+                                }
+                            }
+                            else{
+                                array_push($result->$target, $output);
                             }
                         }
                         else{   //if the target does not expect an array and yet given one, use only the first entry
@@ -151,6 +157,11 @@ class ProtocolObject
     public function protocol()
     {
         return $this->protocol;
+    }
+    
+    public function bindings()
+    {
+        return array_values($this->bindings);
     }
 }
 

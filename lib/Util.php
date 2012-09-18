@@ -86,4 +86,14 @@ function getTokens($input, $regex)
     $result = array();
     preg_match('/' . $regex . '/', $input, $result);
     return $result;
-} 
+}
+
+function cast($obj, $to_class) {
+  if(class_exists($to_class)) {
+    $obj_in = serialize($obj);
+    $obj_out = 'O:' . strlen($to_class) . ':"' . $to_class . '":' . substr($obj_in, $obj_in[2] + 7);
+    return unserialize($obj_out);
+  }
+  else
+    return false;
+}
