@@ -95,13 +95,13 @@ class XMLSimpleParser extends Parser
      * Get the value of the given source binding from the content xml
      * @param \SimpleXMLElement $content the xml to get the value from
      * @param string $source the binding target name
-     * @return string results of the bind
+     * @return mixed results of the bind
      */
     public function parseValue($content, $key)
     {
         $result =  $content->xpath($key);
         if(!empty($result)){
-            return (string)$result[0];
+            return $result;
         }
         return null;
     }

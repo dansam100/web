@@ -19,19 +19,19 @@ class DelimitedParser
         $this->mappings = $mappings;
     }
     
-    public function parse(\string $content)
+    public function parse($content)
     {
         array_map("trim", explode($this->delimiter, $content));
     }
 }
 
-class CommaDelimitedParser{
+class CommaDelimitedParser extends DelimitedParser{
     public function __construct(array $mappings, $delimiter = ',') {
         parent::__construct($mappings, $delimiter);
     }
 }
 
-class NewlineDelimitedParser{
+class NewlineDelimitedParser extends DelimitedParser{
     public function __construct(array $mappings, $delimiter = "\n") {
         parent::__construct($mappings, $delimiter);
     }

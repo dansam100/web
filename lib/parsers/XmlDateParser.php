@@ -32,8 +32,8 @@ class XmlDateParser {
     {
         foreach($this->mappings as $mapping)
         {
-            $bind = $mapping->target;
-            $value = $content->xpath($mapping->source);
+            $bind = $mapping->target();
+            $value = $content->xpath($mapping->source());
             if(isset($value)){
                 $this->$bind = (int)$value;
             }

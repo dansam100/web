@@ -30,7 +30,7 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
      * @param ProtocolMapping[] $mappings the mapping assocations related to the protocol
      * @param IParser $parser The parser to use for reading data contents
      */
-    public function __construct($name, $type, $contenttype, $scope = null, $query = null, $objects = array(), $mappings = array(), $parser = null) {
+    public function __construct($name, $type, $contenttype, $scope = null, $query = null, $objects = null, $mappings = null, $parser = null) {
         $this->type = $type;
         $this->name = $name;
         $this->scope = $scope;
@@ -182,7 +182,8 @@ trait ProtocolParser
         (
             (string)$bind['source'], 
             (string)$bind['target'], 
-            (string)$bind['type'], 
+            (string)$bind['type'],
+            (string)$bind['default'],
             (string)$bind['parser'],
             array_map(array($this, 'createBinding'), $bind->xpath('bind'))
         );
@@ -259,7 +260,7 @@ trait ProtocolParser
     public function parseProtocol($name, $type, $readDef, $parser)
     {
         $objects = array_map(array($this, 'createMapping'), $readDef->xpath('object'));
-        $mappings = array_map(array($this, 'createMapping'), $readDef->xpath('mapping'));
+        $mappings = array_map(array($this, 'createMapping'), $readDef->xpath('mappings/mapping'));        
         return new ProtocolDefinition
         (
             $name, 

@@ -9,7 +9,8 @@ class ProtocolBind
      * @var IValueParser $parser 
      */
     protected $parser;
-    protected $type = 'string';
+    protected $type = 'object';
+    protected $default;
     /**
      *
      * @var ProtocolBind[]
@@ -24,7 +25,7 @@ class ProtocolBind
      * @param string $parser
      * @param ProtocolBind[] $bindings
      */
-    public function __construct($source, $target, $type = null, $parser = null, $bindings = null) {
+    public function __construct($source, $target, $type = null, $default = null, $parser = null, $bindings = null) {
         $this->source = $source;
         $this->target = $target;
         if(!empty($parser)){
@@ -32,6 +33,9 @@ class ProtocolBind
         }
         if(!empty($type)){
             $this->type = $type;
+        }
+        if(!empty($default)){
+            $this->default = $default;
         }
         $this->bindings = array();
         foreach($bindings as $binding){
@@ -41,13 +45,35 @@ class ProtocolBind
     
     public function parse($content)
     {
-        if(!empty($this->parser)){
-            $parser = new $this->parser($this->bindings);
-            return $parser->getValue($content);
+        $result = null;
+        if(!empty($content)){
+            if(is_array($content)){
+                $output = $content[0];
+            }
+            if(!empty($this->parser)){
+                $parser = new $this->parser($this->bindings);
+                $output = $parser->parse((string)$output);
+                if(is_array($result)){
+                    $result = array();
+                    foreach($output as $item){
+                        $new_obj = new $this->type();
+                        $target = $this->target;
+                        $new_obj->$target = $item;
+                        $result[] = $new_obj;
+                    }
+                    return $result;
+                }
+                else{
+                    $result = $output;
+                }
+            }
         }
-        else{
-            return $content;
+        elseif(!empty($this->default)){
+            $result = $this->default;
         }
+        else{ $result = ""; }
+        settype($result, $this->type);
+        return $result;
     }
     
     public function source()

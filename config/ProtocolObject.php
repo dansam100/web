@@ -74,41 +74,38 @@ class ProtocolObject
         }
         //main parsing
         foreach($this->bindings as $binding){
-            $output = null;
             $target = $binding->target();
-            $mapping = $this->parent->getMappingByName($target);
-            $value = $callback->parseValue($content, $binding->source());
-            if(!empty($value)){
-                if(isset($mapping)){
-                    $output = $mapping->parse($value, $callback);
-                }
-                else{
-                    $output = $binding->parse($value);
-                }
-                $type = gettype($result->$target);
-                if(!empty($output)){
-                    if(is_array($output)){   //treat arrays specially
-                        if(is_array($result->$target) || gettype($result->$target) == "ArrayCollection"){   //add arrays entry by entry
-                            if(is_array($output)){
-                                foreach($output as $entry){
-                                    array_push($result->$target, $entry);
-                                }
-                            }
-                            else{
-                                array_push($result->$target, $output);
+            $mapping = $this->parent->getMappingByName($binding->source());
+            if(isset($mapping)){
+                $value = $mapping->parse($content, $callback);
+            }
+            else{
+                $value = $callback->parseValue($content, $binding->source());
+            }
+            //allow the binding to perform any extra parsing
+            $output = $binding->parse($value);
+            if(!empty($output)){
+                if(is_array($output)){   //treat arrays specially
+                    if(is_array($result->$target) || gettype($result->$target) == "ArrayCollection"){   //add arrays entry by entry
+                        if(is_array($output)){
+                            foreach($output as $entry){
+                                array_push($result->$target, $entry);
                             }
                         }
-                        else{   //if the target does not expect an array and yet given one, use only the first entry
-                            $result->$target = $output[0];
+                        else{
+                            array_push($result->$target, $output);
                         }
                     }
-                    else{
-                        $result->$target = $output;
+                    else{   //if the target does not expect an array and yet given one, use only the first entry
+                        $result->$target = $output[0];
                     }
                 }
                 else{
-                    $result->$target = $value;
+                    $result->$target = $output;
                 }
+            }
+            else{
+                $result->$target = $value;
             }
         }
         return $result;
