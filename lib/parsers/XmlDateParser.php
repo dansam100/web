@@ -28,12 +28,12 @@ class XmlDateParser {
         $this->mappings = $mappings;
     }
     
-    public function parse($content)
+    public function parse($content, $callback)
     {
         foreach($this->mappings as $mapping)
         {
             $bind = $mapping->target();
-            $value = $content->xpath($mapping->source());
+            $value = (string)$callback->parseValue($content, $mapping->source());
             if(isset($value)){
                 $this->$bind = (int)$value;
             }

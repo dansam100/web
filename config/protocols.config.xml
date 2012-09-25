@@ -15,11 +15,9 @@
                 <bind source="id" target="memberId" type="string"/>
                 <bind source="first-name" target="firstName" type="string" />
                 <bind source="last-name" target="lastName" type="string" />
-                <bind source="headline" target="status" type="string" />
-                <bind source="summary" target="objective" type="string" />
-                <bind source="person" target="profiles" />
-                <bind source="education" target="educations" />
-                <bind source="position" target="experiences" />
+                <bind source="." target="profiles" name="person"/>
+                <bind source="educations/education" target="degrees" />
+                <bind source="positions/position" target="experiences" />
                 <bind source="volunteer" target="experiences" />
                 <bind source="language" target="languages" />
                 <bind source="phone-number" target="media" />
@@ -31,7 +29,7 @@
                     <bind source="headline" target="status" type="string" />
                     <bind source="summary" target="objective" type="string" />
                 </mapping>
-                <mapping name="position" type="Experience">
+                <mapping name="positions/position" type="Experience">
                     <bind source="title" target="position" type="string"/>
                     <bind source="summary" target="description" type="string" />
                     <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser">
@@ -42,8 +40,8 @@
                         <bind source="month" target="month"/>
                         <bind source="year" target="year"/>
                     </bind>
-                    <bind source="is-current" target="current" type="boolean" />
-                    <bind source="summary" target="activities" parser="Rexume\Parsers\NewlineDelimitedParser" type="Activity"/>
+                    <bind source="is-current" target="isCurrent" type="boolean" />
+                    <!--bind source="summary" target="activities" parser="Rexume\Parsers\NewlineDelimitedParser" type="Activity"/-->
                 </mapping>
                 <mapping name="twitter-account" type="Media">
                     <bind source="provider-account-id" target="value" type="string" />
@@ -87,7 +85,7 @@
                 <mapping name="skill" type="Skill">
                     <bind source="name" target="name" type="string" />
                 </mapping>
-                <mapping name="education" type="Degree">
+                <mapping name="educations/education" type="Degree">
                     <bind source="school-name" target="school" type="string" />
                     <bind source="field-of-study" target="program" type="string" />
                     <bind source="degree" target="status" type="string" />

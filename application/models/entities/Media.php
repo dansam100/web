@@ -24,34 +24,40 @@
 		/** @Column(type="datetime") */
 		protected $editTime;
 		
-		public function getUser()
+		public function user($user = null)
 		{
-			return $this->user;
-		}
-		
-		public function setUser($user)
+			if(isset($user))
+            {
+                $this->user = $user;
+            }
+            return $this->user;
+        }
+        
+        public function name($name = null)
 		{
-			$this->user = $user;
-		}
-		
-		public function getType()
+			if(isset($name))
+            {
+                $this->name = $name;
+            }
+            return $this->name;
+        }
+        
+        public function type($type = null)
 		{
-			return $this->type;
-		}
-		
-		public function setType($type)
+			if(isset($type))
+            {
+                $this->type = $type;
+            }
+            return $this->type;
+        }
+        
+        public function value($value = null)
 		{
-			$this->type = $type;
-		}
-		
-		public function getValue()
-		{
-			return $this->value;
-		}
-		
-		public function setValue($value)
-		{
-			$this->value = $value;
-		}
+			if(isset($value))
+            {
+                $this->value = $value;
+            }
+            return $this->value;
+        }
     }
 ?>

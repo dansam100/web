@@ -31,69 +31,67 @@
      	*/
 		protected $type;
 		
-		public function getUser()
+		public function user($user = null)
 		{
-			return $this->user;
+			if(isset($user))
+            {
+                $this->user = $user;
+            }
+            return $this->user;
 		}
 		
-		public function getStreet1()
+		public function street1($street1 = null)
 		{
-			return $this->address->street1;
+			if(isset($street1))
+            {
+                $this->address->street1 = $street1;
+            }
+            return $this->address->street1;
 		}
 		
-		public function setStreet1($street1)
+		public function street2($street2 = null)
 		{
-			$this->address->setStreet1($street1);
+			if(isset($street2))
+            {
+                $this->address->street2 = $street2;
+            }
+            return $this->address->street2;
 		}
 		
-		public function getStreet2()
+		public function city($city = null)
 		{
-			return $this->address->street2;
+			if(isset($city))
+            {
+                $this->address->city = $city;
+            }
+            return $this->address->city;
 		}
 		
-		public function setStreet2($street2)
+		public function province($province = null)
 		{
-			$this->address->setStreet2($street2);
+			if(isset($province))
+            {
+                $this->address->province = $province;
+            }
+            return $this->address->province;
 		}
 		
-		public function getCity()
+		public function postalCode($postalCode = null)
 		{
-			return $this->address->city;
+			if(isset($postalCode))
+            {
+                $this->address->postalCode = $postalCode;
+            }
+            return $this->address->postalCode;
 		}
 		
-		public function setCity($city)
+		public function country($country = null)
 		{
-			$this->address->setCity($city);
-		}
-		
-		public function getProvince()
-		{
-			return $this->address->province;
-		}
-		
-		public function setProvince($province)
-		{
-			$this->address->setProvince($province);
-		}
-		
-		public function getPostalCode()
-		{
-			return $this->address->postalCode;
-		}
-		
-		public function setPostalCode($postalCode)
-		{
-			$this->address->setPostalCode($postalCode);
-		}
-		
-		public function getCountry()
-		{
-			return $this->address->country;
-		}
-		
-		public function setCountry($country)
-		{
-			$this->address->setCountry($country);
+			if(isset($country))
+            {
+                $this->address->country = $country;
+            }
+            return $this->address->country;
 		}
     }
 ?>

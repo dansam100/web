@@ -27,64 +27,58 @@
 		protected $endDate;
 		
 		
-		public function getName()
+		public function user($user = null)
 		{
-			return $this->name;
+			if(isset($user))
+            {
+                $this->user = $user;
+            }
+            return $this->user;
 		}
 		
-		public function setName($name)
+		public function degree($degree = null)
 		{
-			$this->name = $name;
+			if(isset($degree))
+            {
+                $this->degree = $degree;
+            }
+            return $this->degree;
 		}
 		
-		public function getDegree()
+		public function description($description = null)
 		{
-			return $this->degree;
+			if(isset($description))
+            {
+                $this->description = $description;
+            }
+            return $this->description;
 		}
 		
-		public function setType($degree)
+		public function startDate($startDate = null)
 		{
-			$this->degree = $degree;
+			if(isset($startDate))
+            {
+                $this->startDate = $startDate;
+            }
+            return $this->startDate;
 		}
 		
-		public function getDescription()
+		public function endDate($endDate = null)
 		{
-			return $this->description;
+			if(isset($endDate))
+            {
+                $this->endDate = $endDate;
+            }
+            return $this->endDate;
 		}
 		
-		public function setDescription($description)
+		public function experience($experience = null)
 		{
-			$this->description = $description;
-		}
-		
-		public function getStartDate()
-		{
-			return $this->startDate;
-		}
-		
-		public function setStartDate($startDate)
-		{
-			$this->startDate = $startDate;
-		}
-		
-		public function getEndDate()
-		{
-			return $this->endDate;
-		}
-		
-		public function setEndDate($endDate)
-		{
-			$this->endDate = $endDate;
-		}
-		
-		public function getExperience()
-		{
-			return $this->experience;
-		}
-		
-		public function setExperience($experience)
-		{
-			$this->experience = $experience;
+			if(isset($experience))
+            {
+                $this->experience = $experience;
+            }
+            return $this->experience;
 		}
     }
 ?>

@@ -136,15 +136,13 @@
 			$this->categories = new ArrayCollection();
 		}
 		
-		public function getUser()
+		public function user($user = null)
 		{
-			return $this->user;
-		}
-		
-		public function setUser($user)
-		{
-			$user->addProfile($this);
-			$this->user = $user;
+			if(isset($user))
+            {
+                $this->user = $user;
+            }
+            return $this->user;
 		}
     }
 ?>

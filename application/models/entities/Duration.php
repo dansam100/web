@@ -17,34 +17,31 @@
 	     */
 		protected $experience = null;
 		
-		public function getExperience()
+		public function experience($experience = null)
 		{
-			return $this->experience;
+			if(isset($experience))
+            {
+                $this->experience = $experience;
+            }
+            return $this->experience;
 		}
 		
-		public function setExperience($experience)
+		public function startDate($startDate = null)
 		{
-			$this->experience = $experience;
+			if(isset($startDate))
+            {
+                $this->startDate = $startDate;
+            }
+            return $this->startDate;
 		}
 		
-		public function getStartDate()
+		public function endDate($endDate = null)
 		{
-			return $this->startDate;
-		}
-		
-		public function setStartDate($startDate)
-		{
-			$this->startDate = $startDate;
-		}
-		
-		public function getEndDate()
-		{
-			return $this->startDate;
-		}
-		
-		public function setEndDate($endDate)
-		{
-			$this->endDate = $endDate;
+			if(isset($endDate))
+            {
+                $this->endDate = $endDate;
+            }
+            return $this->endDate;
 		}
    	}
 ?>

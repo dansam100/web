@@ -13,6 +13,12 @@
 		protected $department;
 		/** @Column(type="string") */
 		protected $description;
+        /** @Column(type="datetime") */
+		protected $startDate;
+		/** @Column(type="datetime") */
+		protected $endDate;
+        /** @Column(type="boolean") */
+        protected $isCurrent;
 		/**
 	     * @ManyToOne(targetEntity="ExperienceType")
 		 * @JoinColumn(name="type", referencedColumnName="type")
@@ -29,54 +35,67 @@
 	     */
 		protected $company;
 		
-		public function getUser()
+		public function user($user = null)
 		{
-			return $this->user;
+			if(isset($user))
+            {
+                $this->user = $user;
+            }
+            return $this->user;
 		}
 		
-		public function setUser($user)
+		public function type($type = null)
 		{
-			$this->user = $user;
+			if(isset($type))
+            {
+                $this->type = $type;
+            }
+            return $this->type;
 		}
 		
-		public function getType()
+		public function description($description = null)
 		{
-			return $this->type;
+			if(isset($description))
+            {
+                $this->description = $description;
+            }
+            return $this->description;
 		}
 		
-		public function setType($type)
+		public function department($department = null)
 		{
-			$this->type = $type;
+			if(isset($department))
+            {
+                $this->department = $department;
+            }
+            return $this->department;
 		}
 		
-		public function getDescription()
+		public function position($position = null)
 		{
-			return $this->description;
+			if(isset($position))
+            {
+                $this->position = $position;
+            }
+            return $this->position;
+		}
+        
+        public function startDate($startDate = null)
+		{
+			if(isset($startDate))
+            {
+                $this->startDate = $startDate;
+            }
+            return $this->startDate;
 		}
 		
-		public function setDescription($description)
+		public function endDate($endDate = null)
 		{
-			$this->description = $description;
-		}
-		
-		public function getDepartment()
-		{
-			return $this->description;
-		}
-		
-		public function setDepartment($department)
-		{
-			$this->department = $department;
-		}
-		
-		public function getPosition()
-		{
-			return $this->position;
-		}
-		
-		public function setPosition($position)
-		{
-			$this->position = $position;
+			if(isset($endDate))
+            {
+                $this->endDate = $endDate;
+            }
+            return $this->endDate;
 		}
     }
 ?>

@@ -17,8 +17,12 @@
 		/** @Column(type="string") */
 		protected $name;
 		
-		public function getName()
+		public function name($name = null)
 		{
-			return $this->name;
+			if(isset($name))
+            {
+                $this->name = $name;
+            }
+            return $this->name;
 		}
     }

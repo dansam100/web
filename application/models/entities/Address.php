@@ -20,64 +20,58 @@
 		/** @Column(type="string") */
 		protected $country;
 		
-		public function getStreet1()
+		public function street1($street1 = null)
 		{
-			return $this->street1;
+			if(isset($street1))
+            {
+                $this->street1 = $street1;
+            }
+            return $this->street1;
 		}
 		
-		public function setStreet1($street1)
+		public function street2($street2 = null)
 		{
-			$this->street1 = $street1;
+			if(isset($street2))
+            {
+                $this->street2 = $street2;
+            }
+            return $this->street2;
 		}
 		
-		public function getStreet2()
+		public function city($city = null)
 		{
-			return $this->street2;
+			if(isset($city))
+            {
+                $this->city = $city;
+            }
+            return $this->city;
 		}
 		
-		public function setStreet2($street2)
+		public function province($province = null)
 		{
-			$this->street2 = $street2;
+			if(isset($province))
+            {
+                $this->province = $province;
+            }
+            return $this->province;
 		}
 		
-		public function getCity()
+		public function postalCode($postalCode = null)
 		{
-			return $this->city;
+			if(isset($postalCode))
+            {
+                $this->postalCode = $postalCode;
+            }
+            return $this->postalCode;
 		}
 		
-		public function setCity($city)
+		public function country($country = null)
 		{
-			$this->city = $city;
-		}
-		
-		public function getProvince()
-		{
-			return $this->province;
-		}
-		
-		public function setProvince($province)
-		{
-			$this->province = $province;
-		}
-		
-		public function getPostalCode()
-		{
-			return $this->postalCode;
-		}
-		
-		public function setPostalCode($postalCode)
-		{
-			$this->postalCode = $postalCode;
-		}
-		
-		public function getCountry()
-		{
-			return $this->country;
-		}
-		
-		public function setCountry($country)
-		{
-			$this->country = $country;
+			if(isset($country))
+            {
+                $this->country = $country;
+            }
+            return $this->country;
 		}
     }
 ?>

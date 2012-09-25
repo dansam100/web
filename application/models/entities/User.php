@@ -206,21 +206,24 @@
             }
             return $this->oauthSecret;
         }
-        
-		public function addProfile($profile)
-		{
-			$this->profiles[] = $profile;
-		}
 		
-		public function getSessions()
-		{
-			return $this->sessions;
-		}
+		public function profiles($profile = null)
+        {
+            if(isset($profile))
+            {
+                $this->profiles[] = $profile;
+            }
+            return $this->profiles;
+        }
 		
-		public function setSession($session)
-		{
-			$this->sessions[] = $session;
-		}
+		public function sessions($session = null)
+        {
+            if(isset($session))
+            {
+                $this->sessions[] = $session;
+            }
+            return $this->sessions;
+        }
 		
 		public function isAdmin($isAdmin = null)
 		{

@@ -17,14 +17,22 @@
 	     */
 		protected $location;
 		
-		public function getName()
+		public function name($name = null)
 		{
-			return $this->name;
+			if(isset($name))
+            {
+                $this->name = $name;
+            }
+            return $this->name;
 		}
 		
-		public function getLocation()
+		public function location($location = null)
 		{
-			return $this->location;
+			if(isset($location))
+            {
+                $this->location = $location;
+            }
+            return $this->location;
 		}
     }
 ?>

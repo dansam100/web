@@ -19,7 +19,7 @@ class DelimitedParser
         $this->mappings = $mappings;
     }
     
-    public function parse($content)
+    public function parse($content, $callback)
     {
         array_map("trim", explode($this->delimiter, $content));
     }

@@ -15,23 +15,21 @@
 	     */
 		protected $user;
 		
-		public function getUser()
+		public function user($user = null)
 		{
-			return $this->user;
+			if(isset($user))
+            {
+                $this->user = $user;
+            }
+            return $this->user;
 		}
 		
-		public function setUser($user)
+		public function description($user = null)
 		{
-			$this->user = $user;
-		}
-		
-		public function getDescription()
-		{
-			return $this->description;
-		}
-		
-		public function setDescription($description)
-		{
-			$this->description = $description;
+			if(isset($description))
+            {
+                $this->description = $description;
+            }
+            return $this->description;
 		}
 	}

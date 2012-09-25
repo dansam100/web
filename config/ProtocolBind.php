@@ -2,6 +2,7 @@
 namespace Rexume\Configuration;
 class ProtocolBind
 {
+    protected $name;
     protected $source;
     protected $target;
     /**
@@ -22,10 +23,11 @@ class ProtocolBind
      * @param string $source
      * @param string $target
      * @param string $type
+     * @param string $name Name of the bind. Defaults to $source when not specified
      * @param string $parser
      * @param ProtocolBind[] $bindings
      */
-    public function __construct($source, $target, $type = null, $default = null, $parser = null, $bindings = null) {
+    public function __construct($source, $target, $type = null, $name = null, $default = null, $parser = null, $bindings = null) {
         $this->source = $source;
         $this->target = $target;
         if(!empty($parser)){
@@ -33,6 +35,9 @@ class ProtocolBind
         }
         if(!empty($type)){
             $this->type = $type;
+        }
+        if(empty($name)){
+            $this->name = $source;
         }
         if(!empty($default)){
             $this->default = $default;
@@ -43,21 +48,25 @@ class ProtocolBind
         }
     }
     
-    public function parse($content)
+    public function parse($content, $callback)
     {
         $result = null;
         if(!empty($content)){
             if(is_array($content)){
-                $output = $content[0];
+                $result = (string)$content[0];
+            }
+            else{
+                $result = (string)$content;
             }
             if(!empty($this->parser)){
-                $parser = new $this->parser($this->bindings);
-                $output = $parser->parse((string)$output);
-                if(is_array($result)){
+                $parser = new $this->parser($this->bindings());   //create a new parser with the given bindings
+                $output = $parser->parse($result, $callback);       //pass the contents through the parser
+                if(is_collection($output)){
                     $result = array();
                     foreach($output as $item){
                         $new_obj = new $this->type();
-                        $target = $this->target;
+                        $target = $this->target();
+                        //assign the target value
                         $new_obj->$target = $item;
                         $result[] = $new_obj;
                     }
@@ -67,18 +76,29 @@ class ProtocolBind
                     $result = $output;
                 }
             }
+            /*else{
+                $result = cast($callback->parseValue($result, $this->source()), $this->type());
+            }*/
         }
         elseif(!empty($this->default)){
             $result = $this->default;
         }
-        else{ $result = ""; }
-        settype($result, $this->type);
         return $result;
+    }
+    
+    public function name()
+    {
+        return $this->name;
     }
     
     public function source()
     {
         return $this->source;
+    }
+    
+    public function type()
+    {
+        return $this->type;
     }
     
     public function target()

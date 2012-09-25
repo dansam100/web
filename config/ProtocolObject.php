@@ -4,7 +4,7 @@ namespace Rexume\Configuration;
 class ProtocolObject
 {
     protected $name;
-    protected $type;
+    protected $type = 'string';
     protected $protocol;
     /**
      * A list of name/value bindings
@@ -75,30 +75,47 @@ class ProtocolObject
         //main parsing
         foreach($this->bindings as $binding){
             $target = $binding->target();
-            $mapping = $this->parent->getMappingByName($binding->source());
-            if(isset($mapping)){
-                $value = $mapping->parse($content, $callback);
+            if(!empty($this->parent)){
+                $mapping = $this->parent->getMappingByName($binding->name());
+                $value = $callback->parseValue($content, $binding->source());
+                if(isset($mapping)){
+                    $output = $mapping->parse($value, $callback);    //protocolmapping returns an object mapping
+                }
+                else{
+                    //allow the binding to perform any extra parsing
+                    $output = $binding->parse($value, $callback);
+                }
             }
             else{
-                $value = $callback->parseValue($content, $binding->source());
-            }
-            //allow the binding to perform any extra parsing
-            $output = $binding->parse($value);
-            if(!empty($output)){
-                if(is_array($output)){   //treat arrays specially
-                    if(is_array($result->$target) || gettype($result->$target) == "ArrayCollection"){   //add arrays entry by entry
-                        if(is_array($output)){
-                            foreach($output as $entry){
-                                array_push($result->$target, $entry);
+                if(is_collection($content)){
+                    $output = array();
+                    foreach($content as $subContent){
+                        $results = cast($callback->parseValue($subContent, $binding->source()), $this->type);
+                        if(!results){
+                            foreach($results as $result){
+                                $output[] = $binding->parse($result, $callback);
                             }
                         }
-                        else{
-                            array_push($result->$target, $output);
+                    }
+                }
+                else{
+                    //allow the binding to perform any extra parsing
+                    $output = $binding->parse($content, $callback);
+                }
+            }
+            if(!empty($output)){
+                if(is_collection($result->$target)){   //add arrays entry by entry
+                    if(is_collection($output)){
+                        foreach($output as $entry){
+                            collection_add($result->$target, $entry);
                         }
                     }
-                    else{   //if the target does not expect an array and yet given one, use only the first entry
-                        $result->$target = $output[0];
+                    else{
+                        collection_add($result->$target, $output);
                     }
+                }
+                elseif(is_collection($output)){     //if the target does not expect an array and yet given one, use only the first entry
+                    $result->$target = $output[0];
                 }
                 else{
                     $result->$target = $output;

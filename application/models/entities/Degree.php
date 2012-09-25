@@ -7,7 +7,11 @@
     {
     	/** @Id @Column(type="integer") @GeneratedValue */
     	protected $id;
-		/** @Column(type="string") */
+        /** @Column(type="string") */
+        protected  $school;
+        /** @Column(type="string") */
+        protected $program;
+        /** @Column(type="string") */
 		protected $status;
 		/** @Column(type="datetime") */
 		protected $startDate;
@@ -26,64 +30,58 @@
 	     */
 		protected $user;
 		
-		public function getUser()
+		public function userName($user = null)
 		{
-			return $this->user;
-		}
+			if(isset($user))
+            {
+                $this->username = $user;
+            }
+            return $this->username;
+        }
+        
+        public function status($status = null)
+		{
+			if(isset($status))
+            {
+                $this->status = $status;
+            }
+            return $this->status;
+        }
 		
-		public function setUser($user)
+        public function description($description = null)
 		{
-			$this->user = $user;
-		}
+			if(isset($description))
+            {
+                $this->description = $description;
+            }
+            return $this->description;
+        }
 		
-		public function getStatus()
+		public function startDate($startDate = null)
 		{
-			return $this->status;
-		}
+			if(isset($startDate))
+            {
+                $this->startDate = $startDate;
+            }
+            return $this->startDate;
+        }
 		
-		public function setStatus($status)
+		public function endDate($endDate = null)
 		{
-			$this->status = $status;
-		}
-		
-		public function getDescription()
+			if(isset($endDate))
+            {
+                $this->endDate = $endDate;
+            }
+            return $this->endDate;
+        }
+        
+        public function location($location = null)
 		{
-			return $this->description;
-		}
-		
-		public function setDescription($description)
-		{
-			$this->description = $description;
-		}
-		
-		public function getStartDate()
-		{
-			return $this->startDate;
-		}
-		
-		public function setStartDate($startDate)
-		{
-			$this->startDate = $startDate;
-		}
-		
-		public function getEndDate()
-		{
-			return $this->endDate;
-		}
-		
-		public function setEndState($endDate)
-		{
-			$this->endDate = $endDate;
-		}
-		
-		public function getLocation()
-		{
-			return $this->location;
-		}
-		
-		public function setLocation($location)
-		{
-			$this->location = $location;
-		}
+			if(isset($location))
+            {
+                $this->location = $location;
+            }
+            return $this->location;
+        }
     }
 ?>

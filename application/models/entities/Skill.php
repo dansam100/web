@@ -15,25 +15,22 @@
      	*/
 		protected $type;
 		
-		
-		public function getName()
+		public function name($name = null)
 		{
-			return $this->name;
+			if(isset($name))
+            {
+                $this->name = $name;
+            }
+            return $this->name;
 		}
 		
-		public function setName($name)
+		public function type($type = null)
 		{
-			$this->name = $name;
-		}
-		
-		public function getType()
-		{
-			return $this->type;
-		}
-		
-		public function setType($type)
-		{
-			$this->type = $type;
+			if(isset($type))
+            {
+                $this->type = $type;
+            }
+            return $this->type;
 		}
     }
 ?>

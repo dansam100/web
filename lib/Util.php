@@ -88,12 +88,60 @@ function getTokens($input, $regex)
     return $result;
 }
 
-function cast($obj, $to_class) {
-  if(class_exists($to_class)) {
-    $obj_in = serialize($obj);
-    $obj_out = 'O:' . strlen($to_class) . ':"' . $to_class . '":' . substr($obj_in, $obj_in[2] + 7);
-    return unserialize($obj_out);
-  }
-  else
-    return false;
+function cast($obj, $to_class)
+{
+    if($to_class == 'string')
+    {
+        return (string)$obj;
+    }
+    elseif($to_class == 'integer' || $to_class == 'int'){
+        return (int)$obj;
+    }
+    elseif($to_class == 'float' || $to_class == 'double'){
+        return (double)$obj;
+    }
+    elseif($to_class == 'boolean'){
+        return (boolean)$obj;
+    }
+    elseif(class_exists($to_class))
+    {
+        $obj_in = serialize($obj);
+        $obj_out = 'O:' . strlen($to_class) . ':"' . $to_class . '":' . substr($obj_in, $obj_in[2] + 7);
+        return unserialize($obj_out);
+    }
+    else return false;
+}
+
+function get_class_name($object = null)
+{
+    if (!is_object($object) && !is_string($object)){
+        return false;
+    }
+    $class = explode('\\', (is_string($object) ? $object : get_class($object)));
+    return $class[count($class) - 1];
+}
+
+function is_collection($var)
+{
+    if(is_array($var)){
+        return true;
+    }
+    elseif(get_class_name($var) == 'ArrayCollection'){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+function collection_add($collection, $value){
+    if(is_array($collection)){
+        array_push($collection, $value);
+    }
+    elseif(get_class_name($collection) == 'ArrayCollection'){
+        $collection->add($value);
+    }
+    else{
+        $collection = $value;
+    }
 }

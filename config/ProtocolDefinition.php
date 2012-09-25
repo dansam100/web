@@ -41,7 +41,7 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
         }
         $this->mappings = array();
         foreach($mappings as $mapping){
-            $mapping->parent($this);
+            //$mapping->parent($this);
             $this->mappings[$mapping->name()] = $mapping;
         }
         $this->objects = array();
@@ -183,6 +183,7 @@ trait ProtocolParser
             (string)$bind['source'], 
             (string)$bind['target'], 
             (string)$bind['type'],
+            (string)$bind['name'],
             (string)$bind['default'],
             (string)$bind['parser'],
             array_map(array($this, 'createBinding'), $bind->xpath('bind'))
