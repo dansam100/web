@@ -95,13 +95,13 @@ function cast($obj, $to_class)
         return (string)$obj;
     }
     elseif($to_class == 'integer' || $to_class == 'int'){
-        return (int)$obj;
+        return (int)((string)$obj);
     }
     elseif($to_class == 'float' || $to_class == 'double'){
-        return (double)$obj;
+        return (float)((string)$obj);
     }
-    elseif($to_class == 'boolean'){
-        return (boolean)$obj;
+    elseif($to_class == 'boolean' || $to_class == 'bool'){
+        return (boolean)((string)$obj);
     }
     elseif(class_exists($to_class))
     {

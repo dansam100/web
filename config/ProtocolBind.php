@@ -39,6 +39,7 @@ class ProtocolBind
         if(empty($name)){
             $this->name = $source;
         }
+        else $this->name = $name;
         if(!empty($default)){
             $this->default = $default;
         }
@@ -52,15 +53,9 @@ class ProtocolBind
     {
         $result = null;
         if(!empty($content)){
-            if(is_array($content)){
-                $result = (string)$content[0];
-            }
-            else{
-                $result = (string)$content;
-            }
             if(!empty($this->parser)){
                 $parser = new $this->parser($this->bindings());   //create a new parser with the given bindings
-                $output = $parser->parse($result, $callback);       //pass the contents through the parser
+                $output = $parser->parse($content, $callback);     //pass the contents through the parser
                 if(is_collection($output)){
                     $result = array();
                     foreach($output as $item){
@@ -76,9 +71,9 @@ class ProtocolBind
                     $result = $output;
                 }
             }
-            /*else{
-                $result = cast($callback->parseValue($result, $this->source()), $this->type());
-            }*/
+            elseif(is_array($content)){
+                $result = cast($content[0], $this->type());
+            }
         }
         elseif(!empty($this->default)){
             $result = $this->default;

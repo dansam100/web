@@ -112,7 +112,7 @@ class XMLSimpleParser extends Parser
      * @return type
      */
     public function getValue($key) {
-        return $this->content->xpath($key);
+        return $key;
     }
 }
 

@@ -77,31 +77,24 @@ class ProtocolObject
             $target = $binding->target();
             if(!empty($this->parent)){
                 $mapping = $this->parent->getMappingByName($binding->name());
-                $value = $callback->parseValue($content, $binding->source());
-                if(isset($mapping)){
-                    $output = $mapping->parse($value, $callback);    //protocolmapping returns an object mapping
-                }
-                else{
-                    //allow the binding to perform any extra parsing
-                    $output = $binding->parse($value, $callback);
-                }
-            }
-            else{
-                if(is_collection($content)){
+                $values = $callback->parseValue($content, $binding->source());
+                if(isset($mapping) && !empty($values)){
                     $output = array();
-                    foreach($content as $subContent){
-                        $results = cast($callback->parseValue($subContent, $binding->source()), $this->type);
-                        if(!results){
-                            foreach($results as $result){
-                                $output[] = $binding->parse($result, $callback);
-                            }
-                        }
+                    foreach($values as $value){
+                        $output[] = $mapping->parse($value, $callback);    //protocolmapping returns an object
                     }
                 }
                 else{
                     //allow the binding to perform any extra parsing
-                    $output = $binding->parse($content, $callback);
+                    $output = $binding->parse($values, $callback);
                 }
+            }
+            else{
+                if(is_collection($content)){
+                    $content = $content[0];
+                }
+                $values = $callback->parseValue($content, $binding->source());
+                $output = $binding->parse($values, $callback);
             }
             if(!empty($output)){
                 if(is_collection($result->$target)){   //add arrays entry by entry
@@ -122,7 +115,7 @@ class ProtocolObject
                 }
             }
             else{
-                $result->$target = $value;
+                $result->$target = null;
             }
         }
         return $result;
