@@ -11,7 +11,8 @@ namespace Rexume\Parsers;
  *
  * @author sam.jr
  */
-class XmlDateParser {
+class XmlDateParser
+{
     /**
      *
      * @var ProtocolBind[]
@@ -42,15 +43,18 @@ class XmlDateParser {
     {
         foreach($this->mappings as $mapping)
         {
-            $target = $mapping->target();
-            $source = $mapping->source();
-            foreach($content as $value){
-                $result = cast($value->$source, $mapping->type());
-                if(!empty($result)){
-                    $this->$target = cast($value->$source, $result);
-                }
-                //$this->$target = cast($callback->parseValue($value, $mapping->source()), $mapping->type());
+            $result = $callback->getValue($content, $mapping->source());
+            if(!empty($result)){
+                $target = $mapping->target();
+                $this->$target = cast($result, $mapping->type());
             }
+            /*foreach($content as $value){
+                //$result = $value->$source;
+                $result = $callback->getValues($value, $mapping->source());
+                if(!empty($result)){
+                    $this->$target = cast($result, $mapping->type());
+                }
+            }*/
         }
         return date(DATE_ATOM, mktime(0,0,0,$this->month, $this->day, $this->year));
     }

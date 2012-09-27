@@ -42,7 +42,9 @@ class VerificationController extends Controller
         {
             
         }
-        var_dump($dataArray);
+        var_dump($dataArray[0]);
+        //var_dump($dataArray);
+        //print_r($dataArray);
     }
     
     public function protocol($protocol = null)

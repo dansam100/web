@@ -39,16 +39,10 @@ class XMLSimpleParser extends Parser
         //process the root node
         if(isset($callback))
         {
-            $mappingObject = null;
-            foreach($this->mappings as $mapping)
-            {
+            foreach($this->mappings as $mapping){
                 if(strcmp($mapping->name(), $parser->getName()) == 0){
-                    $mappingObject = $mapping;
-                    break;
+                    $this->results[] = $this->invokeParser($mapping, $parser);
                 }
-            }
-            if(!empty($mappingObject)){
-                $this->results[] = $this->invokeParser($mappingObject, $parser);
             }
         }
         //process children
@@ -78,7 +72,7 @@ class XMLSimpleParser extends Parser
         {
             if(isset($callback))
             {
-                $mapping = $callback->getValue($node->key());
+                $mapping = $callback->getObject($node->key());
                 if(!empty($mapping))
                 {
                     $this->results[] = $this->invokeParser($mapping, $node->current());
@@ -97,7 +91,25 @@ class XMLSimpleParser extends Parser
      * @param string $source the binding target name
      * @return mixed results of the bind
      */
-    public function parseValue($content, $key)
+    public function getValue($content, $key)
+    {
+        $result =  $content->xpath($key);
+        if(!empty($result)){
+            if(is_collection($result)){
+                $result = $result[0];
+            }
+            return $result;
+        }
+        return null;
+    }
+    
+    /**
+     * Get the values of the given source binding from the content xml
+     * @param \SimpleXMLElement $content the xml to get the value from
+     * @param string $source the binding target name
+     * @return mixed results of the bind
+     */
+    public function getValues($content, $key)
     {
         $result =  $content->xpath($key);
         if(!empty($result)){
@@ -111,7 +123,7 @@ class XMLSimpleParser extends Parser
      * @param string $key
      * @return type
      */
-    public function getValue($key) {
+    public function getObject($key) {
         return $key;
     }
 }

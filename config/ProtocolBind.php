@@ -52,7 +52,10 @@ class ProtocolBind
     public function parse($content, $callback)
     {
         $result = null;
-        if(!empty($content)){
+        //print_r("type of ");
+        //print_r((string)$content[0]);
+        //print_r(" is " . gettype($content[0]));
+        if(isset($content)){
             if(!empty($this->parser)){
                 $parser = new $this->parser($this->bindings());   //create a new parser with the given bindings
                 $output = $parser->parse($content, $callback);     //pass the contents through the parser
@@ -73,6 +76,9 @@ class ProtocolBind
             }
             elseif(is_array($content)){
                 $result = cast($content[0], $this->type());
+            }
+            else{
+                $result = cast($content, $this->type());
             }
         }
         elseif(!empty($this->default)){

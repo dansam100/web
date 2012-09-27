@@ -1,6 +1,6 @@
 <?php
 namespace Rexume\Configuration;
-require_once("ProtocolMapping.php");
+require_once("ProtocolObject.php");
 require_once( "ProtocolBind.php");
 
 /**
@@ -69,7 +69,7 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
      * @param string $name
      * @return ProtocolMapping The resulting mapping 
      */
-    public function getValue($name)
+    public function getObject($name)
     {
         if(!empty($this->objects[$name])){
             return $this->objects[$name];
@@ -104,16 +104,6 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
         $parser_name = $this->parser;
         $parser = new $parser_name($this->objects);
         return $parser->parse($data, $this);
-    }
-    
-    /**
-     * Overrides and implements the interface
-     * @param ProtocolObject $content
-     * @param string $key
-     * @throws Exception It is not implemented yet
-     */
-    public function parseValue($content, $key) {
-        throw new Exception("Not implemented for " . $content . "and key:" . $key);
     }
     
     /**
@@ -186,7 +176,7 @@ trait ProtocolParser
             (string)$bind['name'],
             (string)$bind['default'],
             (string)$bind['parser'],
-            array_map(array($this, 'createBinding'), $bind->xpath('bind'))
+            array_map(array($this, 'createBinding'), $bind->xpath('data/bind'))
         );
     }
     
@@ -198,7 +188,7 @@ trait ProtocolParser
      */
     function createMapping(\SimpleXmlElement $mapping)
     {
-        $protocol = array();
+        $protocol = null;
         $bindings = array_map(array($this, 'createBinding'), $mapping->xpath('bind'));
         if($mapping->read){
             $protocol = $this->parseProtocol

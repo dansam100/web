@@ -19,9 +19,9 @@
                 <bind source="educations/education" target="degrees" />
                 <bind source="positions/position" target="experiences" />
                 <bind source="volunteer" target="experiences" />
-                <bind source="language" target="languages" />
+                <!--bind source="language" target="languages" />
                 <bind source="phone-number" target="media" />
-                <bind source="im-account" target="media" />
+                <bind source="im-account" target="media" /-->
             </object>
             <mappings>
                 <mapping name="person" type="Profile">
@@ -33,12 +33,16 @@
                     <bind source="title" target="position" type="string"/>
                     <bind source="summary" target="description" type="string" />
                     <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser">
-                        <bind source="month" target="month"/>
-                        <bind source="year" target="year"/>
+                        <data>
+                            <bind source="month" target="month"/>
+                            <bind source="year" target="year"/>
+                        </data>
                     </bind>
                     <bind source="end-date" target="endDate" parser="Rexume\Parsers\XmlDateParser">
-                        <bind source="month" target="month"/>
-                        <bind source="year" target="year"/>
+                        <data>
+                            <bind source="month" target="month"/>
+                            <bind source="year" target="year"/>
+                        </data>
                     </bind>
                     <bind source="is-current" target="isCurrent" type="boolean" />
                     <!--bind source="summary" target="activities" parser="Rexume\Parsers\NewlineDelimitedParser" type="Activity"/-->
@@ -90,9 +94,15 @@
                     <bind source="field-of-study" target="program" type="string" />
                     <bind source="degree" target="status" type="string" />
                     <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser">
-                        <bind source="year" target="year" type="integer" />
+                        <data>
+                            <bind source="year" target="year" type="integer" />
+                        </data>
                     </bind>
-                    <bind source="end-date" target="endDate"/>
+                    <bind source="end-date" target="endDate">
+                        <data>
+                            <bind source="year" target="year" type="integer" />
+                        </data>
+                    </bind>
                     <bind source="notes" target="description" type="string" />
                 </mapping>
                 <mapping name="volunteer" type="Experience">
