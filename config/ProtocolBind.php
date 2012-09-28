@@ -10,7 +10,7 @@ class ProtocolBind
      * @var IValueParser $parser 
      */
     protected $parser;
-    protected $type = 'object';
+    protected $type = 'string';
     protected $default;
     /**
      *

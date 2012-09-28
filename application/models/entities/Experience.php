@@ -34,6 +34,13 @@
 		 * @JoinColumn(name="companyId", referencedColumnName="id")
 	     */
 		protected $company;
+        /**
+	     * @var Activity[]
+		 * 
+		 * @OneToMany(targetEntity="Activity", mappedBy="experience")
+		 * 
+	     */
+        protected $activities;
 		
 		public function user($user = null)
 		{

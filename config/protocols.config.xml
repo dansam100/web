@@ -10,7 +10,7 @@
             </object>
         </read>
         <read contenttype="Data" scope="https://api.linkedin.com/v1/people/~">
-            <query>:(id,first-name,last-name,main-address,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts)</query>
+            <query>:(id,first-name,last-name,main-address,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts,skills)</query>
             <object name="person" type="User">
                 <bind source="id" target="memberId" type="string"/>
                 <bind source="first-name" target="firstName" type="string" />
@@ -19,11 +19,13 @@
                 <bind source="educations/education" target="degrees" />
                 <bind source="positions/position" target="experiences" />
                 <bind source="volunteer" target="experiences" />
-                <!--bind source="language" target="languages" />
-                <bind source="phone-number" target="media" />
-                <bind source="im-account" target="media" /-->
+                <bind source="languages/language" target="languages" />
+                <bind source="phone-numbers/phone-number" target="media" />
+                <bind source="im-accounts/im-account" target="media" />
+                <bind source="skills/skill" target="skills" />
             </object>
             <mappings>
+                <!--object binds find mappings by name-->
                 <mapping name="person" type="Profile">
                     <!--bind source="main-address" target="defaultAddress" type="Address" parser="LinkedInAddressParser"/-->
                     <bind source="headline" target="status" type="string" />
@@ -34,33 +36,36 @@
                     <bind source="summary" target="description" type="string" />
                     <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser">
                         <data>
-                            <bind source="month" target="month"/>
-                            <bind source="year" target="year"/>
+                            <bind source="month" target="month" type="integer"/>
+                            <bind source="year" target="year" type="integer"/>
                         </data>
                     </bind>
                     <bind source="end-date" target="endDate" parser="Rexume\Parsers\XmlDateParser">
                         <data>
-                            <bind source="month" target="month"/>
-                            <bind source="year" target="year"/>
+                            <bind source="month" target="month" type="integer"/>
+                            <bind source="year" target="year" type="integer"/>
                         </data>
                     </bind>
                     <bind source="is-current" target="isCurrent" type="boolean" />
-                    <!--bind source="summary" target="activities" parser="Rexume\Parsers\NewlineDelimitedParser" type="Activity"/-->
+                    <bind source="summary" target="activities" parser="Rexume\Parsers\NewlineDelimitedParser" type="Activity">
+                        <data>
+                        </data>
+                    </bind>
                 </mapping>
                 <mapping name="twitter-account" type="Media">
                     <bind source="provider-account-id" target="value" type="string" />
                     <bind source="provider-account-name" target="name" type="string"/>
                     <bind source="" target="type" default="twitter" type="string"/>
                 </mapping>
-                <mapping name="im-account" type="Media">
+                <mapping name="im-accounts/im-account" type="Media">
                     <bind source="im-account-type" target="type" type="string"/>
                     <bind source="im-account-type" target="name" type="string"/>
                     <bind source="im-account-name" target="value" type="string"/>
                 </mapping>
                 <mapping name="main-address" type="Address">
-                    <!--bind source="." target="address" parser="LinkedInAddressParser" /-->
+                    <bind source="." target="address" parser="LinkedInAddressParser" />
                 </mapping>
-                <mapping name="phone-number" type="Media">
+                <mapping name="phone-numbers/phone-number" type="Media">
                     <bind source="phone-type" target="name" default="Phone" type="string" />
                     <bind source="phone-number" target="value" type="string" />
                     <bind source="phone-type" target="type" type="string" />
@@ -83,10 +88,10 @@
                     <bind source="name" target="name" type="string" />
                     <bind source="industry" target="industry" type="string" />
                 </mapping>
-                <mapping name="language" type="Language">
+                <mapping name="languages/language" type="Language">
                     <bind source="name" target="name" type="string" />
                 </mapping>
-                <mapping name="skill" type="Skill">
+                <mapping name="skills/skill" type="Skill">
                     <bind source="name" target="name" type="string" />
                 </mapping>
                 <mapping name="educations/education" type="Degree">

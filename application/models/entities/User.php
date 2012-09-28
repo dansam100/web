@@ -62,7 +62,7 @@
 		/**
 	     * @var Experience[]
 		 * 
-		 * @OneToMany(targetEntity="Profile", mappedBy="users")
+		 * @OneToMany(targetEntity="Profile", mappedBy="user")
 		 * 
 	     */
 		protected $experiences = null;

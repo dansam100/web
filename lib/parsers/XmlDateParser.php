@@ -44,17 +44,10 @@ class XmlDateParser
         foreach($this->mappings as $mapping)
         {
             $result = $callback->getValue($content, $mapping->source());
-            if(!empty($result)){
+            if(isset($result)){
                 $target = $mapping->target();
                 $this->$target = cast($result, $mapping->type());
             }
-            /*foreach($content as $value){
-                //$result = $value->$source;
-                $result = $callback->getValues($value, $mapping->source());
-                if(!empty($result)){
-                    $this->$target = cast($result, $mapping->type());
-                }
-            }*/
         }
         return date(DATE_ATOM, mktime(0,0,0,$this->month, $this->day, $this->year));
     }

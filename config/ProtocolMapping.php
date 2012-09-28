@@ -112,16 +112,18 @@ class ProtocolMapping
                         collection_add($result->$target, $output);
                     }
                 }
-                elseif(is_collection($output)){     //if the target does not expect an array and yet given one, use only the first entry
+                elseif(is_collection($output) && !empty($output)){     //if the target does not expect an array and yet given one, use only the first entry
                     $result->$target = $output[0];
                 }
                 else{
                     $result->$target = $output;
                 }
             }
+            /*
             else{
                 $result->$target = null;
             }
+            */
         }
         //exit();
         return $result;
