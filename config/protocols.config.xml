@@ -12,6 +12,9 @@
         <read contenttype="Data" scope="https://api.linkedin.com/v1/people/~">
             <query>:(id,first-name,last-name,main-address,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts,skills)</query>
             <object name="person" type="User">
+                <bind source="isAdmin" target="isAdmin" type="boolean" default="false"/>
+                <bind source="isActive" target="isActive" type="boolean" default="true"/>
+                <bind source="isVerified" target="isVerified" type="boolean" default="false"/>
                 <bind source="id" target="memberId" type="string"/>
                 <bind source="first-name" target="firstName" type="string" />
                 <bind source="last-name" target="lastName" type="string" />
@@ -34,13 +37,13 @@
                 <mapping name="positions/position" type="Experience">
                     <bind source="title" target="position" type="string"/>
                     <bind source="summary" target="description" type="string" />
-                    <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser">
+                    <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser" type="date">
                         <data>
                             <bind source="month" target="month" type="integer"/>
                             <bind source="year" target="year" type="integer"/>
                         </data>
                     </bind>
-                    <bind source="end-date" target="endDate" parser="Rexume\Parsers\XmlDateParser">
+                    <bind source="end-date" target="endDate" parser="Rexume\Parsers\XmlDateParser" type="date">
                         <data>
                             <bind source="month" target="month" type="integer"/>
                             <bind source="year" target="year" type="integer"/>
@@ -49,6 +52,7 @@
                     <bind source="is-current" target="isCurrent" type="boolean" />
                     <bind source="summary" target="activities" parser="Rexume\Parsers\NewlineDelimitedParser" type="Activity">
                         <data>
+                            <bind source="." target="description" type="string" />
                         </data>
                     </bind>
                 </mapping>
@@ -98,7 +102,7 @@
                     <bind source="school-name" target="school" type="string" />
                     <bind source="field-of-study" target="program" type="string" />
                     <bind source="degree" target="status" type="string" />
-                    <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser">
+                    <bind source="start-date" target="startDate" parser="Rexume\Parsers\XmlDateParser" type="date">
                         <data>
                             <bind source="year" target="year" type="integer" />
                         </data>

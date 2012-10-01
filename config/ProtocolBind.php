@@ -24,6 +24,7 @@ class ProtocolBind
      * @param string $target
      * @param string $type
      * @param string $name Name of the bind. Defaults to $source when not specified
+     * @param string $default default value when the parsing and no entries are found
      * @param string $parser
      * @param ProtocolBind[] $bindings
      */
@@ -41,7 +42,7 @@ class ProtocolBind
         }
         else $this->name = $name;
         if(!empty($default)){
-            $this->default = $default;
+            $this->default = cast($default, $this->type);
         }
         $this->bindings = array();
         foreach($bindings as $binding){
@@ -57,22 +58,8 @@ class ProtocolBind
         //print_r(" is " . gettype($content[0]));
         if(isset($content)){
             if(!empty($this->parser)){
-                $parser = new $this->parser($this->bindings());   //create a new parser with the given bindings
-                $output = $parser->parse($content, $callback);     //pass the contents through the parser
-                if(is_collection($output)){
-                    $result = array();
-                    foreach($output as $item){
-                        $new_obj = new $this->type();
-                        $target = $this->target();
-                        //assign the target value
-                        $new_obj->$target = $item;
-                        $result[] = $new_obj;
-                    }
-                    return $result;
-                }
-                else{
-                    $result = $output;
-                }
+                $parser = new $this->parser($this->bindings(), $this->type());  //create a new parser with the given bindings
+                $result = $parser->parse($content, $callback);                  //pass the contents through the parser to get results
             }
             elseif(is_array($content)){
                 $result = cast($content[0], $this->type());
@@ -81,8 +68,8 @@ class ProtocolBind
                 $result = cast($content, $this->type());
             }
         }
-        elseif(!empty($this->default)){
-            $result = $this->default;
+        elseif(isset($this->default)){
+            $result = cast($this->default, $this->type());
         }
         return $result;
     }

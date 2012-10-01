@@ -101,7 +101,17 @@ function cast($obj, $to_class)
         return (float)((string)$obj);
     }
     elseif($to_class == 'boolean' || $to_class == 'bool'){
-        return (boolean)((string)$obj);
+        $val = (string)$obj;
+        switch (strtolower($val)){
+            case "true":
+            case "1":
+                return true;
+            case "false":
+            case "0":
+                return false;
+            default:
+                return (boolean)$val;
+        }
     }
     elseif(class_exists($to_class))
     {

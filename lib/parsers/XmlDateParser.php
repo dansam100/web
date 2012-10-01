@@ -26,7 +26,7 @@ class XmlDateParser
      * Ctor
      * @param ProtocolBind[] $mappings
      */
-    public function __construct($mappings) {
+    public function __construct($mappings, $type = null) {
         $this->year = 1970;
         $this->month = 1;
         $this->day = 1;
@@ -46,7 +46,7 @@ class XmlDateParser
             $result = $callback->getValue($content, $mapping->source());
             if(isset($result)){
                 $target = $mapping->target();
-                $this->$target = cast($result, $mapping->type());
+                $this->$target = $mapping->parse($result, $callback);
             }
         }
         return date(DATE_ATOM, mktime(0,0,0,$this->month, $this->day, $this->year));

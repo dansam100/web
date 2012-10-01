@@ -52,7 +52,7 @@ class LinkedInAuth extends Authentication
                     header("location: $result[signed_url]");
                 }
                 else{
-                    throw new AuthenticationException("Unable to get request token with LinkedIn oAuth request", AuthenticationStatus::get()->ERROR, $e);
+                    throw new AuthenticationException("Unable to get request token with LinkedIn oAuth request", AuthenticationStatus::get()->ERROR, null);
                 }
                 exit;
             }

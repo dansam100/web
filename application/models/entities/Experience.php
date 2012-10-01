@@ -1,4 +1,5 @@
 <?php
+    use Doctrine\Common\Collections\ArrayCollection as ArrayCollection;
     //entitites/Experience.php
     /**
 	 * @Entity @Table(name="experience")
@@ -41,6 +42,11 @@
 		 * 
 	     */
         protected $activities;
+        
+        public function __construct()
+		{
+			$this->activities = new ArrayCollection();
+		}
 		
 		public function user($user = null)
 		{
@@ -68,6 +74,15 @@
             }
             return $this->description;
 		}
+        
+        public function activities($activity = null)
+        {
+            if(isset($activity))
+            {
+                $this->activities[] = $activity;
+            }
+            return $this->activities;
+        }
 		
 		public function department($department = null)
 		{

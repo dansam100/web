@@ -42,7 +42,7 @@ class VerificationController extends Controller
         {
             
         }
-        var_dump($dataArray[0]);
+        var_dump($dataArray[0]->experiences[0]->activities);
         //var_dump($dataArray);
         //print_r($dataArray);
     }

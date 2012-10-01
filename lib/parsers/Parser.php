@@ -24,11 +24,17 @@ abstract class Parser implements IParser
      */
     protected $mappings;
     /**
+     *
+     * @var string 
+     */
+    protected $type;
+    /**
      * Ctor
      * @param ProtocolObject[] $mappings 
      */
-    public function __construct($mappings) {
+    public function __construct($mappings, $type) {
         $this->mappings = $mappings;
+        $this->type = $type;
     }
     
     public abstract function getValue($content, $key);

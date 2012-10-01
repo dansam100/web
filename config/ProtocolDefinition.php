@@ -102,7 +102,7 @@ class ProtocolDefinition implements \Rexume\Parsers\IValueParser
     public function parse($data)
     {
         $parser_name = $this->parser;
-        $parser = new $parser_name($this->objects);
+        $parser = new $parser_name($this->objects, $this->type);
         return $parser->parse($data, $this);
     }
     

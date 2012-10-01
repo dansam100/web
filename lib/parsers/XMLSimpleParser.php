@@ -21,8 +21,8 @@ class XMLSimpleParser extends Parser
      * Ctor
      * @param ProtocolObject[] $mappings 
      */
-    public function __construct($mappings) {
-        parent::__construct($mappings);
+    public function __construct($mappings, $type) {
+        parent::__construct($mappings, $type);
         $this->results = array();
     }
     
@@ -41,7 +41,10 @@ class XMLSimpleParser extends Parser
         {
             foreach($this->mappings as $mapping){
                 if(strcmp($mapping->name(), $parser->getName()) == 0){
-                    $this->results[] = $this->invokeParser($mapping, $parser);
+                    $result = $this->invokeParser($mapping, $parser);
+                    if(isset($result)){
+                        $this->results[] = $result;
+                    }
                 }
             }
         }
@@ -75,7 +78,10 @@ class XMLSimpleParser extends Parser
                 $mapping = $callback->getObject($node->key());
                 if(!empty($mapping))
                 {
-                    $this->results[] = $this->invokeParser($mapping, $node->current());
+                    $result = $this->invokeParser($mapping, $node->current());
+                    if(isset($result)){
+                        $this->results[] = $result;
+                    }
                 }
             }
             if($node->hasChildren())
