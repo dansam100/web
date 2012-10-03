@@ -11,6 +11,10 @@ class ProtocolBind
      */
     protected $parser;
     protected $type = 'string';
+    /**
+     *
+     * @var $type 
+     */
     protected $default;
     /**
      *
@@ -69,7 +73,7 @@ class ProtocolBind
             }
         }
         elseif(isset($this->default)){
-            $result = cast($this->default, $this->type());
+            $result = $this->default;
         }
         return $result;
     }
