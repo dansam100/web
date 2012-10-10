@@ -96,9 +96,6 @@ class ProtocolMapping
                     $content = $content[0];
                 }
                 $values = $callback->getValue($content, $binding->source());
-                //print_r("type of ");
-                //print_r((string)$values[0]);
-                //print_r(" is " . gettype($values[0]));
                 $output = $binding->parse($values, $callback);
             }
             if(isset($output)){
@@ -119,13 +116,7 @@ class ProtocolMapping
                     $result->$target = $output;
                 }
             }
-            /*
-            else{
-                $result->$target = null;
-            }
-            */
         }
-        //exit();
         return $result;
     }
     

@@ -54,12 +54,15 @@ class ProtocolBind
         }
     }
     
+    /**
+     * 
+     * @param mixed $content
+     * @param IValueParser $callback
+     * @return mixed
+     */
     public function parse($content, $callback)
     {
         $result = null;
-        //print_r("type of ");
-        //print_r((string)$content[0]);
-        //print_r(" is " . gettype($content[0]));
         if(isset($content)){
             if(!empty($this->parser)){
                 $parser = new $this->parser($this->bindings(), $this->type());  //create a new parser with the given bindings

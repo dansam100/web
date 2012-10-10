@@ -155,3 +155,10 @@ function collection_add($collection, $value){
         $collection = $value;
     }
 }
+
+function is_scalar_type($type = null){
+    if(!isset($type)){
+        return false;
+    }
+    return in_array($type, array('string', 'boolean', 'bool', 'integer', 'int', 'float', 'double'));
+}

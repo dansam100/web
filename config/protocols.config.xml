@@ -30,7 +30,16 @@
             <mappings>
                 <!--object binds find mappings by name-->
                 <mapping name="person" type="Profile">
-                    <!--bind source="main-address" target="defaultAddress" type="Address" parser="LinkedInAddressParser"/-->
+                    <bind source="main-address" target="defaultAddress" type="Address" parser="LinkedInAddressParser">
+                        <data>
+                            <bind source="street1" target="street1" type="string"/>
+                            <bind source="street2" target="street2" type="string"/>
+                            <bind source="city" target="year" type="string"/>
+                            <bind source="country" target="country" type="string"/>
+                            <bind source="postalCode" target="postalCode" type="string"/>
+                            <bind source="province" target="province" type="string"/>
+                        </data>
+                    </bind>
                     <bind source="headline" target="status" type="string" />
                     <bind source="summary" target="objective" type="string" />
                 </mapping>
