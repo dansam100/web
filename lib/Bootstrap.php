@@ -19,6 +19,7 @@ if (!class_exists("Doctrine\Common\Version", false))
 {
     require_once(LIBRARIES_FOLDER . DS . 'doctrine2-orm/lib/Doctrine/ORM/Tools/Setup.php');
     Setup::registerAutoloadGit(LIBRARIES_FOLDER . DS . "doctrine2-orm");
+    Setup::registerAutoloadGit(LIBRARIES_FOLDER . DS . "OAuth" . DS . "oauth_simple");
 }
 $lookup = function($classFile, $folder){ return find($folder, $classFile);};
 $loaders = array(
