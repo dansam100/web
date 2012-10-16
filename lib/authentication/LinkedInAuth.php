@@ -1,6 +1,6 @@
 <?php
-namespace Rexume\Models\Auth;
-use Rexume\Readers;
+namespace Rexume\Lib\Authentication;
+use Rexume\Lib\Readers;
 
 class LinkedInAuth extends Authentication
 {
@@ -97,7 +97,7 @@ class LinkedInAuth extends Authentication
         try
         {
             //get data request protocol for linkedin
-            $protocol = \Rexume\Configuration\Configuration::getInstance()->getAuthenticationProtocol($this->name);
+            $protocol = \Rexume\Config\Configuration::getInstance()->getAuthenticationProtocol($this->name);
             //construct url
             $url = $protocol->scope();
             $query = $protocol->query();

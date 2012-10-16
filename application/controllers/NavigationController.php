@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Controllers;
+namespace Rexume\Application\Controllers;
 
 class NavigationController extends Controller
 {

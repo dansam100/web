@@ -1,6 +1,6 @@
 <?php
-    define('SITE_ROOT', dirname(dirname(__FILE__)));
-	define("DS", DIRECTORY_SEPARATOR);
+    define("ROOT", dirname(dirname(__FILE__)));
+    require_once(ROOT . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . "Bootstrap.php");
 	
 	//start processing urls
 	$ACCESSED_URL = null;
@@ -8,6 +8,6 @@
 	{
 		$ACCESSED_URL = $_GET['url'];
 	}
-	
-	require_once(SITE_ROOT . DS . "lib" . DS . "Bootstrap.php");
+    //finish the bootstraping
+    require_once(ROOT . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . 'Setup.php');
 ?>

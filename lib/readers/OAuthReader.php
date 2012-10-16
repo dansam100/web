@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Readers;
+namespace Rexume\Lib\Readers;
 /**
  * Description of oAuthReader
  *
@@ -73,7 +73,7 @@ trait OAuthBase{
      */
     protected function constructAccessSignature($oauthToken, $oauthSecret, $oauthVerifier)
     {
-        $auth_key = \Rexume\Configuration\Configuration::getInstance()->getAuthorizationKey($this->name);
+        $auth_key = \Rexume\Config\Configuration::getInstance()->getAuthorizationKey($this->name);
         $signatures = $this->getSignatures();
 
         // Fetch the cookie and amend our signature array with the request
@@ -97,7 +97,7 @@ trait OAuthBase{
      */
     protected function constructAuthorizationSignature($oauthToken)
     {
-        $auth_key = \Rexume\Configuration\Configuration::getInstance()->getAuthorizationKey($this->name);
+        $auth_key = \Rexume\Config\Configuration::getInstance()->getAuthorizationKey($this->name);
         $signatures = $this->getSignatures();
 
         return array(
@@ -113,7 +113,7 @@ trait OAuthBase{
      */
     protected function constructRequestSignature()
     {			
-        $auth_key = \Rexume\Configuration\Configuration::getInstance()->getAuthorizationKey($this->name);
+        $auth_key = \Rexume\Config\Configuration::getInstance()->getAuthorizationKey($this->name);
         $signatures = $this->getSignatures();
         return array(
             'path' => $auth_key->getRequestTokenUrl(),
@@ -128,7 +128,7 @@ trait OAuthBase{
      */
     protected function getSignatures()
     {
-        $auth_key = \Rexume\Configuration\Configuration::getInstance()->getAuthorizationKey($this->name);
+        $auth_key = \Rexume\Config\Configuration::getInstance()->getAuthorizationKey($this->name);
         return array(
             'consumer_key' => $auth_key->getApiKey(), 
             'shared_secret' => $auth_key->getSharedSecret()

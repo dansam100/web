@@ -19,7 +19,7 @@ class DB {
         }
         else{
             $paths = array("entities");
-            $appConfig = \Rexume\Configuration\Configuration::getInstance();
+            $appConfig = \Rexume\Config\Configuration::getInstance();
 
             $dbParams = array(
                 'driver' => 'pdo_mysql',

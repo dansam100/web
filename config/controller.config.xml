@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <sitemaps>
     <map name="login" default="true">
-        <model>Rexume\Models\LoginModel</model>
-        <view>Rexume\Views\LoginView</view>
-        <controller>Rexume\Controllers\LoginController</controller>
+        <model>Rexume\Application\Models\LoginModel</model>
+        <view>Rexume\Application\Views\LoginView</view>
+        <controller>Rexume\Application\Controllers\LoginController</controller>
         <defaultAction>simple</defaultAction>
     </map>
     <map name="verify">
-        <model>Rexume\Models\VerificationModel</model>
-        <view>Rexume\Views\VerificationView</view>
-        <controller>Rexume\Controllers\VerificationController</controller>
+        <model>Rexume\Application\Models\VerificationModel</model>
+        <view>Rexume\Application\Views\VerificationView</view>
+        <controller>Rexume\Application\Controllers\VerificationController</controller>
         <defaultAction>display</defaultAction>
     </map>
     <map name="home">
-        <model>Rexume\Models\HomeScreenModel</model>
-        <view>Rexume\Views\HomeScreenView</view>
-        <controller>Rexume\Controllers\HomeScreenController</controller>
+        <model>Rexume\Application\Models\HomeScreenModel</model>
+        <view>Rexume\Application\Views\HomeScreenView</view>
+        <controller>Rexume\Application\Controllers\HomeScreenController</controller>
         <defaultAction>display</defaultAction>
     </map>
     <!--Match all invalid URLS-->
     <map name="*">
-        <model>Rexume\Models\NavigationModel</model>
-        <view>Rexume\Views\NavigationView</view>
-        <controller>Rexume\Controllers\NavigationController</controller>
+        <model>Rexume\Application\Models\NavigationModel</model>
+        <view>Rexume\Application\Views\NavigationView</view>
+        <controller>Rexume\Application\Controllers\NavigationController</controller>
         <defaultAction>pageNotFound</defaultAction>
     </map>
 </sitemaps>

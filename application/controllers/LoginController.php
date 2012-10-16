@@ -1,5 +1,6 @@
 <?php
-namespace Rexume\Controllers;
+namespace Rexume\Application\Controllers;
+use \Rexume\Lib\Authentication;
 
 require_once("Controller.php");
 
@@ -21,7 +22,7 @@ class LoginController extends Controller
 
     public function simple()
     {
-        $authentication = new \Rexume\Models\Auth\Authentication();
+        $authentication = new Authentication\Authentication();
         if($authentication->validateSession())
         {
             header("location: /home"); //redirect to home screen
@@ -31,7 +32,7 @@ class LoginController extends Controller
 
     public function doLogin()
     {
-        $authentication = new \Rexume\Models\Auth\Authentication();			
+        $authentication = new Authentication\Authentication();			
         //only login if the user is not already logged in
         if(!$authentication->validateSession())
         {		
@@ -40,11 +41,11 @@ class LoginController extends Controller
                 $email = $this->model->getEmail();
                 $password = $this->model->getPassword();
                 $auth_success = $authentication->login($email, $password);
-                if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->SUCCESS)
+                if($auth_success == Authentication\AuthenticationStatus::get()->SUCCESS)
                 {
                     header("location: /rexume/home");
                 }
-                else if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->NOT_VERIFIED){
+                else if($auth_success == Authentication\AuthenticationStatus::get()->NOT_VERIFIED){
                     header("location: /verify?protocol=$authentication->getName()");
                 }
                 else{
@@ -63,7 +64,7 @@ class LoginController extends Controller
     public function linkedin()
     {
         //authenticate the user using the linkedin oAuth object
-        $authentication = new \Rexume\Models\Auth\LinkedInAuth();
+        $authentication = new Authentication\LinkedInAuth();
         try{
             //only login if the user is not already logged in
             if(!$authentication->validateSession()){    
@@ -75,12 +76,12 @@ class LoginController extends Controller
                     $access_token = $this->model->getOAuthToken();
                     $access_secret = $this->model->getOAuthSecret();
                     $auth_success = $authentication->authenticate($access_token, $access_secret);
-                    if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->SUCCESS)
+                    if($auth_success == Authentication\AuthenticationStatus::get()->SUCCESS)
                     {
                         //header("location: /rexume/home");
                         header("location: /rexume/verify?protocol=" . $authentication->getName());
                     }
-                    else if($auth_success == \Rexume\Models\Auth\AuthenticationStatus::get()->NOT_VERIFIED){
+                    else if($auth_success == Authentication\AuthenticationStatus::get()->NOT_VERIFIED){
                         header("location: /verify?protocol=" . $authentication->getName());
                     }
                     else{

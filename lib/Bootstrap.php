@@ -2,6 +2,9 @@
 use Doctrine\ORM\Tools\Setup;
 
 //bootstrap.php
+define("DS", DIRECTORY_SEPARATOR);
+define('SITE_ROOT', dirname(dirname(__FILE__)));
+define('BASE_DIR', dirname(SITE_ROOT));
 define("CONTROLLERS_FOLDER", SITE_ROOT . DS . "application" . DS . "controllers");
 define("MODELS_FOLDER", SITE_ROOT . DS . "application" . DS . "models");
 define("VIEWS_FOLDER", SITE_ROOT . DS . "application" . DS . "views");
@@ -17,46 +20,17 @@ if (!class_exists("Doctrine\Common\Version", false))
     require_once(LIBRARIES_FOLDER . DS . 'doctrine2-orm/lib/Doctrine/ORM/Tools/Setup.php');
     Setup::registerAutoloadGit(LIBRARIES_FOLDER . DS . "doctrine2-orm");
 }
-
-//load all parsers
-foreach (directory_list_files(LIBRARIES_FOLDER . DS . 'parsers', 'php') as $value) {
-    require_once(LIBRARIES_FOLDER . DS . "parsers" . DS . "$value");
-}
-
-//load all parsers
-foreach (directory_list_files(LIBRARIES_FOLDER . DS . 'readers', 'php') as $value) {
-    require_once(LIBRARIES_FOLDER . DS . "readers" . DS . "$value");
-}
-
-//include other classes
-require_once(LIBRARIES_FOLDER . DS . "oauth_simple". DS . "php" . DS . "OAuthSimple.php");
-require_once(CONFIG_FOLDER . DS . 'Configuration.php');
-require_once(LIBRARIES_FOLDER . DS . "Authentication.php");
-require_once(LIBRARIES_FOLDER . DS . "LinkedInAuth.php");
-require_once(CONFIG_FOLDER . DS . 'EntityManager.php');
-
-//load all controllers
-foreach (directory_list_files(CONTROLLERS_FOLDER, 'php') as $value) {
-    require_once(CONTROLLERS_FOLDER . DS . "$value");
-}
-//load all models
-foreach (directory_list_files(MODELS_FOLDER, 'php') as $value) {
-    require_once(MODELS_FOLDER . DS . "$value");
-}
-//load all views
-foreach (directory_find_files(VIEWS_FOLDER, 'php') as $value) {
-    require_once("$value");
-}
-//load all doctrine models
-foreach (directory_list_files(ENTITIES_FOLDER, 'php') as $value) {
-    require_once(ENTITIES_FOLDER . DS . "$value");
-}
-//load enum library
-require_once(LIBRARIES_FOLDER . DS . "Enum.php");
+$lookup = function($classFile, $folder){ return find($folder, $classFile);};
+$loaders = array(
+    new \Doctrine\Common\ClassLoader('Rexume\Config', BASE_DIR),
+    new \Doctrine\Common\ClassLoader('Rexume\Application\Controllers', BASE_DIR),
+    new \Doctrine\Common\ClassLoader('Rexume\Application\Views', BASE_DIR, $lookup),
+    new \Doctrine\Common\ClassLoader('Rexume\Application\Models', BASE_DIR),
+    new \Doctrine\Common\ClassLoader('Rexume\Lib', BASE_DIR),
+    new \Doctrine\Common\ClassLoader('Rexume\Lib\Parsers', BASE_DIR),
+    new \Doctrine\Common\ClassLoader('\\', BASE_DIR)
+);
+foreach($loaders as $loader){ $loader->register(); };
 
 //check development mode
-define("DEVELOPMENT_ENVIRONMENT", (\Rexume\Configuration\Configuration::getInstance()->getDeploymentMode() == "Development"));
-
-
-//start the bootstraping
-require_once(LIBRARIES_FOLDER . DS . 'Setup.php');
+define("DEVELOPMENT_ENVIRONMENT", (Rexume\Config\Configuration::getInstance()->getDeploymentMode() == "Development"));

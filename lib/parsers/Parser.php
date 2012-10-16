@@ -1,16 +1,5 @@
 <?php
-namespace Rexume\Parsers;
-
-interface IParser extends IValueParser{
-    function getValue($content, $callback);
-    function getValues($content, $key);
-    function parse($content, $callback);
-}
-
-interface IValueParser{
-    function getObject($key);
-}
-
+namespace Rexume\Lib\Parsers;
 /**
  * Description of Parser
  *
@@ -42,5 +31,3 @@ abstract class Parser implements IParser
     public abstract function parse($content, $callback);
     public abstract function getObject($key);
 }
-
-?>

@@ -1,5 +1,5 @@
 <?php
-    namespace Rexume\Views;
+    namespace Rexume\Application\Views;
     
     interface IView{
     	function getController();

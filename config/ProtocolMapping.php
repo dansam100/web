@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Configuration;
+namespace Rexume\Config;
 
 class ProtocolMapping
 {

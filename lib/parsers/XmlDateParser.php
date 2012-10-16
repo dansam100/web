@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Parsers;
+namespace Rexume\Lib\Parsers;
 /**
  * Date parser for xml structure.
  * 

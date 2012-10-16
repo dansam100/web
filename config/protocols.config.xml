@@ -30,7 +30,7 @@
             <mappings>
                 <!--object binds find mappings by name-->
                 <mapping name="person" type="Profile">
-                    <bind source="main-address" target="defaultAddress" type="Address" parser="LinkedInAddressParser">
+                    <bind source="main-address" target="defaultAddress" type="Address" parser="Rexume\Parsers\LinkedInAddressParser">
                         <data>
                             <bind source="street1" target="street1" type="string"/>
                             <bind source="street2" target="street2" type="string"/>

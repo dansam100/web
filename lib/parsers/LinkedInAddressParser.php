@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Parsers;
+namespace Rexume\Lib\Parsers;
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -18,43 +18,42 @@ class LinkedInAddressParser
     private $province;
     private $postalCode;
     private $country;
-    
-    private $parser;
+    private $mappings;
     private $type;
     
     //format: USA, Canada(liberal), Canada(hard), UK
     private $postalCodeRegexes = array('/\d{5}(?(?=-)-\d{4})/', '/[A-Z]\d[A-Z] \d[A-Z]\d/', '/[ABCEGHJKLMNPRSTVXY]\d[A-Z] \d[A-Z]\d/', '/[A-Z]{1,2}\d[A-Z\d]? \d[ABD-HJLNP-UW-Z]{2}/');
     private $poBoxRegexes = array('/\bp(ost)?[.\s-]+o(ffice)?[.\s-]+box\b/');
+    private $locationRegexes = array('/([\w])[\s|,]+([\w])[\s|\n|,]+([\w])');
         
-    public function __construct($mappings, $type, $delimiters = array(',', '\n')) {
-        $this->parser = new CompoundDelimitedParser($mappings, 'string', $delimiters);
+    public function __construct($mappings, $type) {
+        $this->mappings = $mappings;
         $this->type = $type;
     }
     
     public function parse($content, $callback)
     {
-        $results = parent::parse($content, $callback);
-        foreach($results as $value){
-            $type = $this->checkType($value);
-            switch($type){
-                case AddressFieldType::get()->STREET1:
-                    break;
-                case AddressFieldType::get()->STREET2:
-                    break;
-                case AddressFieldType::get()->CITY:
-                    break;
-                case AddressFieldType::get()->PROVINCE:
-                    break;
-                case AddressFieldType::get()->POSTALCODE:
-                    break;
-                case AddressFieldType::get()->COUNTRY;
-                    break;
-                default:
-                    break;
-            }
+        foreach($this->mappings as $mapping){
+            $this->street1 = $this->getMatch($content, $this->street1Regexes);
+            $this->street2 = $this->getMatch($content, $this->poBoxRegexes);
+            $this->city = $this->getMatch($content, $this->locationRegexes, 1);
+            $this->province = $this->getMatch($content, $this->locationRegexes, 2);
+            $this->postalCode = $this->getMatch($content, $this->postalCodeRegexes);
+            $this->country = $this->getMatch($content, $this->locationRegexes, 4);
         }
+        
     }
     
+    private  function getMatch($content, $regexes, $match = 0){
+        foreach($regexes as $regex){
+            if(preg_match($regex, $content, $matches)){
+                return $matches[$match];
+            }
+        }
+        return null;
+    }
+
+
     private function checkType($value){
         //match post office boxes
         foreach($this->poBoxRegexes as $poBoxRegex){
@@ -69,12 +68,13 @@ class LinkedInAddressParser
             if(cast($first, 'integer')){
                 return AddressFieldType::get()->STREET1;
             }
-            elseif(count($pieces) > 1){{
+            elseif(count($pieces) > 1){
                 
             }
         }
     }
 }
+
 
 /**
 * Authentication state flags
@@ -101,5 +101,3 @@ class AddressFieldType
         else return self::$address_field_type = new AddressFieldType();
     }
 }
-
-?>

@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Views;
+namespace Rexume\Application\Views;
 
 class NavigationView extends StaticView
 {

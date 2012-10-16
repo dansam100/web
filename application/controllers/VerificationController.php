@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Controllers;
+namespace Rexume\Application\Controllers;
 
 class VerificationController extends Controller
 {
@@ -31,7 +31,7 @@ class VerificationController extends Controller
     public function getOAuthData()
     {
         //get data request protocol for linkedin
-        $protocol   = \Rexume\Configuration\Configuration::getInstance()->getDataProtocol($this->protocol());
+        $protocol   = \Rexume\Config\Configuration::getInstance()->getDataProtocol($this->protocol());
         $url        = $protocol->scope();
         $query      = $protocol->query();
         $reader     = new \Rexume\Readers\OAuthReader($this->protocol());

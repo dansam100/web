@@ -1,9 +1,9 @@
 <?php
-namespace Rexume\Configuration;
-require_once(LIBRARIES_FOLDER . DS . "Bootstrap.php");
-require_once("AuthorizationKey.php");
-require_once("Sitemap.php");
-require_once("ProtocolDefinition.php");
+namespace Rexume\Config;
+//require_once(LIBRARIES_FOLDER . DS . "Bootstrap.php");
+//require_once("AuthorizationKey.php");
+//require_once("Sitemap.php");
+//require_once("ProtocolDefinition.php");
 
 /**
 * Exception thrown when loading invalid configuration files
@@ -13,10 +13,8 @@ class ConfigurationLoaderException extends \Exception{}
 /**
     * Loader for web.config configuration parameters
     */
-class Configuration
-{
-    use ProtocolParser;
-    
+class Configuration extends \Rexume\Lib\Parsers\ProtocolParser
+{    
     const WEB_CONFIG = "web.config.xml";
     
     private static $appConfig;
@@ -45,7 +43,7 @@ class Configuration
 
     /**
      * Returns an instance that contains web.config configuration parameters
-     * @return \Rexume\Configuration\Configuration
+     * @return \Rexume\Config\Configuration
      */
     public static function getInstance()
     {

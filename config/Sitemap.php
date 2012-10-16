@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Configuration;
+namespace Rexume\Config;
 /*
     * A site map holds the controller, model and view information for a given url on the site
     */

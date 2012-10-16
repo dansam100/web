@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Models;
+namespace Rexume\Application\Models;
 
 interface IModel
 {

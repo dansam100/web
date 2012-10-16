@@ -19,7 +19,7 @@ function directory_list_files($dir, $ext = '*')
 
                     if($extension == $ext)
                     {
-                        array_push($files, $file);
+                        array_push($files, $dir . DS . $file);
                     }
                 }
             }
@@ -57,6 +57,33 @@ function directory_find_files($dir, $ext = '*')
         } 
     } 
     return $result; 
+}
+
+/**
+ * find files matching a pattern
+ * using PHP "glob" function and recursion
+ *
+ * <a href="http://twitter.com/return">@return</a> array containing all pattern-matched files
+ *
+ * <a href="http://twitter.com/param">@param</a> string $dir     - directory to start with
+ * <a href="http://twitter.com/param">@param</a> string $pattern - pattern to glob for
+ */
+function find($dir, $pattern){
+    // escape any character in a string that might be used to trick
+    // a shell command into executing arbitrary commands
+    $dir = escapeshellcmd(str_replace('\\', '/', $dir));
+    //$dir = escapeshellcmd($dir);
+    // get a list of all matching files in the current directory
+    $files = glob("$dir/$pattern");
+    //echo "<br>Searching $dir for $pattern<br>";
+    // find a list of all directories in the current directory
+    // directories beginning with a dot are also included
+    foreach (glob("$dir/{.[^.]*,*}", GLOB_BRACE|GLOB_ONLYDIR) as $sub_dir){
+        $arr   = find($sub_dir, $pattern);  // resursive call
+        $files = array_merge($files, $arr); // merge array with files from subdirectory
+    }
+    // return all found files
+    return $files;
 }
 
 /**

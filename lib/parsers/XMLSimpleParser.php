@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Parsers;
+namespace Rexume\Lib\Parsers;
 /**
  * Description of XMLSimpleParser
  *

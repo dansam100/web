@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Models;
+namespace Rexume\Application\Models;
 
 require_once("Model.php");
 

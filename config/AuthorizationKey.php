@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Configuration;
+namespace Rexume\Config;
 
 /*
 * This class contains information about a given oAuth's protocols shared secret and api key

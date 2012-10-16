@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Models\Auth;
+namespace Rexume\Lib\Authentication;
 require_once(LIBRARIES_FOLDER . DS . "Enum.php");
 require_once(LIBRARIES_FOLDER . DS . "Bootstrap.php");
 
@@ -51,7 +51,7 @@ class Authentication
     public function __construct()
     {
         $this->name = 'basic';
-        $this->siteKey = \Rexume\Configuration\Configuration::getInstance()->getSiteKey();
+        $this->siteKey = \Rexume\Config\Configuration::getInstance()->getSiteKey();
     }
     
     public function getName()

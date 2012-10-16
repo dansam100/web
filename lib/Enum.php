@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Models\Enums;
+namespace Rexume\Lib\Enums;
 
 /**
     * Example usage:

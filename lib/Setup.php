@@ -47,7 +47,7 @@ function unregisterGlobals() {
 /** Main Call Function **/
 function callHook() {
 	global $ACCESSED_URL;
-	$appConfig = \Rexume\Configuration\Configuration::getInstance();
+	$appConfig = \Rexume\Config\Configuration::getInstance();
 	
 	$siteMap = null;
 	if(isset($ACCESSED_URL))
@@ -61,7 +61,7 @@ function callHook() {
 	
 	if(isset($siteMap))
 	{
-		$authentication = new \Rexume\Models\Auth\Authentication();
+		$authentication = new \Rexume\Lib\Authentication\Authentication();
 		if(!(isset($_SESSION['userId']) && $authentication->validateSession()))
 		{
 			//invalid login. if user is not accessing default site login page, redirect to it
