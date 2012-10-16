@@ -1,15 +1,15 @@
 <?php
 namespace Rexume\Lib\Readers;
+use \Rexume\Lib\OAuth;
 /**
  * Description of oAuthReader
  *
  * @author sam.jr
  */
-class OAuthReader {
-    private $name;
-    private $oauthObject;
-    
-    use OAuthBase;
+class OAuthReader extends OAuth\OAuthBase
+{
+    protected $name;
+    protected $oauthObject;
     
     /**
      * Constructor
@@ -17,7 +17,7 @@ class OAuthReader {
      */
     public function __construct($name) {
         $this->name = $name;
-        $this->oauthObject = new \OAuthSimple();
+        $this->oauthObject = new OAuth\OAuthSimple();
     }
     
     /**
@@ -62,76 +62,5 @@ class OAuthReader {
         {
             throw new Exception("Unknown error encountered during read", -1, $e);
         }
-    }
-}
-
-
-trait OAuthBase{
-    /**
-     * Gets the default signatures required to make an oAuth acessToken call
-     * @return array An array of signed keys
-     */
-    protected function constructAccessSignature($oauthToken, $oauthSecret, $oauthVerifier)
-    {
-        $auth_key = \Rexume\Config\Configuration::getInstance()->getAuthorizationKey($this->name);
-        $signatures = $this->getSignatures();
-
-        // Fetch the cookie and amend our signature array with the request
-        // token and secret.
-        $signatures['oauth_secret'] = $oauthSecret;
-        $signatures['oauth_token'] = $oauthToken;
-
-        return array(
-            //'action' => 'POST',
-            'path'      => $auth_key->getAccessTokenUrl(),
-            'parameters'=> array(
-                'oauth_token' => $oauthToken,
-                'oauth_verifier' => $oauthVerifier),
-            'signatures'=> $signatures
-        );
-    }
-    
-    /**
-     * Constructs the default signatures required to make an oAuth authoriseToken call
-     * @return array An array of signed keys
-     */
-    protected function constructAuthorizationSignature($oauthToken)
-    {
-        $auth_key = \Rexume\Config\Configuration::getInstance()->getAuthorizationKey($this->name);
-        $signatures = $this->getSignatures();
-
-        return array(
-            'path'       => $auth_key->getAuthorizeTokenUrl(),
-            'parameters' => array('oauth_token' => $oauthToken),
-            'signatures' => $signatures
-        );
-    }
-    
-    /**
-     * Constructs the default signatures required to make an oAuth requestToken call
-     * @return array An array of signed keys
-     */
-    protected function constructRequestSignature()
-    {			
-        $auth_key = \Rexume\Config\Configuration::getInstance()->getAuthorizationKey($this->name);
-        $signatures = $this->getSignatures();
-        return array(
-            'path' => $auth_key->getRequestTokenUrl(),
-            'parameters' => array('oauth_callback' => $auth_key->getCallback()),
-            'signatures'=> $signatures
-        );
-    }
-
-    /**
-     * Gets the default signatures required to make an oAuth call
-     * @return array An array of signed keys
-     */
-    protected function getSignatures()
-    {
-        $auth_key = \Rexume\Config\Configuration::getInstance()->getAuthorizationKey($this->name);
-        return array(
-            'consumer_key' => $auth_key->getApiKey(), 
-            'shared_secret' => $auth_key->getSharedSecret()
-        );
     }
 }

@@ -1,17 +1,20 @@
 <?php
 namespace Rexume\Lib\Authentication;
 use Rexume\Lib\Readers;
+use Rexume\Lib\OAuth;
+use Rexume\Application\Models;
 
 class LinkedInAuth extends Authentication
 {
     private $oauthObject;
-    use \Rexume\Readers\OAuthBase;
+    private $oauthReader;
 
     public function __construct()
     {
         parent::__construct();
         $this->name = "LinkedIn";
-        $this->oauthObject = new \OAuthSimple();
+        $this->oauthObject = new OAuth\OAuthSimple();
+        $this->oauthReader = new Readers\OAuthReader($this->name);
     }
 
     /**
@@ -26,7 +29,7 @@ class LinkedInAuth extends Authentication
             if (!isset($_GET['oauth_verifier']))
             {
                 // Step 1: Get a Request Token
-                $request_signature = $this->constructRequestSignature();
+                $request_signature = $this->oauthReader->constructRequestSignature();
                 $result = $this->oauthObject->sign($request_signature);
                 // The above object generates a simple URL that includes a signature, the 
                 // needed parameters, and the web page that will handle our request.  I now
@@ -46,7 +49,7 @@ class LinkedInAuth extends Authentication
                     setcookie("oauth_token_secret", $request_token_secret, time()+3600);
                     //////////////////////////////////////////////////////////////////////////
                     // Step 2: Authorize the Request Token
-                    $auth_signature = $this->constructAuthorizationSignature($request_token);
+                    $auth_signature = $this->oauthReader->constructAuthorizationSignature($request_token);
                     $result = $this->oauthObject->sign($auth_signature);
                     // See you in a sec in step 3.
                     header("location: $result[signed_url]");
@@ -58,7 +61,7 @@ class LinkedInAuth extends Authentication
             }
             else {			    
                 // Build the request-URL sending the secret and token received in the get request
-                $access_signature = $this->constructAccessSignature($_GET['oauth_token'], $_COOKIE['oauth_token_secret'], $_GET['oauth_verifier']);
+                $access_signature = $this->oauthReader->constructAccessSignature($_GET['oauth_token'], $_COOKIE['oauth_token_secret'], $_GET['oauth_verifier']);
                 $result = $this->oauthObject->sign($access_signature);	
                 // ... and grab the resulting string again. 
                 $page = getWebContent($result['signed_url']);
@@ -70,14 +73,14 @@ class LinkedInAuth extends Authentication
                     $access_token = $returned_items['oauth_token'];
                     $access_token_secret = $returned_items['oauth_token_secret'];
                     //return a login model containing the oAuth token and secret as the authentication object
-                    return new \Rexume\Models\LoginModel(null, null, $access_token, $access_token_secret);
+                    return new Models\LoginModel(null, null, $access_token, $access_token_secret);
                 }
                 else{
                     throw new AuthenticationException("Unable to get access token with LinkedIn oAuth request", AuthenticationStatus::get()->ERROR);
                 }
             }
         }
-        catch(\Rexume\Models\Auth\AuthenticationException $ae){
+        catch(AuthenticationException $ae){
             throw $ae;
         }
         catch(Exception $e){
@@ -102,8 +105,7 @@ class LinkedInAuth extends Authentication
             $url = $protocol->scope();
             $query = $protocol->query();
             //perform the read operation
-            $reader = new \Rexume\Readers\OAuthReader($this->name);
-            $page = $reader->read($url, $query, $accessToken, $accessTokenSecret);
+            $page = $this->oauthReader->read($url, $query, $accessToken, $accessTokenSecret);
             $user = $protocol->parseOne($page);
             if(isset($user))
             {

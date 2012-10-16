@@ -1,6 +1,3 @@
-[submodule "lib/oAuth/oauth_simple"]
-	path = lib/OAuth/oauth_simple
-	url = git@github.com:dansam100/oauthsimple.git
 [submodule "lib/doctrine2-orm"]
 	path = lib/doctrine2-orm
 	url = git@github.com:dansam100/doctrine2.git

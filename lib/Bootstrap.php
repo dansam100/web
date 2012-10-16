@@ -19,17 +19,17 @@ if (!class_exists("Doctrine\Common\Version", false))
 {
     require_once(LIBRARIES_FOLDER . DS . 'doctrine2-orm/lib/Doctrine/ORM/Tools/Setup.php');
     Setup::registerAutoloadGit(LIBRARIES_FOLDER . DS . "doctrine2-orm");
-    Setup::registerAutoloadGit(LIBRARIES_FOLDER . DS . "OAuth" . DS . "oauth_simple");
 }
 $lookup = function($classFile, $folder){ return find($folder, $classFile);};
 $loaders = array(
+    new \Doctrine\Common\ClassLoader('*', BASE_DIR, $lookup),
     new \Doctrine\Common\ClassLoader('Rexume\Config', BASE_DIR),
     new \Doctrine\Common\ClassLoader('Rexume\Application\Controllers', BASE_DIR),
     new \Doctrine\Common\ClassLoader('Rexume\Application\Views', BASE_DIR, $lookup),
     new \Doctrine\Common\ClassLoader('Rexume\Application\Models', BASE_DIR),
     new \Doctrine\Common\ClassLoader('Rexume\Lib', BASE_DIR),
     new \Doctrine\Common\ClassLoader('Rexume\Lib\Parsers', BASE_DIR),
-    new \Doctrine\Common\ClassLoader('\\', BASE_DIR)
+    new \Doctrine\Common\ClassLoader('\Rexume\Lib\OAuth', LIBRARIES_FOLDER . DS . "OAuth", $lookup)
 );
 foreach($loaders as $loader){ $loader->register(); };
 
