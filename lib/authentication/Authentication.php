@@ -1,7 +1,6 @@
 <?php
 namespace Rexume\Lib\Authentication;
-require_once(LIBRARIES_FOLDER . DS . "Enum.php");
-require_once(LIBRARIES_FOLDER . DS . "Bootstrap.php");
+use \Rexume\Application\Models\Enums;
 
 /**
  * Exception thrown during authentication
@@ -21,7 +20,7 @@ class AuthenticationStatus
     private static $auth_status;
     private $statuses;
     public function __construct() {
-        $this->statuses = new \Rexume\Models\Enums\FlagsEnum("SUCCESS", "NOT_VERIFIED", "INACTIVE", "INVALID_LOGIN", "ERROR");
+        $this->statuses = new Enums\FlagsEnum("SUCCESS", "NOT_VERIFIED", "INACTIVE", "INVALID_LOGIN", "ERROR");
     }
     
     public function __get(/*string*/ $name)

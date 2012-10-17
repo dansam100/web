@@ -62,12 +62,12 @@
 		/**
 	     * @var Experience[]
 		 * 
-		 * @OneToMany(targetEntity="Profile", mappedBy="user")
+		 * @OneToMany(targetEntity="Experience", mappedBy="user")
 		 * 
 	     */
 		protected $experiences = null;
 		/**
-	     * @OneToMany(targetEntity="Profile", mappedBy="user")
+	     * @OneToMany(targetEntity="Degree", mappedBy="user")
 		 * @var Degree[]
 	     */
 		protected $degrees = null;

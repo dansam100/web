@@ -18,7 +18,7 @@ class DB {
             return self::$entityManager;
         }
         else{
-            $paths = array("entities");
+            $paths = array("../application/models/entities");
             $appConfig = \Rexume\Config\Configuration::getInstance();
 
             $dbParams = array(
@@ -29,7 +29,7 @@ class DB {
             );
             //initialize database
             $config = Setup::createAnnotationMetadataConfiguration($paths, DEVELOPMENT_ENVIRONMENT);
-            return self::$entityManager = Doctrine\ORM\EntityManager::create($dbParams, $config);
+            return self::$entityManager = \Doctrine\ORM\EntityManager::create($dbParams, $config);
         }
     }
     

@@ -1,5 +1,5 @@
 <?php
-namespace Rexume\Lib\Enums;
+namespace Rexume\Application\Models\Enums;
 
 /**
     * Example usage:
@@ -40,20 +40,5 @@ class Enum {
             $this->self[$name] = $enum;
         else
             $this->self[$name] = end($this->self) + 1;
-    }
-}
-
-class DefinedEnum extends Enum {
-    public function __construct( /*array*/ $itms ) {
-        foreach( $itms as $name => $enum )
-            $this->add($name, $enum);
-    }
-}
-
-class FlagsEnum extends Enum {
-    public function __construct( /*...*/ ) {
-        $args = func_get_args();
-        for( $i=0, $n=count($args), $f=0x1; $i<$n; $i++, $f *= 0x2 )
-            $this->add($args[$i], $f);
     }
 }

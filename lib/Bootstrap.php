@@ -22,16 +22,20 @@ if (!class_exists("Doctrine\Common\Version", false))
 }
 $lookup = function($classFile, $folder){ return find($folder, $classFile);};
 $loaders = array(
-    new \Doctrine\Common\ClassLoader('*', BASE_DIR, $lookup),
+    new \Doctrine\Common\ClassLoader('Rexume\Lib', BASE_DIR),
     new \Doctrine\Common\ClassLoader('Rexume\Config', BASE_DIR),
+    new \Doctrine\Common\ClassLoader('*', CONFIG_FOLDER, $lookup),
+    new \Doctrine\Common\ClassLoader('*', ENTITIES_FOLDER, $lookup),
+    new \Doctrine\Common\ClassLoader('Rexume\Lib\Parsers', BASE_DIR),
+    new \Doctrine\Common\ClassLoader('Rexume\Application\Models', BASE_DIR),
     new \Doctrine\Common\ClassLoader('Rexume\Application\Controllers', BASE_DIR),
     new \Doctrine\Common\ClassLoader('Rexume\Application\Views', BASE_DIR, $lookup),
-    new \Doctrine\Common\ClassLoader('Rexume\Application\Models', BASE_DIR),
-    new \Doctrine\Common\ClassLoader('Rexume\Lib', BASE_DIR),
-    new \Doctrine\Common\ClassLoader('Rexume\Lib\Parsers', BASE_DIR),
+    new \Doctrine\Common\ClassLoader('Rexume\Application\Models\Enums', BASE_DIR, $lookup),
     new \Doctrine\Common\ClassLoader('\Rexume\Lib\OAuth', LIBRARIES_FOLDER . DS . "OAuth", $lookup)
 );
 foreach($loaders as $loader){ $loader->register(); };
+//include all entity files
+foreach(find(ENTITIES_FOLDER, '*') as $file){ require_once $file; }
 
 //check development mode
 define("DEVELOPMENT_ENVIRONMENT", (Rexume\Config\Configuration::getInstance()->getDeploymentMode() == "Development"));
