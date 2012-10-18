@@ -1,6 +1,7 @@
 <?php
 namespace Rexume\Lib\Readers;
-use \Rexume\Lib\OAuth;
+use Rexume\Lib\Authentication\Authentication as Authentication;
+use Rexume\Lib\OAuth;
 /**
  * Description of oAuthReader
  *
@@ -36,7 +37,7 @@ class OAuthReader extends OAuth\OAuthBase
             $url = $scope . $query;
             if(empty($accessToken) || empty($accessTokenSecret))
             {
-                $current_user = \Rexume\Models\Auth\Authentication::currentUser();
+                $current_user = Authentication::currentUser();
                 if(!empty($current_user))
                 {
                     $accessToken = $current_user->oauthToken();

@@ -1,5 +1,7 @@
 <?php
 namespace Rexume\Application\Controllers;
+use Rexume\Lib\Authentication\Authentication as Authentication;
+use Rexume\Lib\Readers\OAuthReader as OAuthReader;
 
 class VerificationController extends Controller
 {
@@ -12,7 +14,7 @@ class VerificationController extends Controller
      */
     public function __construct($model, $view, $action) {
         parent::__construct($model, $view, $action);
-        $this->model = new $model(\Rexume\Models\Auth\Authentication::currentUser());
+        $this->model = new $model(Authentication::currentUser());
         if(isset($_GET['protocol'])){ $this->protocol($_GET['protocol']); }
     }
     
@@ -34,7 +36,7 @@ class VerificationController extends Controller
         $protocol   = \Rexume\Config\Configuration::getInstance()->getDataProtocol($this->protocol());
         $url        = $protocol->scope();
         $query      = $protocol->query();
-        $reader     = new \Rexume\Readers\OAuthReader($this->protocol());
+        $reader     = new OAuthReader($this->protocol());
         $page       = $reader->read($url, $query, $this->model->oauthToken(), $this->model->oauthTokenSecret());
         $dataArray  = $protocol->parse($page);
         

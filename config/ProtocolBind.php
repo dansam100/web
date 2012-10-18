@@ -32,7 +32,7 @@ class ProtocolBind
      * @param string $parser
      * @param ProtocolBind[] $bindings
      */
-    public function __construct($source, $target, $type = null, $name = null, $default = null, $parser = null, $bindings = null) {
+    public function __construct($source, $target, $type = null, $name = null, $default = null, $parser = null, $bindings = array()) {
         $this->source = $source;
         $this->target = $target;
         if(!empty($parser)){

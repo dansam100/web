@@ -20,18 +20,17 @@ if (!class_exists("Doctrine\Common\Version", false))
     require_once(LIBRARIES_FOLDER . DS . 'doctrine2-orm/lib/Doctrine/ORM/Tools/Setup.php');
     Setup::registerAutoloadGit(LIBRARIES_FOLDER . DS . "doctrine2-orm");
 }
-$lookup = function($classFile, $folder){ return find($folder, $classFile);};
 $loaders = array(
     new \Doctrine\Common\ClassLoader('Rexume\Lib', BASE_DIR),
     new \Doctrine\Common\ClassLoader('Rexume\Config', BASE_DIR),
-    new \Doctrine\Common\ClassLoader('*', CONFIG_FOLDER, $lookup),
-    new \Doctrine\Common\ClassLoader('*', ENTITIES_FOLDER, $lookup),
+    new \Doctrine\Common\ClassLoader('*', CONFIG_FOLDER, true),
+    new \Doctrine\Common\ClassLoader('*', ENTITIES_FOLDER, true),
     new \Doctrine\Common\ClassLoader('Rexume\Lib\Parsers', BASE_DIR),
     new \Doctrine\Common\ClassLoader('Rexume\Application\Models', BASE_DIR),
     new \Doctrine\Common\ClassLoader('Rexume\Application\Controllers', BASE_DIR),
-    new \Doctrine\Common\ClassLoader('Rexume\Application\Views', BASE_DIR, $lookup),
-    new \Doctrine\Common\ClassLoader('Rexume\Application\Models\Enums', BASE_DIR, $lookup),
-    new \Doctrine\Common\ClassLoader('\Rexume\Lib\OAuth', LIBRARIES_FOLDER . DS . "OAuth", $lookup)
+    new \Doctrine\Common\ClassLoader('Rexume\Application\Views', BASE_DIR, true),
+    new \Doctrine\Common\ClassLoader('Rexume\Application\Models\Enums', BASE_DIR, true),
+    new \Doctrine\Common\ClassLoader('Rexume\Lib\OAuth', LIBRARIES_FOLDER . DS . "OAuth", true)
 );
 foreach($loaders as $loader){ $loader->register(); };
 //include all entity files

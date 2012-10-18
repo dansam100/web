@@ -47,22 +47,3 @@ class DelimitedParser
         return $this->results;
     }
 }
-
-class CompoundDelimitedParser{
-    public function __construct($mappings, $type, $delimiters = array(',', '\n')) {
-        $delimiter = join("", $delimiters);
-        parent::__construct($mappings, $type, $delimiter);
-    }
-}
-
-class CommaDelimitedParser extends DelimitedParser{
-    public function __construct($mappings, $type, $delimiter = ',') {
-        parent::__construct($mappings, $type, $delimiter);
-    }
-}
-
-class NewlineDelimitedParser extends DelimitedParser{
-    public function __construct($mappings, $type, $delimiter = "\n") {
-        parent::__construct($mappings, $type, $delimiter);
-    }
-}

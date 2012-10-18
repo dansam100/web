@@ -22,32 +22,41 @@ class LinkedInAddressParser
     private $type;
     
     //format: USA, Canada(liberal), Canada(hard), UK
-    private $postalCodeRegexes = array('/\d{5}(?(?=-)-\d{4})/', '/[A-Z]\d[A-Z] \d[A-Z]\d/', '/[ABCEGHJKLMNPRSTVXY]\d[A-Z] \d[A-Z]\d/', '/[A-Z]{1,2}\d[A-Z\d]? \d[ABD-HJLNP-UW-Z]{2}/');
+    private $postalCodeRegexes = array('/\d{5}(?(?=-)-\d{4})/', '/[A-Z]\d[A-Z][\s]*\d[A-Z]\d/', '/[ABCEGHJKLMNPRSTVXY]\d[A-Z][\s]*\d[A-Z]\d/', '/[A-Z]{1,2}\d[A-Z\d]?[\s]*\d[ABD-HJLNP-UW-Z]{2}/');
     private $poBoxRegexes = array('/\bp(ost)?[.\s-]+o(ffice)?[.\s-]+box\b/');
-    private $locationRegexes = array('/([\w])[\s|,]+([\w])[\s|\n|,]+([\w])');
+    private $locationRegexes = array('/([\w])[^\S\n\r]+([\w])[\s,]+([a-zA-Z0-9]+)?[\s,]+([\w]+)?/');
+    private $street1Regexes = array('/(.*)?(?:\w\w)\s+/');
         
     public function __construct($mappings, $type) {
         $this->mappings = $mappings;
         $this->type = $type;
     }
     
+    /**
+     * 
+     * @param mixed $content
+     * @param IParser $callback
+     */
     public function parse($content, $callback)
     {
+        $string = $callback->getValue($content, ".");
+        $this->street1 = $this->getMatch($string, $this->street1Regexes);
+        $this->street2 = $this->getMatch($string, $this->poBoxRegexes);
+        $this->city = $this->getMatch($string, $this->locationRegexes, 1);
+        $this->province = $this->getMatch($string, $this->locationRegexes, 2);
+        $this->postalCode = $this->getMatch($string, $this->postalCodeRegexes);
+        $this->country = $this->getMatch($string, $this->locationRegexes, 4);
+        $result = new $this->type;
         foreach($this->mappings as $mapping){
-            $this->street1 = $this->getMatch($content, $this->street1Regexes);
-            $this->street2 = $this->getMatch($content, $this->poBoxRegexes);
-            $this->city = $this->getMatch($content, $this->locationRegexes, 1);
-            $this->province = $this->getMatch($content, $this->locationRegexes, 2);
-            $this->postalCode = $this->getMatch($content, $this->postalCodeRegexes);
-            $this->country = $this->getMatch($content, $this->locationRegexes, 4);
+            $result->{$mapping->target()} = $this->{$mapping->target()};
         }
-        
+        return $result;
     }
     
     private  function getMatch($content, $regexes, $match = 0){
         foreach($regexes as $regex){
             if(preg_match($regex, $content, $matches)){
-                return $matches[$match];
+                return trim($matches[$match]);
             }
         }
         return null;

@@ -107,7 +107,7 @@ class LinkedInAuth extends Authentication
             //perform the read operation
             $page = $this->oauthReader->read($url, $query, $accessToken, $accessTokenSecret);
             $data = $protocol->parseOne($page);
-            if(isset($user))
+            if(isset($data))
             {
                 $member_id = $data->memberId(); //for LinkedIn, we want the member id
                 if(isset($member_id)){

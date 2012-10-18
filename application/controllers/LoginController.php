@@ -46,7 +46,7 @@ class LoginController extends Controller
                     header("location: /rexume/home");
                 }
                 else if($auth_success == Authentication\AuthenticationStatus::get()->NOT_VERIFIED){
-                    header("location: /verify?protocol=$authentication->getName()");
+                    header("location: /rexume/verify?protocol=$authentication->getName()");
                 }
                 else{
                     $this->error = "Invalid login";
@@ -82,7 +82,7 @@ class LoginController extends Controller
                         header("location: /rexume/verify?protocol=" . $authentication->getName());
                     }
                     else if($auth_success == Authentication\AuthenticationStatus::get()->NOT_VERIFIED){
-                        header("location: /verify?protocol=" . $authentication->getName());
+                        header("location: /rexume/verify?protocol=" . $authentication->getName());
                     }
                     else{
                         $this->error = "Invalid login";
