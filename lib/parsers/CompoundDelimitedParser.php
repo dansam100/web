@@ -10,9 +10,9 @@ namespace Rexume\Lib\Parsers;
  *
  * @author sam.jr
  */
-class CompoundDelimitedParser{
-    public function __construct($mappings, $type, $delimiters = array(',', '\n')) {
-        $delimiter = join("", $delimiters);
-        parent::__construct($mappings, $type, $delimiter);
+class CompoundDelimitedParser extends DelimitedParser
+{
+    public function __construct($mappings, $type, $delimiters = array('\n', ',')){
+        parent::__construct($mappings, $type, implode("", $delimiters));
     }
 }

@@ -21,15 +21,20 @@ class LinkedInAddressParser
     private $mappings;
     private $type;
     
-    //format: USA, Canada(liberal), Canada(hard), UK
-    private $postalCodeRegexes = array('/\d{5}(?(?=-)-\d{4})/', '/[A-Z]\d[A-Z][\s]*\d[A-Z]\d/', '/[ABCEGHJKLMNPRSTVXY]\d[A-Z][\s]*\d[A-Z]\d/', '/[A-Z]{1,2}\d[A-Z\d]?[\s]*\d[ABD-HJLNP-UW-Z]{2}/');
-    private $poBoxRegexes = array('/\bp(ost)?[.\s-]+o(ffice)?[.\s-]+box\b/');
-    private $locationRegexes = array('/([\w])[^\S\n\r]+([\w])[\s,]+([a-zA-Z0-9]+)?[\s,]+([\w]+)?/');
-    private $street1Regexes = array('/(.*)?(?:\w\w)\s+/');
+    private $parser;
+    
+    //format: USA, Canada(liberal), Canada(strict), UK
+    private $postalCodeRegexes = array('/\b\d{5}(?(?=-)-\d{4})\b/i', '/\b[A-Z]\d[A-Z][\s]*\d[A-Z]\d\b/i', '/\b[ABCEGHJKLMNPRSTVXY]\d[A-Z][\s]*\d[A-Z]\d\b/i', '/\b[A-Z]{1,2}\d[A-Z\d]?[\s]*\d[ABD-HJLNP-UW-Z]{2}\b/i');
+    private $poBoxRegexes = array('/\bp(ost)?[.\s-]?o(ffice)?[.\s-]+box[\s]+[a-zA-Z0-9]+\b/i');
+    private $locationRegexes = array('/^([a-z]+)[\s]+([a-z]+)[\s,]?([a-zA-Z0-9]+)?$/i');
+    private $countryRegexes = array('/^[^\s]+$/i');
+    private $street1Regexes = array('/^(\d+[\s]*(-[\s]*[\d]+)?[\s]+[a-z]+[\s]+[a-z]+)$/i');
         
     public function __construct($mappings, $type) {
         $this->mappings = $mappings;
         $this->type = $type;
+        
+        $this->parser = new CompoundDelimitedParser(null, 'string');
     }
     
     /**
@@ -40,12 +45,16 @@ class LinkedInAddressParser
     public function parse($content, $callback)
     {
         $string = $callback->getValue($content, ".");
-        $this->street1 = $this->getMatch($string, $this->street1Regexes);
-        $this->street2 = $this->getMatch($string, $this->poBoxRegexes);
-        $this->city = $this->getMatch($string, $this->locationRegexes, 1);
-        $this->province = $this->getMatch($string, $this->locationRegexes, 2);
+        //certain things can be matched right away
         $this->postalCode = $this->getMatch($string, $this->postalCodeRegexes);
-        $this->country = $this->getMatch($string, $this->locationRegexes, 4);
+        $this->street2 = $this->getMatch($string, $this->poBoxRegexes);
+        //break the string into pieces
+        $pieces = $this->parser->parse($string);
+        //match the rest
+        $this->street1 = $this->getMatch($pieces, $this->street1Regexes);
+        $this->city = $this->getMatch($pieces, $this->locationRegexes, 1, $this->poBoxRegexes);
+        $this->province = $this->getMatch($pieces, $this->locationRegexes, 2, $this->poBoxRegexes);
+        $this->country = $this->getMatch($pieces, $this->countryRegexes);
         $result = new $this->type;
         foreach($this->mappings as $mapping){
             $result->{$mapping->target()} = $this->{$mapping->target()};
@@ -53,34 +62,25 @@ class LinkedInAddressParser
         return $result;
     }
     
-    private  function getMatch($content, $regexes, $match = 0){
-        foreach($regexes as $regex){
-            if(preg_match($regex, $content, $matches)){
-                return trim($matches[$match]);
+    private  function getMatch($content, $regexes, $match = 0, $exclude = array()){
+        if(is_array($content)){
+            foreach($content as $value){
+                $result = $this->getMatch($value, $regexes, $match, $exclude);
+                if(!empty($result)){
+                    return $result;
+                }
+            }
+        }
+        else{
+            foreach($regexes as $regex){
+                $matches = array();
+                $is_excluded = $this->getMatch($content, $exclude);
+                if(empty($is_excluded) && preg_match($regex, $content, $matches)){
+                    return trim($matches[$match]);
+                }
             }
         }
         return null;
-    }
-
-
-    private function checkType($value){
-        //match post office boxes
-        foreach($this->poBoxRegexes as $poBoxRegex){
-            if(preg_match($poBoxRegex, $value)){
-                return AddressFieldType::get()->STREET2;
-            }
-        }
-        $pieces = preg_split('/[\s]+/', $value, PREG_SPLIT_NO_EMPTY);
-        if(count($pieces) > 0){
-            $first = $pieces[0];
-            //if the first part is a number, it's street1
-            if(cast($first, 'integer')){
-                return AddressFieldType::get()->STREET1;
-            }
-            elseif(count($pieces) > 1){
-                
-            }
-        }
     }
 }
 

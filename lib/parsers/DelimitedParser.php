@@ -19,20 +19,31 @@ class DelimitedParser
      * @param string $delimiter
      */
     public function __construct($mappings, $type, $delimiter = null) {
-        $this->delimiter = sprintf("/[%s]+/", $delimiter);
+        $this->delimiter = sprintf('/[%s]+/', $delimiter);
         $this->mappings = $mappings;
         $this->type = $type;
         $this->result = array();
     }
     
-    public function parse($content, $callback)
+    public function parse($content, $callback = null)
     {
-        foreach($this->mappings as $mapping){
-            $target = $mapping->target();
-            $value = $callback->getValue($content, $mapping->source());
-            $splits = preg_split($this->delimiter, $mapping->parse($value, $callback), PREG_SPLIT_NO_EMPTY);
-            $results = array_map("trim", $splits);
-            foreach($results as $result){
+        $results = array();
+        if(!empty($this->mappings)){
+            foreach($this->mappings as $mapping){
+                $target = $mapping->target();
+                $value = $content;
+                if(isset($callback)){
+                    $value = $callback->getValue($content, $mapping->source());
+                }
+                $splits = preg_split($this->delimiter, $mapping->parse($value, $callback));
+                $results = array_map("trim", $splits);
+            }
+        }
+        else{
+            $results = array_map("trim", preg_split($this->delimiter, $content));
+        }
+        foreach($results as $result){
+            if(!empty($result)){
                 //call 'new' for non-scalar types and create the instances
                 if(!is_scalar_type($this->type)){
                     $item = new $this->type;
