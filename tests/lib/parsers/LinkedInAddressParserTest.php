@@ -11,32 +11,63 @@ class LinkedInAddressParserTest extends \PHPUnit_Framework_TestCase {
      * @var LinkedInAddressParser
      */
     protected $object;
-    private $mappings;
-    private $type = 'Address';
-    private $testAddresses;
+    
+    private $simpleAddress1 = <<<EOL
+    11 Street Name
+    PO Box 11
+    City Province P0S7A1
+    Country
+EOL;
+    private $simpleAddressWithName1 = <<<EOL
+    Name
+    11 Street Name
+    PO Box 11
+    City Province P0S7A1
+    Country
+EOL;
+    private $simpleAddressOneLine1 = '11 Street Name, PO Box 11, City, Province P0S7A1, Country';
 
-    private $simpleAddress = <<<EOL
-        11 Street Name
-        PO Box 11
-        City Province P0S7A1
-        Country
+    private $simpleAddress2 = <<<EOL
+    11 Street Name,
+    P.O. Box 11,
+    City Province P0S7A1,
+    Country
 EOL;
     
-    private $simpleAddressWithName = <<<EOL
-        Name
-        11 Street Name
-        PO Box 11
-        City Province P0S7A1
-        Country
+    private $simpleAddressWithName2 = <<<EOL
+    MARY ROE
+    11 Street Name,
+    P.O. Box 11,
+    City Province P0S7A1,
+    Country
+EOL;
+    private $simpleAddressWithCompanyAndName2 = <<<EOL
+    MARY ROE
+    MEGASYSTEMS INC
+    421 E DRACHMAN SUITE 5A
+    TUCSON AZ 85705-7598
+    USA
+EOL;
+    private $simpleAddressWithName3 = <<<EOL
+    JANE ROE
+    421 E DRACHMAN ST
+    TUCSON AZ 85705-7598
+    USA
+EOL;
+    private $simpleAddressWithComplexPostalCode3 = <<<EOL
+    JOHN "GULLIBLE" DOE
+    CENTER FOR FINANCIAL ASSISTANCE TO DEPOSED NIGERIAN ROYALTY
+    421 E DRACHMAN
+    TUCSON AZ 85705-7598
+    USA
 EOL;
     
-    private $simpleAddressOneLine = '11 Street Name, City, Province P0S7A1, Country';
-        
     /**
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        $this->type = 'Address';
         $this->mappings = array(
             new Config\ProtocolBind(".", "street1"),
             new Config\ProtocolBind(".", "street2"),
@@ -46,13 +77,21 @@ EOL;
             new Config\ProtocolBind(".", "country")
         );
         $createTag = function($content){ return '<value>' . $content . '</value>'; };
-        $this->testAddresses = array(
-            new \SimpleXMLElement($createTag($this->simpleAddress))//,
-            //new \SimpleXMLElement($this->simpleAddressWithName),
-            //new \SimpleXMLElement($this->simpleAddressOneLine)
+        $this->testAddresses1 = array(
+            new \SimpleXMLElement($createTag($this->simpleAddress1)),
+            new \SimpleXMLElement($createTag($this->simpleAddressWithName1)),
+            new \SimpleXMLElement($createTag($this->simpleAddressOneLine1))
+        );
+        $this->testAddresses2 = array(
+            new \SimpleXMLElement($createTag($this->simpleAddress2)),
+            new \SimpleXMLElement($createTag($this->simpleAddressWithName2))
+        );
+        $this->testAddresses3 = array(
+            new \SimpleXMLElement($createTag($this->simpleAddressWithCompanyAndName2)),
+            new \SimpleXMLElement($createTag($this->simpleAddressWithName3)),
+            new \SimpleXMLElement($createTag($this->simpleAddressWithComplexPostalCode3))
         );
         $this->parser = new XMLSimpleParser(null, 'Data');
-        $this->object = new LinkedInAddressParser($this->mappings, $this->type);
     }
 
     /**
@@ -67,15 +106,41 @@ EOL;
      * @covers Rexume\Lib\Parsers\LinkedInAddressParser::parse
      */
     public function testParse() {
-        foreach($this->testAddresses as $testAddress){
+        $this->object = new LinkedInAddressParser($this->mappings, $this->type);
+        foreach($this->testAddresses1 as $testAddress){
             $result = $this->object->parse($testAddress, $this->parser);
             //check stuff
+            $this->assertInstanceOf($this->type, $result);
             $this->assertEquals("11 Street Name", $result->street1());
             $this->assertEquals("PO Box 11", $result->street2());
             $this->assertEquals("City", $result->city());
             $this->assertEquals("P0S7A1", $result->postalCode());
             $this->assertEquals("Country", $result->country());
             $this->assertEquals("Province", $result->province());
+        }
+        $this->object = new LinkedInAddressParser($this->mappings, $this->type);
+        foreach($this->testAddresses2 as $testAddress){
+            $result = $this->object->parse($testAddress, $this->parser);
+            //check stuff
+            $this->assertInstanceOf($this->type, $result);
+            $this->assertEquals("11 Street Name", $result->street1());
+            $this->assertEquals("P.O. Box 11", $result->street2());
+            $this->assertEquals("City", $result->city());
+            $this->assertEquals("P0S7A1", $result->postalCode());
+            $this->assertEquals("Country", $result->country());
+            $this->assertEquals("Province", $result->province());
+        }
+        $this->object = new LinkedInAddressParser($this->mappings, $this->type);
+        foreach($this->testAddresses3 as $testAddress){
+            $result = $this->object->parse($testAddress, $this->parser);
+            //check stuff
+            $this->assertInstanceOf($this->type, $result);
+            $this->assertEquals("421 E DRACHMAN", $result->street1());
+            $this->assertEmpty($result->street2());
+            $this->assertEquals("TUCSON", $result->city());
+            $this->assertEquals("85705-7598", $result->postalCode());
+            $this->assertEquals("USA", $result->country());
+            $this->assertEquals("AZ", $result->province());
         }
     }
 

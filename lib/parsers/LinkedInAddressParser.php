@@ -25,15 +25,14 @@ class LinkedInAddressParser
     
     //format: USA, Canada(liberal), Canada(strict), UK
     private $postalCodeRegexes = array('/\b\d{5}(?(?=-)-\d{4})\b/i', '/\b[A-Z]\d[A-Z][\s]*\d[A-Z]\d\b/i', '/\b[ABCEGHJKLMNPRSTVXY]\d[A-Z][\s]*\d[A-Z]\d\b/i', '/\b[A-Z]{1,2}\d[A-Z\d]?[\s]*\d[ABD-HJLNP-UW-Z]{2}\b/i');
-    private $poBoxRegexes = array('/\bp(ost)?[.\s-]?o(ffice)?[.\s-]+box[\s]+[a-zA-Z0-9]+\b/i');
-    private $locationRegexes = array('/^([a-z]+)[\s]+([a-z]+)[\s,]?([a-zA-Z0-9]+)?$/i');
+    private $poBoxRegexes = array('/\bp(ost)?[.\s-]?o(ffice)?[.\s-]+b(ox)?[\s]+[a-z0-9]+\b/i');
+    private $locationRegexes = array('/^([a-z]+)[\s]+([a-z]+)[\s,]+([a-z0-9-]+)+$/i');
     private $countryRegexes = array('/^[^\s]+$/i');
-    private $street1Regexes = array('/^(\d+[\s]*(-[\s]*[\d]+)?[\s]+[a-z]+[\s]+[a-z]+)$/i');
+    private $street1Regexes = array('/^(\d+[\s]*(-[\s]*[\d]+)?[\s]+[a-z]+([\s]+[a-z]+))+\b/i');
         
     public function __construct($mappings, $type) {
         $this->mappings = $mappings;
         $this->type = $type;
-        
         $this->parser = new CompoundDelimitedParser(null, 'string');
     }
     
