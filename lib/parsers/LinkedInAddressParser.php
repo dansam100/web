@@ -28,7 +28,7 @@ class LinkedInAddressParser
     private $poBoxRegexes = array('/\bp(ost)?[.\s-]?o(ffice)?[.\s-]+b(ox)?[\s]+[a-z0-9]+\b/i');
     private $locationRegexes = array('/^([a-z]+)[\s]+([a-z]+)[\s,]+([a-z0-9-]+)+$/i');
     private $countryRegexes = array('/^[^\s]+$/i');
-    private $street1Regexes = array('/^(\d+[\s]*(-[\s]*[\d]+)?[\s]+[a-z]+([\s]+[a-z]+))+\b/i');
+    private $street1Regexes = array('/^\b((\d+[\s]*(-[\s]*[\d]+)?){1}[\s]+((E.*|S.*|N.*|W.*)[\s]+)?[a-z]+([\s]+[a-z]+)([\s]+(E.*|S.*|N.*|W.*))?)+\b/i');
         
     public function __construct($mappings, $type) {
         $this->mappings = $mappings;
