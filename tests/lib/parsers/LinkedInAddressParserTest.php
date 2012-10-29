@@ -44,7 +44,7 @@ EOL;
     private $simpleAddressWithCompanyAndName2 = <<<EOL
     MARY ROE
     MEGASYSTEMS INC
-    421 E DRACHMAN SUITE 5A
+    421 E DRACHMAN ST SUITE 5A
     TUCSON AZ 85705-7598
     USA
 EOL;
@@ -57,7 +57,7 @@ EOL;
     private $simpleAddressWithComplexPostalCode3 = <<<EOL
     JOHN "GULLIBLE" DOE
     CENTER FOR FINANCIAL ASSISTANCE TO DEPOSED NIGERIAN ROYALTY
-    421 E DRACHMAN
+    421 E DRACHMAN ST
     TUCSON AZ 85705-7598
     USA
 EOL;
@@ -91,7 +91,6 @@ EOL;
             new \SimpleXMLElement($createTag($this->simpleAddressWithName3)),
             new \SimpleXMLElement($createTag($this->simpleAddressWithComplexPostalCode3))
         );
-        $this->parser = new XMLSimpleParser(null, 'Data');
     }
 
     /**
@@ -108,7 +107,7 @@ EOL;
     public function testParse() {
         $this->object = new LinkedInAddressParser($this->mappings, $this->type);
         foreach($this->testAddresses1 as $testAddress){
-            $result = $this->object->parse($testAddress, $this->parser);
+            $result = $this->object->parse($testAddress);
             //check stuff
             $this->assertInstanceOf($this->type, $result);
             $this->assertEquals("11 Street Name", $result->street1());
@@ -120,7 +119,7 @@ EOL;
         }
         $this->object = new LinkedInAddressParser($this->mappings, $this->type);
         foreach($this->testAddresses2 as $testAddress){
-            $result = $this->object->parse($testAddress, $this->parser);
+            $result = $this->object->parse($testAddress);
             //check stuff
             $this->assertInstanceOf($this->type, $result);
             $this->assertEquals("11 Street Name", $result->street1());
@@ -132,10 +131,10 @@ EOL;
         }
         $this->object = new LinkedInAddressParser($this->mappings, $this->type);
         foreach($this->testAddresses3 as $testAddress){
-            $result = $this->object->parse($testAddress, $this->parser);
+            $result = $this->object->parse($testAddress);
             //check stuff
             $this->assertInstanceOf($this->type, $result);
-            $this->assertEquals("421 E DRACHMAN", $result->street1());
+            $this->assertEquals("421 E DRACHMAN ST", $result->street1());
             $this->assertEmpty($result->street2());
             $this->assertEquals("TUCSON", $result->city());
             $this->assertEquals("85705-7598", $result->postalCode());

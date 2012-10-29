@@ -24,11 +24,16 @@ class LinkedInAddressParser
     private $parser;
     
     //format: USA, Canada(liberal), Canada(strict), UK
-    private $postalCodeRegexes = array('/\b\d{5}(?(?=-)-\d{4})\b/i', '/\b[A-Z]\d[A-Z][\s]*\d[A-Z]\d\b/i', '/\b[ABCEGHJKLMNPRSTVXY]\d[A-Z][\s]*\d[A-Z]\d\b/i', '/\b[A-Z]{1,2}\d[A-Z\d]?[\s]*\d[ABD-HJLNP-UW-Z]{2}\b/i');
+    private $postalCodeRegexes = array('/\b\d{5}(?(?=-)-\d{4})\b/i',
+                                        '/\b[A-Z]\d[A-Z][\s]*\d[A-Z]\d\b/i',
+                                        '/\b[ABCEGHJKLMNPRSTVXY]\d[A-Z][\s]*\d[A-Z]\d\b/i',
+                                        '/\b[A-Z]{1,2}\d[A-Z\d]?[\s]*\d[ABD-HJLNP-UW-Z]{2}\b/i'
+                                    );
     private $poBoxRegexes = array('/\bp(ost)?[.\s-]?o(ffice)?[.\s-]+b(ox)?[\s]+[a-z0-9]+\b/i');
     private $locationRegexes = array('/^([a-z]+)[\s]+([a-z]+)[\s,]+([a-z0-9-]+)+$/i');
     private $countryRegexes = array('/^[^\s]+$/i');
-    private $street1Regexes = array('/^\b((\d+[\s]*(-[\s]*[\d]+)?){1}[\s]+((E.*|S.*|N.*|W.*)[\s]+)?[a-z]+([\s]+[a-z]+)([\s]+(E.*|S.*|N.*|W.*))?)+\b/i');
+    private $street1Regexes = 
+            array('/^\b((?:\d+[\s]*(?:-[\s]*[\d]+)?){1}(?:)((?:(?:[\s]+)(?:E[\S]*|S[\S]*|N[\S]*|W[\S]*)))?[\s]+([a-z]+)(?:[\s]+[a-z]+)([\s]+(?:E[ast]*|S[outh]*|N[orth]*|W[est]*))?)+\b/i');
         
     public function __construct($mappings, $type) {
         $this->mappings = $mappings;
@@ -37,13 +42,13 @@ class LinkedInAddressParser
     }
     
     /**
-     * 
+     * Parses the address
      * @param mixed $content
      * @param IParser $callback
      */
-    public function parse($content, $callback)
+    public function parse($content, $callback = null)
     {
-        $string = $callback->getValue($content, ".");
+        $string = (isset($callback)) ? $callback->getValue($content, ".") : $content;
         //certain things can be matched right away
         $this->postalCode = $this->getMatch($string, $this->postalCodeRegexes);
         $this->street2 = $this->getMatch($string, $this->poBoxRegexes);
