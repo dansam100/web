@@ -1,6 +1,5 @@
 <?php
 namespace Rexume\Config;
-require_once("ProtocolMapping.php");
 
 /**
  * ProtocolMapping.php

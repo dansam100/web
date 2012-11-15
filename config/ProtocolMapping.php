@@ -170,5 +170,3 @@ class ProtocolMapping
         return array_values($this->bindings);
     }
 }
-
-?>

@@ -1,3 +1,6 @@
 [submodule "lib/doctrine2-orm"]
 	path = lib/doctrine2-orm
 	url = git@github.com:dansam100/doctrine2.git
+[submodule "lib/protomapper"]
+	path = lib/protomapper
+	url = git@github.com:dansam100/protomapper.git

@@ -1,10 +1,5 @@
 <?php
 namespace Rexume\Config;
-//require_once(LIBRARIES_FOLDER . DS . "Bootstrap.php");
-//require_once("AuthorizationKey.php");
-//require_once("Sitemap.php");
-//require_once("ProtocolDefinition.php");
-
 /**
 * Exception thrown when loading invalid configuration files
 */
