@@ -38,15 +38,17 @@ class VerificationController extends Controller
         $query      = $protocol->query();
         $reader     = new OAuthReader($this->protocol());
         $page       = $reader->read($url, $query, $this->model->oauthToken(), $this->model->oauthTokenSecret());
-        $dataArray  = $protocol->parse($page);
+        $dataArray  = $protocol->parseOne($page);
+        
+        //var_dump($dataArray->experiences[1]->activities);
+        //var_dump(Authentication::currentUser()->experiences[0]);
+        var_dump($dataArray);
+        //print_r($dataArray);
         
         foreach($dataArray as $entity)
         {
             
         }
-        var_dump($dataArray[0]->experiences[0]->activities);
-        //var_dump($dataArray);
-        //print_r($dataArray);
     }
     
     public function protocol($protocol = null)

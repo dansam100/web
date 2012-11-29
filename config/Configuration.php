@@ -8,7 +8,7 @@ class ConfigurationLoaderException extends \Exception{}
 /**
     * Loader for web.config configuration parameters
     */
-class Configuration extends \Rexume\Lib\Parsers\ProtocolParser
+class Configuration extends \ProtoMapper\Config\ConfigLoader
 {    
     const WEB_CONFIG = "web.config.xml";
     
@@ -27,7 +27,6 @@ class Configuration extends \Rexume\Lib\Parsers\ProtocolParser
     private $default_sitemap;
     private $siteKey;
     private $authentication;
-    private $protocol;
 
     public function __construct()
     {
@@ -135,12 +134,11 @@ class Configuration extends \Rexume\Lib\Parsers\ProtocolParser
         //LOAD: Load protocols for parsing data
         if(isset($this->xml->protocols["configuration"])){
             $protocols_config = join(DS, array(dirname($configLocation), $this->xml->protocols["configuration"]));
-            if(!file_exists($sitemap_config))
+            if(!file_exists($protocols_config))
             {
                 throw new ConfigurationLoaderException("Protcols configuration file: '" . $protocols_config . " could not be found!");
             }
-            $protocol_xml = simplexml_load_file($protocols_config);
-            $this->protocol = $this->parseProtocols($protocol_xml);
+            $this->load($protocols_config);
         }
     }
     
@@ -160,7 +158,7 @@ class Configuration extends \Rexume\Lib\Parsers\ProtocolParser
      */
     public function getDataProtocol($name)
     {
-        return $this->protocol[$name]['Data'];
+        return $this->protocols[$name]['Data'];
     }
     
     /**
@@ -170,7 +168,7 @@ class Configuration extends \Rexume\Lib\Parsers\ProtocolParser
      */
     public function getAuthenticationProtocol($name)
     {
-        return $this->protocol[$name]['Authentication'];
+        return $this->protocols[$name]['Authentication'];
     }
     
     /**

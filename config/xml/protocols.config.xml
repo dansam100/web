@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <protocols>
-    <definition name="LinkedIn" type="REST" parser="Rexume\Lib\Parsers\XMLSimpleParser">
+    <definition name="LinkedIn" type="REST" parser="ProtoMapper\Parsers\XMLSimpleParser">
         <read contenttype="Authentication" scope="https://api.linkedin.com/v1/people/~">
             <query>:(id,first-name,last-name)</query>
             <object name="person" type="User">
@@ -11,7 +11,7 @@
         </read>
         <read contenttype="Data" scope="https://api.linkedin.com/v1/people/~">
             <query>:(id,first-name,last-name,main-address,headline,summary,interests,educations,positions,volunteer,languages,phone-numbers,im-accounts,skills)</query>
-            <object name="person" type="User">
+            <object name="person" type="User" default="Rexume\Lib\Authentication\Authentication::currentUser()">
                 <bind source="isAdmin" target="isAdmin" type="boolean" default="false"/>
                 <bind source="isActive" target="isActive" type="boolean" default="true"/>
                 <bind source="isVerified" target="isVerified" type="boolean" default="false"/>
@@ -30,7 +30,7 @@
             <mappings>
                 <!--object binds find mappings by name-->
                 <mapping name="person" type="Profile">
-                    <bind source="main-address" target="defaultAddress" type="Address" parser="Rexume\Lib\Parsers\LinkedInAddressParser">
+                    <bind source="main-address" target="defaultAddress" type="Address" parser="ProtoMapper\Parsers\SimpleAddressParser">
                         <data>
                             <bind source="." target="street1" type="string"/>
                             <bind source="." target="street2" type="string"/>
@@ -46,20 +46,20 @@
                 <mapping name="positions/position" type="Experience">
                     <bind source="title" target="position" type="string"/>
                     <bind source="summary" target="description" type="string" />
-                    <bind source="start-date" target="startDate" parser="Rexume\Lib\Parsers\XmlDateParser" type="date">
+                    <!--<bind source="start-date" target="startDate" parser="ProtoMapper\Parsers\XmlDateParser" type="date">
                         <data>
                             <bind source="month" target="month" type="integer"/>
                             <bind source="year" target="year" type="integer"/>
                         </data>
                     </bind>
-                    <bind source="end-date" target="endDate" parser="Rexume\Lib\Parsers\XmlDateParser" type="date">
+                    <bind source="end-date" target="endDate" parser="ProtoMapper\Parsers\XmlDateParser" type="date">
                         <data>
                             <bind source="month" target="month" type="integer"/>
                             <bind source="year" target="year" type="integer"/>
                         </data>
-                    </bind>
+                    </bind>-->
                     <bind source="is-current" target="isCurrent" type="boolean" />
-                    <bind source="summary" target="activities" parser="Rexume\Lib\Parsers\NewlineDelimitedParser" type="Activity">
+                    <bind source="summary" target="activities" parser="ProtoMapper\Parsers\NewlineDelimitedParser" type="Activity">
                         <data>
                             <bind source="." target="description" type="string" />
                         </data>
@@ -76,7 +76,7 @@
                     <bind source="im-account-name" target="value" type="string"/>
                 </mapping>
                 <mapping name="main-address" type="Address">
-                    <bind source="." target="address" parser="LinkedInAddressParser" />
+                    <bind source="." target="address" parser="ProtoMapper\Parsers\SimpleAddressParser" />
                 </mapping>
                 <mapping name="phone-numbers/phone-number" type="Media">
                     <bind source="phone-type" target="name" default="Phone" type="string" />
@@ -111,7 +111,7 @@
                     <bind source="school-name" target="school" type="string" />
                     <bind source="field-of-study" target="program" type="string" />
                     <bind source="degree" target="status" type="string" />
-                    <bind source="start-date" target="startDate" parser="Rexume\Lib\Parsers\XmlDateParser" type="date">
+                    <bind source="start-date" target="startDate" parser="ProtoMapper\Parsers\XmlDateParser" type="date">
                         <data>
                             <bind source="year" target="year" type="integer" />
                         </data>

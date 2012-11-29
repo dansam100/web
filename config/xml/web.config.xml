@@ -23,7 +23,7 @@
 			<authorizeToken>/uas/oauth/authenticate</authorizeToken>
 			<accessToken>/uas/oauth/accessToken</accessToken>
 			<scope>/v1/people/~</scope>
-			<callback>http://localhost/rexume/login/linkedin</callback>
+			<callback>http://rexume.local/login/linkedin</callback>
 			<apiKey>6npecl1f70xq</apiKey>
 			<sharedSecret>4qC73dDPWEH09LsN</sharedSecret>
 		</authentication>

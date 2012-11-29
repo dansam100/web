@@ -9,5 +9,3 @@ class VerificationView extends StaticView
         $this->setBody("verify/verify.inc");
     }
 }
-
-?>

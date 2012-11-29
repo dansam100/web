@@ -13,6 +13,7 @@ define("LIBRARIES_FOLDER", SITE_ROOT . DS . "lib");
 define("CONFIG_FOLDER", SITE_ROOT . DS . "config");
 
 require_once(LIBRARIES_FOLDER . DS . "Util.php");
+require_once(LIBRARIES_FOLDER . DS . "protomapper" . DS . "AutoLoad.php");
 
 //setup doctrine stuff
 if (!class_exists("Doctrine\Common\Version", false))

@@ -66,4 +66,8 @@ class Controller implements IController
     {
         return $this->model;
     }
+    
+    function redirect($url){
+        header("location: /$url");
+    }
 }

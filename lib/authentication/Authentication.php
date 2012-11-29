@@ -7,7 +7,7 @@ use \Rexume\Application\Models\Enums;
  */
 class AuthenticationException extends \Exception
 {
-    public function __construct($message, $code, $previous) {
+    public function __construct($message = null, $code = null, $previous = null) {
         parent::__construct($message, $code, $previous);
     }
 }
@@ -53,7 +53,7 @@ class Authentication
         $this->siteKey = \Rexume\Config\Configuration::getInstance()->getSiteKey();
     }
     
-    public function getName()
+    public function name()
     {
         return $this->name;
     }

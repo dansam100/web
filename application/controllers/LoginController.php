@@ -25,7 +25,7 @@ class LoginController extends Controller
         $authentication = new Authentication\Authentication();
         if($authentication->validateSession())
         {
-            header("location: /home"); //redirect to home screen
+            $this->redirect("home"); //redirect to home screen
         }
     }
 
@@ -43,10 +43,10 @@ class LoginController extends Controller
                 $auth_success = $authentication->login($email, $password);
                 if($auth_success == Authentication\AuthenticationStatus::get()->SUCCESS)
                 {
-                    header("location: /rexume/home");
+                    $this->redirect("home");
                 }
                 else if($auth_success == Authentication\AuthenticationStatus::get()->NOT_VERIFIED){
-                    header("location: /rexume/verify?protocol=$authentication->getName()");
+                    $this->redirect('verify?protocol='.$authentication->name());
                 }
                 else{
                     $this->error = "Invalid login";
@@ -58,7 +58,7 @@ class LoginController extends Controller
                  throw $e;
             }
         }
-        else header("location: /rexume/home");
+        else $this->redirect("home");
     }
 
     public function linkedin()
@@ -79,10 +79,10 @@ class LoginController extends Controller
                     if($auth_success == Authentication\AuthenticationStatus::get()->SUCCESS)
                     {
                         //header("location: /rexume/home");
-                        header("location: /rexume/verify?protocol=" . $authentication->getName());
+                        $this->redirect('verify?protocol='.$authentication->name());
                     }
                     else if($auth_success == Authentication\AuthenticationStatus::get()->NOT_VERIFIED){
-                        header("location: /rexume/verify?protocol=" . $authentication->getName());
+                        $this->redirect('verify?protocol='.$authentication->name());
                     }
                     else{
                         $this->error = "Invalid login";
@@ -90,7 +90,7 @@ class LoginController extends Controller
                 }
             }
             else //header("location: /rexume/home");
-                header("location: /rexume/verify?protocol=" . $authentication->getName());
+                $this->redirect('verify?protocol='.$authentication->name());
         }
         catch(Exception $e){
             //log the error and continue
