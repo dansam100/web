@@ -93,5 +93,13 @@
             }
             return $this->address->country;
 		}
+        
+        public function isDefault($isDefault = null)
+		{
+			if(isset($isDefault))
+            {
+                $this->user->defaultAddress = $this;
+            }
+            return ($this->address == $this->user->defaultAddress);
+		}
     }
-?>

@@ -96,4 +96,12 @@
 		{
 			$this->body = $body;
 		}
+        
+        function clearContent()
+        {
+            $this->body = null;
+            $this->header = null;
+            $this->footer = null;
+            $this->sidebar = null;
+        }
 	}

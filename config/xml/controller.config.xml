@@ -18,6 +18,12 @@
         <controller>Rexume\Application\Controllers\HomeScreenController</controller>
         <defaultAction>display</defaultAction>
     </map>
+    <map name="data">
+        <model>Rexume\Application\Models\DataModel</model>
+        <view>Rexume\Application\Views\DataView</view>
+        <controller>Rexume\Application\Controllers\DataController</controller>
+        <defaultAction>display</defaultAction>
+    </map>
     <!--Match all invalid URLS-->
     <map name="*">
         <model>Rexume\Application\Models\NavigationModel</model>

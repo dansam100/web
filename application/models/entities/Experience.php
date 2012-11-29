@@ -14,11 +14,14 @@
 		protected $department;
 		/** @Column(type="string") */
 		protected $description;
-        /** @Column(type="datetime") */
-		protected $startDate;
-		/** @Column(type="datetime") */
-		protected $endDate;
-        /** @Column(type="boolean") */
+        /**
+	     * @var Duration[]
+		 * 
+		 * @OneToMany(targetEntity="Duration", mappedBy="experience")
+		 * 
+	     */
+		protected $durations;
+        /** @Column(type="boolean", name="current") */
         protected $isCurrent;
 		/**
 	     * @ManyToOne(targetEntity="ExperienceType")
@@ -46,6 +49,7 @@
         public function __construct()
 		{
 			$this->activities = new ArrayCollection();
+            $this->durations = new ArrayCollection();
 		}
 		
 		public function user($user = null)

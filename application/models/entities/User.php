@@ -37,7 +37,27 @@
 		protected $isActive;
 		/** @Column(type="datetime") */
 		protected $editTime;
-		
+		/**
+         * @var Media
+         * 
+	     * @ManyToOne(targetEntity="Media", inversedBy="profiles")
+		 * @JoinColumn(name="defaultEmail", referencedColumnName="id")
+	     */
+        protected $defaultEmail;
+        /**
+         * @var Media
+         * 
+	     * @ManyToOne(targetEntity="Media", inversedBy="profiles")
+		 * @JoinColumn(name="defaultPhone", referencedColumnName="id")
+	     */
+        protected $defaultPhone;
+        /**
+         * @var UserAddress
+         * 
+	     * @ManyToOne(targetEntity="UserAddress", inversedBy="profiles")
+		 * @JoinColumn(name="defaultAddressId", referencedColumnName="id")
+	     */
+        protected $defaultAddress;
 		/**
 		 * @var Profile[]
 		 *

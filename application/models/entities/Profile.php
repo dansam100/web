@@ -19,18 +19,24 @@
 		protected $status;
 		
 		/**
+         * @var Media
+         * 
 	     * @ManyToOne(targetEntity="Media", inversedBy="profiles")
 		 * @JoinColumn(name="defaultEmail", referencedColumnName="id")
 	     */
 		protected $defaultEmail;
 		/**
+         * @var Media
+         * 
 	     * @ManyToOne(targetEntity="Media", inversedBy="profiles")
 		 * @JoinColumn(name="defaultPhone", referencedColumnName="id")
 	     */
 		protected $defaultPhone;
 		/**
-	     * @ManyToOne(targetEntity="Address", inversedBy="profiles")
-		 * @JoinColumn(name="defaultAddress", referencedColumnName="id")
+         * @var UserAddress
+         * 
+	     * @ManyToOne(targetEntity="UserAddress", inversedBy="profiles")
+		 * @JoinColumn(name="defaultAddressId", referencedColumnName="id")
 	     */
 		protected $defaultAddress;
 		/**

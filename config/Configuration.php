@@ -10,7 +10,7 @@ class ConfigurationLoaderException extends \Exception{}
     */
 class Configuration extends \ProtoMapper\Config\ConfigLoader
 {    
-    const WEB_CONFIG = "web.config.xml";
+    const WEB_CONFIG = "xml/web.config.xml";
     
     private static $appConfig;
 
@@ -27,6 +27,7 @@ class Configuration extends \ProtoMapper\Config\ConfigLoader
     private $default_sitemap;
     private $siteKey;
     private $authentication;
+    private $restConfig;
 
     public function __construct()
     {
@@ -72,7 +73,7 @@ class Configuration extends \ProtoMapper\Config\ConfigLoader
         elseif(isset($this->xml->database["configuration"])) 
         {
             $dbconfig_path = join(DS, array(dirname($configLocation), $this->xml->database["configuration"]));
-            if(file_exists($dbconfig_path))
+            if(is_readable($dbconfig_path))
             {
                 $dbxml = simplexml_load_file($dbconfig_path);
                 $this->db_name = (string)$dbxml->database["name"];
@@ -88,7 +89,7 @@ class Configuration extends \ProtoMapper\Config\ConfigLoader
         //LOAD: Site map configurations for redirecting to the right controllers and models
         if(isset($this->xml->sitemap["configuration"])){ 
             $sitemap_config = join(DS, array(dirname($configLocation), $this->xml->sitemap["configuration"]));
-            if(!file_exists($sitemap_config))
+            if(!is_readable($sitemap_config))
             {
                 throw new ConfigurationLoaderException("Controller configuration file: '" . $sitemap_config . " could not be found!");
             }
@@ -119,8 +120,8 @@ class Configuration extends \ProtoMapper\Config\ConfigLoader
         foreach($auths as $auth)
         {
             $this->authentication[(string)$auth['name']] = new AuthorizationKey(
-                (string)$auth['name'], 
-                (string)$auth->apiKey, 
+                (string)$auth['name'],
+                (string)$auth->apiKey,
                 (string)$auth->sharedSecret,
                 (string)$auth->apiRoot,
                 (string)$auth->requestToken,
@@ -132,13 +133,25 @@ class Configuration extends \ProtoMapper\Config\ConfigLoader
         }
         
         //LOAD: Load protocols for parsing data
-        if(isset($this->xml->protocols["configuration"])){
-            $protocols_config = join(DS, array(dirname($configLocation), $this->xml->protocols["configuration"]));
-            if(!file_exists($protocols_config))
+        if(isset($this->xml->protocols['configuration'])){
+            $protocols_config = join(DS, array(dirname($configLocation), $this->xml->protocols['configuration']));
+            if(!is_readable($protocols_config))
             {
                 throw new ConfigurationLoaderException("Protcols configuration file: '" . $protocols_config . " could not be found!");
             }
             $this->load($protocols_config);
+        }
+        
+        //LOAD: load data configurations
+        if(isset($this->xml->interfaces['configuration']))
+        {
+            $data_config = join(DS, array(dirname($configLocation), $this->xml->interfaces['configuration']));
+            if(!is_readable($data_config)){
+                throw new ConfigurationLoaderException("Protcols configuration file: '" . $data_config . " could not be found!");
+            }
+            
+            $this->restConfig = new ReadConfiguration();
+            $this->restConfig->load($data_config);
         }
     }
     
@@ -149,6 +162,11 @@ class Configuration extends \ProtoMapper\Config\ConfigLoader
     public function getSiteKey()
     {
         return $this->siteKey;
+    }
+    
+    public function getInterfaceConfiguration()
+    {
+        return $this->restConfig;
     }
     
     /**

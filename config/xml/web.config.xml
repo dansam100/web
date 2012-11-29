@@ -12,7 +12,7 @@
 	<database configuration="db.config.xml"/>
 	<sitemap configuration="controller.config.xml" />
 	<protocols configuration="protocols.config.xml" />
-    
+    <interfaces configuration="interface.config.xml" />
 	<!--TEMPLATES-->
 	<templates location="application/views/templates.xml" />
 	<deployment mode="Development">

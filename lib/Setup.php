@@ -68,7 +68,7 @@ function callHook() {
 			if(!$siteMap->isDefault())
 			{
 				//TODO: fix navigation so that it goes to root/controller at all times
-                header("location: login");
+                header("location: /login");
 			}
 		}	
 	
@@ -83,7 +83,7 @@ function callHook() {
 		
 		$controller = $siteMap->getController();
 		$dispatch = new $controller($siteMap->getModel(), $siteMap->getView(), $action);
-		if (method_exists($dispatch, $action)) {
+		if (is_callable(array($dispatch, $action))) {
 			call_user_func_array(array($dispatch, $action), $queryString);
 		}
 		else {
