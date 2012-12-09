@@ -26,7 +26,7 @@ class ReadType {
         return $this->class;
     }
     
-    public function getBase(){
+    public function getBaseType(){
         return $this->base;
     }
     

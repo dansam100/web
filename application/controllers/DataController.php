@@ -1,5 +1,6 @@
 <?php
 namespace Rexume\Application\Controllers;
+use Rexume\Lib\Authentication\Authentication as Authentication;
 /**
  * Description of DataController
  *
@@ -24,7 +25,8 @@ class DataController extends Controller {
     public function __construct($model, $view, $action) {
         $this->configuration = \Rexume\Config\Configuration::getInstance()->getInterfaceConfiguration();
         parent::__construct($model, $view, $action);
-        $this->model = new $model(Authentication::currentUser());
+        $this->model = new $model(Authentication::currentUser(), $this->configuration);
+        //TEST: $this->model = new $model(\DB::getOne('User', array('memberId' => 'tDz75GX1SG')), $this->configuration);
     }
     
     /**
@@ -52,18 +54,11 @@ class DataController extends Controller {
             if(isset($interface)){
                 //all interfaces must return defined types
                 $type = $this->configuration->getType($interface->getType());
-                $dataObjects = null;
                 //type must be exposed through the interface definition
                 if(isset($type)){
                     //discriminate between interfaces that expect to return collections and those that don't.
-                    if($interface->getIsCollection()){
-                        //TODO: implement stub for 'getDataObjects'
-                        $dataObjects = $this->model->getDataObjects($type, $where);
-                    }
-                    else{
-                        //TODO: implement stub for 'getDataObject'
-                        $dataObjects = $this->model->getDataObject($type, $where);
-                    }
+                    //the model will take care of the rest of the work
+                    $this->model->setQuery($type, $where, $interface->getIsCollection());
                 }
             }
         }

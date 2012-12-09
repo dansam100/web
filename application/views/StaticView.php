@@ -19,7 +19,6 @@
 	class StaticView implements IStaticView, IView
 	{
 		protected $controller;
-		protected $model;
 		protected $action;
 		
 		private $header = "includes/header.inc";
@@ -31,7 +30,6 @@
 		{
 			$this->controller = $controller;
 			$this->action = $action;
-			$this->model = $controller->getModel();
 		}
 		
 		function getController()
@@ -46,7 +44,7 @@
 		
 		function getModel()
 		{
-			return $this->model;
+			return $this->controller->getModel();
 		}
 		
 		function render()

@@ -33,6 +33,23 @@ class DB {
         }
     }
     
+    public static function get($entityType, $where)
+    {
+        try{
+            $repository = self::getInstance()->getRepository($entityType);
+            if(!empty($repository))
+            {
+                return $repository->findBy($where);
+            }
+        }
+        catch(Exception $e)
+        {
+            //swallow
+            throw $e;
+        }
+        return null;
+    }
+    
     public static function getOne($entityType, $where)
     {
         try{

@@ -31,6 +31,24 @@ class ReadConfiguration {
         return null;
     }
     
+    public function getTypes(){
+        if(isset($this->types)){
+            return array_values($this->types);
+        }
+        return null;
+    }
+    
+    public function getTypeByBase($base){
+        if(isset($this->types)){
+            foreach($this->types as $type){
+                if($type->getBaseType() == $base){
+                    return $type;
+                }
+            }
+        }
+        return null;
+    }
+    
     public function load($file_config){
         $data_config_xml = simplexml_load_file($file_config);
         $this->interfaces = array(); $this->types = array();
@@ -59,10 +77,10 @@ class ReadConfiguration {
                 array_map(
                     function($item){
                         if(isset($item->limit)){ 
-                            return new AttributeRef((string)$item->name, (int)$item->limit);    
+                            return new AttributeRef((string)$item['name'], (int)$item['limit']);    
                         }
                         else{
-                            return new AttributeRef((string)$item->name);
+                            return new AttributeRef((string)$item['name']);
                         }
                     },
                     $type->xpath('attribute')

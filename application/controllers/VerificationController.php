@@ -41,8 +41,11 @@ class VerificationController extends Controller
         $dataArray  = $protocol->parseOne($page);
         
         //var_dump($dataArray->experiences[1]->activities);
-        //var_dump(Authentication::currentUser()->experiences[0]);
-        var_dump($dataArray);
+        var_dump(Authentication::currentUser()->experiences[0]);
+        var_dump(Authentication::currentUser()->experiences[0]->durations[0]);
+        var_dump(Authentication::currentUser()->addresses[0]);
+        \DB::save(Authentication::currentUser());
+        //var_dump($dataArray);
         //print_r($dataArray);
         
         foreach($dataArray as $entity)

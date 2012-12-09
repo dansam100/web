@@ -20,7 +20,7 @@
     </map>
     <map name="data">
         <model>Rexume\Application\Models\DataModel</model>
-        <view>Rexume\Application\Views\DataView</view>
+        <view>Rexume\Application\Views\XMLDataView</view>
         <controller>Rexume\Application\Controllers\DataController</controller>
         <defaultAction>display</defaultAction>
     </map>

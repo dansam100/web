@@ -8,16 +8,16 @@ namespace Rexume\Lib\Formatters;
 class SimpleXMLFormatter {
     protected $object;
     
-    public function __construct($object) {
+    public function __construct($object = null) {
         $this->object = $object;
     }
     
     public function format($object = null){
         if(isset($object)){
-            $this->encodeObj($object);
+            return $this->encodeObj($object);
         }
         else{
-            $this->encodeObj($this->object);
+            return $this->encodeObj($this->object);
         }
     }
     
@@ -37,17 +37,23 @@ class SimpleXMLFormatter {
 	/**
 	 *    Encode an object as XML string
 	 *    @param        Object|array $data
-	 *    @param        string $root_node        
-	 *    @param        int $depth                Used for indentation
+	 *    @param        string $node        
+	 *    @param        int $depth Used for indentation
 	 *    @return        string $xml
 	 */
 	private function encode($data, $node, $depth) {
-		$xml .= str_repeat("\t", $depth);
-		$xml .= "<$node>\n";
+		$xml = str_repeat("\t", $depth);
+		$xml .= "<$node>";
 		foreach($data as $key => $val) {
 			if(is_array($val) || is_object($val)) {
-				$xml .= self::encode($val, $key, ($depth + 1));
-			} else {
+                if($val instanceof \Rexume\Config\DataObject){
+                    $xml .= self::encode($val, $val->class, ($depth + 1));
+                }
+				else{
+                    $xml .= self::encode($val, $key, ($depth + 1));
+                }
+			}
+            else {
 				$xml .= str_repeat("\t", ($depth + 1));
 				$xml .= "<$key>" . htmlspecialchars($val) . "</$key>\n";
 			}
