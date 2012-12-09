@@ -79,7 +79,7 @@ class Authentication
         return hash_hmac('sha512', $data, $this->siteKey);
     }
     
-    function generateString($length, $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
+    protected function generateString($length, $charset='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789')
     {
         $str = '';
         $count = strlen($charset);
@@ -216,7 +216,7 @@ class Authentication
      * @param string $memberId An alternative to the password for oAuth authentications
      * @return FlagsEnum the success code of the login
      */
-    public function login($username, $password, $memberId = nullw)
+    public function login($username, $password, $memberId = null)
     {
         try
         {
@@ -310,6 +310,7 @@ class Authentication
             session_regenerate_id();    //regenerate the session id
             $token = $this->hashData($this->generateSalt() . $_SERVER['HTTP_USER_AGENT']);  //create a new token for the user
             $session->token($token);
+            $session->sessionId(session_id());
             \DB::save($session);    //update the token. if the flush fails, the user will have to login again
             $_SESSION['token'] = $token;    //replace the session token
         }
