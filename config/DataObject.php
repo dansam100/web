@@ -7,8 +7,8 @@ namespace Rexume\Config;
  * @author sam.jr
  */
 class DataObject {
-    private $id;
-    private $class;
+    public $id;
+    protected $class;
     
     public function __construct($id = null, $class = null) {
         $this->id = $id;

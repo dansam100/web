@@ -61,8 +61,7 @@ class DataModel extends Model
         $this->createOutput($results, $readType);
     }
     
-    public function createOutput($entities, $readType){ 
-        $objects = array();
+    public function createOutput($entities, $readType){
         $attributes = $readType->getAttributes();
         if(isset($entities)){
             if(is_collection($entities)){
@@ -84,9 +83,15 @@ class DataModel extends Model
             return $object;
         }
         else{
-            $dataObject = new DataObject($object->getId(), $class);
-            $readType = $this->configuration->getTypeByBase($class);
-            return $this->setAttributes($dataObject, $object, $readType->getAttributes());
+            $dataObject = null;
+            if(is_callable(array($object, 'getId'))){
+                $dataObject = new DataObject($object->getId(), $class);
+                $readType = $this->readConfiguration->getTypeByBase($class);
+                return $this->setAttributes($dataObject, $object, $readType->getAttributes());
+            }
+            else{
+                return $object;
+            }
         }
     }
     
@@ -102,8 +107,11 @@ class DataModel extends Model
                         if(isset($limit)){
                             $target = $target->slice(0, $limit);
                         }
-                        //var_dump($target);
-                        $dataObject->{$attribute->getName()} = array_map(array($this, 'createDataObject'), $target);
+                        $subObjects = array();
+                        foreach($target as $value){
+                            $subObjects[] = $this->createDataObject($value); 
+                        }
+                        $dataObject->{$attribute->getName()} = $subObjects;
                     }
                 }
                 else{

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<data formatter="SimpleXMLFormatter">
+<data>
     <types>
+        <object class="User" base="User">
+            <attribute name="firstName" />
+            <attribute name="lastName" />
+            <attribute name="degrees" />
+            <attribute name="experiences" />
+        </object>
         <object class="Profile" base="Profile">
             <attribute name="objective" />
             <attribute name="firstName" />
             <attribute name="lastName" />
             <attribute name="status" />
-            <attribute name="defaultEmail" />
-            <attribute name="defaultPhone" />
-            <attribute name="defaultAddress" />
         </object>
         <object class="DetailedProfile" base="Profile">
             <attribute name="objective" />
             <attribute name="firstName" />
             <attribute name="lastName" />
             <attribute name="status" />
-            <attribute name="defaultEmail" />
-            <attribute name="defaultPhone" />
-            <attribute name="defaultAddress" />
             <attribute name="addresses" /> 
             <attribute name="media" />
             <attribute name="languages" />
@@ -37,12 +37,22 @@
         </object>
         <object class="Experience" base="Experience">
             <attribute name="position" />
+            <attribute name="company" />
             <attribute name="description" />
             <attribute name="department" />
-            <attribute name="startdate" />
-            <attribute name="endDate" />
+            <attribute name="durations" />
             <attribute name="isCurrent" />
-            <attribute name="activities" />
+            <attribute name="achievements" />
+        </object>
+        <object class="Company" base="Company">
+            <attribute name="name" />
+        </object>
+        <object class="Achievement" base="Achievement">
+            <attribute name="description" />
+        </object>
+        <object class="Duration" base="Duration">
+            <attribute name="startDate" />
+            <attribute name="endDate" />
         </object>
         <object class="Media" base="Media">
             <attribute name="type" />
@@ -70,6 +80,7 @@
         </object>
     </types>
     <interfaces scope="resumes">
+        <interface name="user" type="User" collection="true" />
         <interface name="profile" type="Profile" />
         <interface name="detail" type="DetailedProfile" />
         <interface name="educations" type="Education" collection="true" />
