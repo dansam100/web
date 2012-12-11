@@ -67,7 +67,7 @@ class LoginController extends Controller
         $authentication = new Authentication\LinkedInAuth();
         try{
             //only login if the user is not already logged in
-            if(!$authentication->validateSession()){    
+            if(!$authentication->validateSession()){
                 $login_model = $authentication->getAuthentication();
                 //use the returned login model to authenticate the user
                 if(isset($login_model))

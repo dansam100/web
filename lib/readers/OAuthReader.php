@@ -44,7 +44,7 @@ class OAuthReader extends OAuth\OAuthBase
                     $accessTokenSecret = $current_user->oauthSecret();
                 }
                 else{ 
-                    throw new Exception("Cannot perform oAuth read without both 'accessToken' and 'accessTokenSecret'");
+                    throw new \Exception("Cannot perform oAuth read without both 'accessToken' and 'accessTokenSecret'");
                 }
             }
             //recreate request with new signatures
@@ -61,7 +61,7 @@ class OAuthReader extends OAuth\OAuthBase
         }
         catch(\Exception $e)
         {
-            throw new Exception("Unknown error encountered during read", -1, $e);
+            throw new \Exception("Unknown error encountered during read", -1, $e);
         }
     }
 }
