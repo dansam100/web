@@ -149,7 +149,6 @@ class Configuration extends \ProtoMapper\Config\ConfigLoader
             if(!is_readable($data_config)){
                 throw new ConfigurationLoaderException("Protcols configuration file: '" . $data_config . " could not be found!");
             }
-            
             $this->restConfig = new ReadConfiguration();
             $this->restConfig->load($data_config);
         }

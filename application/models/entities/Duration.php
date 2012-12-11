@@ -16,10 +16,14 @@
 		 * @JoinColumn(name="experienceId", referencedColumnName="id")
 	     */
 		protected $experience = null;
+        
+        public function getId(){
+            return $this->id;
+        }
 		
 		public function experience($experience = null)
 		{
-			if(isset($experience))
+			if(isset($experience) && $this->experience !== $experience)
             {
                 $this->experience = $experience;
             }
@@ -44,4 +48,3 @@
             return $this->endDate;
 		}
    	}
-?>

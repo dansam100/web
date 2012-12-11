@@ -16,6 +16,11 @@
 		 * @JoinColumn(name="locationId", referencedColumnName="id")
 	     */
 		protected $location;
+        
+        public function getId()
+        {
+            return $this->id;
+        }
 		
 		public function name($name = null)
 		{
@@ -35,4 +40,3 @@
             return $this->location;
 		}
     }
-?>

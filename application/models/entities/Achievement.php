@@ -1,5 +1,4 @@
 <?php
-    require_once("Entity.php");
     //entities/Achievement.php
     /**
 	 * @Entity @Table(name="achievement")
@@ -49,7 +48,7 @@
         
         public function project($project = null)
 		{
-			if(isset($project))
+			if(isset($project) && $this->project !== $project)
             {
                 $this->project = $project;
             }
@@ -58,7 +57,7 @@
         
         public function experience($experience = null)
 		{
-			if(isset($experience))
+			if(isset($experience) && $this->experience !== $experience)
             {
                 $this->experience = $experience;
             }
@@ -67,10 +66,11 @@
         
         public function degree($degree = null)
 		{
-			if(isset($degree))
+			if(isset($degree) && $this->degree !== $degree)
             {
                 $this->degree = $degree;
             }
             return $this->degree;
         }
     }
+    

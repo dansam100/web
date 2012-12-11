@@ -14,7 +14,17 @@
 		 * @JoinColumn(name="userId", referencedColumnName="id")
 	     */
 		protected $user;
-		/** @Column(type="string") */
+        /**
+	     * @var Profile[]
+		 * 
+	     * @ManyToMany(targetEntity="Profile", inversedBy="categories", cascade={"persist"})
+		 * @JoinTable(name="ProfileCategory",
+		 *      joinColumns={@JoinColumn(name="categoryId", referencedColumnName="id")},
+     	 *      inverseJoinColumns={@JoinColumn(name="profileId", referencedColumnName="id")}
+ 		 * )
+	     */
+        protected $profiles;
+        /** @Column(type="string") */
 		protected $name;
 		
 		public function name($name = null)
@@ -25,4 +35,23 @@
             }
             return $this->name;
 		}
+        
+        public function user($user = null)
+		{
+			if(isset($user) && $this->user !== $user)
+            {
+                $this->user = $user;
+                $user->categories($this);
+            }
+            return $this->user;
+		}
+        
+        public function profiles($profile = null)
+        {
+            if(isset($profile))
+            {
+                $this->profiles[] = $profile;
+            }
+            return $this->profiles;
+        }
     }

@@ -5,12 +5,16 @@
 	 */
     class UserAddress extends Entity
     {
-    	/** @Id @Column(type="integer") @GeneratedValue */
+    	public function __construct() {
+            $this->address = new Address();
+        }
+        
+        /** @Id @Column(type="integer") @GeneratedValue */
     	protected $id;
 		/**  
 		 * @var Address
 		 *  
-		 * @ManyToOne(targetEntity="UserAddress")
+		 * @ManyToOne(targetEntity="Address", cascade={"persist"})
 		 * @JoinColumn(name="addressId", referencedColumnName="id")
 	     */
 		protected $address = null;
@@ -21,7 +25,7 @@
 		 * @JoinColumn(name="userId", referencedColumnName="id")
 	     */
 		protected $user = null;
-		/** @Column(type="boolean") */
+		/** @Column(type="boolean", name="default") */
 		protected $isDefault;
 		/**
 	     * @ AddressType
@@ -33,7 +37,7 @@
 		
 		public function user($user = null)
 		{
-			if(isset($user))
+			if(isset($user) && $this->user !== $user)
             {
                 $this->user = $user;
             }
@@ -44,62 +48,65 @@
 		{
 			if(isset($street1))
             {
-                $this->address->street1 = $street1;
+                $this->address->street1($street1);
             }
-            return $this->address->street1;
+            return $this->address->street1();
 		}
 		
 		public function street2($street2 = null)
 		{
 			if(isset($street2))
             {
-                $this->address->street2 = $street2;
+                $this->address->street2($street2);
             }
-            return $this->address->street2;
+            return $this->address->street2();
 		}
 		
 		public function city($city = null)
 		{
 			if(isset($city))
             {
-                $this->address->city = $city;
+                $this->address->city($city);
             }
-            return $this->address->city;
+            return $this->address->city();
 		}
 		
 		public function province($province = null)
 		{
 			if(isset($province))
             {
-                $this->address->province = $province;
+                $this->address->province($province);
             }
-            return $this->address->province;
+            return $this->address->province();
 		}
 		
 		public function postalCode($postalCode = null)
 		{
 			if(isset($postalCode))
             {
-                $this->address->postalCode = $postalCode;
+                $this->address->postalCode($postalCode);
             }
-            return $this->address->postalCode;
+            return $this->address->postalCode();
 		}
 		
 		public function country($country = null)
 		{
 			if(isset($country))
             {
-                $this->address->country = $country;
+                $this->address->country($country);
             }
-            return $this->address->country;
+            return $this->address->country();
 		}
         
         public function isDefault($isDefault = null)
 		{
 			if(isset($isDefault))
             {
+                $this->isDefault = true;
                 $this->user->defaultAddress = $this;
             }
-            return ($this->address == $this->user->defaultAddress);
+            return ($this->address === $this->user->defaultAddress);
 		}
+        
+        
     }

@@ -55,59 +55,59 @@
          * @var UserAddress
          * 
 	     * @ManyToOne(targetEntity="UserAddress", inversedBy="profiles")
-		 * @JoinColumn(name="defaultAddressId", referencedColumnName="id")
+		 * @JoinColumn(name="defaultAddress", referencedColumnName="id")
 	     */
         protected $defaultAddress;
 		/**
 		 * @var Profile[]
 		 *
-	     * @OneToMany(targetEntity="Profile", mappedBy="user")
+	     * @OneToMany(targetEntity="Profile", mappedBy="user", cascade={"persist"})
 		 * 
 	     */
 		protected $profiles = null;
 		/**
 		 * @var Category[]
 		 *
-	     * @OneToMany(targetEntity="Category", mappedBy="user")
+	     * @OneToMany(targetEntity="Category", mappedBy="user", cascade={"persist"})
 		 * 
 	     */
 		protected $categories = null;
         /**
 	     * @var UserAddress[]
 		 * 
-		 * @OneToMany(targetEntity="UserAddress", mappedBy="user")
+		 * @OneToMany(targetEntity="UserAddress", mappedBy="user", cascade={"persist"})
 		 * 
 	     */
 		protected $addresses = null;
 		/**
 	     * @var Experience[]
 		 * 
-		 * @OneToMany(targetEntity="Experience", mappedBy="user")
+		 * @OneToMany(targetEntity="Experience", mappedBy="user", cascade={"persist"})
 		 * 
 	     */
 		protected $experiences = null;
 		/**
-	     * @OneToMany(targetEntity="Degree", mappedBy="user")
+	     * @OneToMany(targetEntity="Degree", mappedBy="user", cascade={"persist"})
 		 * @var Degree[]
 	     */
 		protected $degrees = null;
 		/**
-	     * @OneToMany(targetEntity="Media", mappedBy="user")
+	     * @OneToMany(targetEntity="Media", mappedBy="user", cascade={"persist"})
 		 * @var Media[]
 	     */
 		protected $media = null;
 		/**
-	     * @OneToMany(targetEntity="Skill", mappedBy="user")
+	     * @OneToMany(targetEntity="Skill", mappedBy="user", cascade={"persist"})
 		 * @var Skill[]
 	     */
 		protected $skills = null;
 		/**
-	     * @OneToMany(targetEntity="Language", mappedBy="user")
+	     * @OneToMany(targetEntity="Language", mappedBy="user", cascade={"persist"})
 		 * @var Language[]
 	     */
 		protected $languages = null;
 		/**
-	     * @OneToMany(targetEntity="Activity", mappedBy="user")
+	     * @OneToMany(targetEntity="Activity", mappedBy="user", cascade={"persist"})
 		 * @var Activity[]
 	     */
 		protected $activities = null;
@@ -231,18 +231,90 @@
         {
             if(isset($profile))
             {
+                $profile->user($this);
                 $this->profiles[] = $profile;
             }
             return $this->profiles;
+        }
+        
+        public function categories($category = null)
+        {
+            if(isset($category))
+            {
+                $category->user($this);
+                $this->categories[] = $category;
+            }
+            return $this->categories;
         }
 		
 		public function sessions($session = null)
         {
             if(isset($session))
             {
+                $session->user($this);
                 $this->sessions[] = $session;
             }
             return $this->sessions;
+        }
+        
+        public function experiences($experience = null)
+        {
+            if(isset($experience))
+            {
+                $experience->user($this);
+                $this->experiences[] = $experience;
+            }
+            return $this->experiences;
+        }
+        
+        public function activities($activity = null)
+        {
+            if(isset($activity))
+            {
+                $activity->user($this);
+                $this->activities[] = $activity;
+            }
+            return $this->activities;
+        }
+        
+        public function degrees($degree = null)
+        {
+            if(isset($degree))
+            {
+                $degree->user($this);
+                $this->degrees[] = $degree;
+            }
+            return $this->degrees;
+        }
+        
+        public function skills($skill = null)
+        {
+            if(isset($skill))
+            {
+                $skill->user($this);
+                $this->skills[] = $skill;
+            }
+            return $this->skills;
+        }
+        
+        public function languages($language = null)
+        {
+            if(isset($language))
+            {
+                $language->user($this);
+                $this->languages[] = $language;
+            }
+            return $this->languages;
+        }
+        
+        public function media($media = null)
+        {
+            if(isset($media))
+            {
+                $media->user($this);
+                $this->media[] = $media;
+            }
+            return $this->media;
         }
 		
 		public function isAdmin($isAdmin = null)
@@ -272,4 +344,5 @@
 			}
             return ($this->isActive == 1);
 		}
+        
     }

@@ -17,8 +17,7 @@
         /**
 	     * @var Duration[]
 		 * 
-		 * @OneToMany(targetEntity="Duration", mappedBy="experience")
-		 * 
+		 * @OneToMany(targetEntity="Duration", mappedBy="experience", cascade={"persist"})
 	     */
 		protected $durations;
         /** @Column(type="boolean", name="current") */
@@ -34,27 +33,38 @@
 	     */
 		protected $user;
 		/**
-	     * @ManyToOne(targetEntity="Company")
+	     * @ManyToOne(targetEntity="Company", cascade={"persist"})
 		 * @JoinColumn(name="companyId", referencedColumnName="id")
 	     */
 		protected $company;
         /**
-	     * @var Activity[]
+	     * @var Achievement[]
 		 * 
-		 * @OneToMany(targetEntity="Activity", mappedBy="experience")
-		 * 
+		 * @OneToMany(targetEntity="Achievement", mappedBy="experience", cascade={"persist"})
 	     */
-        protected $activities;
+        protected $achievements;
         
         public function __construct()
 		{
-			$this->activities = new ArrayCollection();
+			$this->achievements = new ArrayCollection();
             $this->durations = new ArrayCollection();
 		}
+        
+        public function getId()
+		{
+			return $this->id;
+		}
+        
+        public function isCurrent($isCurrent = null){
+            if(isset($isCurrent)){
+                $this->isCurrent = $isCurrent;
+            }
+            return $this->isCurrent;
+        }
 		
 		public function user($user = null)
 		{
-			if(isset($user))
+			if(isset($user) && $this->user !== $user)
             {
                 $this->user = $user;
             }
@@ -79,13 +89,14 @@
             return $this->description;
 		}
         
-        public function activities($activity = null)
+        public function achievements($achievement = null)
         {
-            if(isset($activity))
+            if(isset($achievement))
             {
-                $this->activities[] = $activity;
+                $achievement->experience($this);
+                $this->achievements[] = $achievement;
             }
-            return $this->activities;
+            return $this->achievements;
         }
 		
 		public function department($department = null)
@@ -123,5 +134,13 @@
             }
             return $this->endDate;
 		}
+        
+        public function durations($duration = null){
+            if(isset($duration)){
+                $duration->experience($this);
+                $this->durations[] = $duration;
+            }
+            return $this->durations;
+        }
     }
-?>
+    

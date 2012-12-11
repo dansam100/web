@@ -29,7 +29,32 @@
 		 * @JoinColumn(name="userId", referencedColumnName="id")
 	     */
 		protected $user;
+        /**
+	     * @var Profile[]
+		 * 
+	     * @ManyToMany(targetEntity="Profile", inversedBy="degrees", cascade={"persist"})
+		 * @JoinTable(name="ProfileDegree",
+		 *      joinColumns={@JoinColumn(name="degreeId", referencedColumnName="id")},
+     	 *      inverseJoinColumns={@JoinColumn(name="profileId", referencedColumnName="id")}
+ 		 * )
+	     */
+        protected $profiles;
+        
+        public function getId()
+		{
+			return $this->id;
+		}
 		
+        public function user($user = null)
+		{
+			if(isset($user) && $this->user !== $user)
+            {
+                $this->user = $user;
+                $user->degrees($this);
+            }
+            return $this->user;
+		}
+        
 		public function userName($user = null)
 		{
 			if(isset($user))
@@ -77,11 +102,19 @@
         
         public function location($location = null)
 		{
-			if(isset($location))
+			if(isset($location) && $this->location !== $location)
             {
                 $this->location = $location;
             }
             return $this->location;
         }
+        
+        public function profiles($profile = null)
+        {
+            if(isset($profile))
+            {
+                $this->profiles[] = $profile;
+            }
+            return $this->profiles;
+        }
     }
-?>

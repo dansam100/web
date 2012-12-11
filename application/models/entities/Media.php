@@ -12,12 +12,12 @@
 		/** @Column(type="string") */
 		protected $value;
 		/**
-	     * @ManyToOne(targetEntity="MediaType", inversedBy="medias")
-		 * @JoinColumn(name="type", referencedColumnName="name")
+	     * @ManyToOne(targetEntity="MediaType", inversedBy="media", cascade={"persist"})
+		 * @JoinColumn(name="type", referencedColumnName="id")
 	     */
 		protected $type;
 		/**
-	     * @ManyToOne(targetEntity="User", inversedBy="profiles")
+	     * @ManyToOne(targetEntity="User", inversedBy="media")
 		 * @JoinColumn(name="userId", referencedColumnName="id")
 	     */
 		protected $user;
@@ -26,12 +26,12 @@
 		
 		public function user($user = null)
 		{
-			if(isset($user))
+			if(isset($user) && $this->user !== $user)
             {
                 $this->user = $user;
             }
             return $this->user;
-        }
+		}
         
         public function name($name = null)
 		{
@@ -60,4 +60,3 @@
             return $this->value;
         }
     }
-?>

@@ -20,9 +20,10 @@
 		
 		public function user($user = null)
 		{
-			if(isset($user))
+			if(isset($user) && $this->user !== $user)
             {
                 $this->user = $user;
+                $user->sessions($this);
             }
             return $this->user;
 		}

@@ -17,14 +17,14 @@
 		
 		public function user($user = null)
 		{
-			if(isset($user))
+			if(isset($user) && $this->user !== $user)
             {
                 $this->user = $user;
             }
             return $this->user;
 		}
 		
-		public function description($user = null)
+		public function description($description = null)
 		{
 			if(isset($description))
             {

@@ -10,10 +10,15 @@
 		/** @Column(type="string") */
 		protected $name;
 		/**
-	     * @ManyToOne(targetEntity="SkillType")
-		 * @JoinColumn(name="type", referencedColumnName="name")
+	     * @ManyToOne(targetEntity="SkillType", cascade={"persist"})
+		 * @JoinColumn(name="type", referencedColumnName="id")
      	*/
 		protected $type;
+        /**
+	     * @ManyToOne(targetEntity="User")
+		 * @JoinColumn(name="userId", referencedColumnName="id")
+	     */
+		protected $user;
 		
 		public function name($name = null)
 		{
@@ -32,5 +37,13 @@
             }
             return $this->type;
 		}
+        
+        public function user($user = null)
+		{
+			if(isset($user) && $this->user !== $user)
+            {
+                $this->user = $user;
+            }
+            return $this->user;
+		}
     }
-?>
