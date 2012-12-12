@@ -10,7 +10,7 @@ class XMLDataView extends StaticView {
     {
         parent::__construct($controller, $action);
         $this->clearContent();
-        header("Content-type: text/xml");
+        //header("Content-type: text/xml");
     }
     
     public function render()

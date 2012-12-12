@@ -40,10 +40,12 @@ class VerificationController extends Controller
         $page       = $reader->read($url, $query, $this->model->oauthToken(), $this->model->oauthTokenSecret());
         $dataArray  = $protocol->parseOne($page);
         
-        //var_dump($dataArray->experiences[1]->activities);
-        var_dump(Authentication::currentUser()->experiences[0]);
-        var_dump(Authentication::currentUser()->experiences[0]->durations[0]);
-        var_dump(Authentication::currentUser()->addresses[0]);
+        //var_dump($dataArray->experiences);
+        //var_dump(Authentication::currentUser()->profiles[0]->firstName);
+        var_dump(Authentication::currentUser()->experiences[0]->achievements[0]);
+        //var_dump(Authentication::currentUser()->experiences[0]->durations[0]);
+        //var_dump(Authentication::currentUser()->addresses[0]);
+        //var_dump(Authentication::currentUser()->degrees);
         \DB::save(Authentication::currentUser());
         //var_dump($dataArray);
         //print_r($dataArray);
