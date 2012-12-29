@@ -20,7 +20,7 @@
             <attribute name="status" />
             <attribute name="addresses" /> 
             <attribute name="media" />
-            <attribute name="languages" />
+            <attribute name="languages" collapse="true" />
             <attribute name="activities" />
         </object>
         <object class="Education" base="Degree">
@@ -32,8 +32,8 @@
             <attribute name="location" />
         </object>
         <object class="Skill" base="Skill">
-            <attribute name="name" />
-            <attribute name="type" />
+            <attribute name="name" attribute="true" />
+            <attribute name="type" attribute="true" />
         </object>
         <object class="Experience" base="Experience">
             <attribute name="position" />
@@ -45,7 +45,7 @@
             <attribute name="achievements" />
         </object>
         <object class="Company" base="Company">
-            <attribute name="name" />
+            <attribute name="name" attribute="true" />
         </object>
         <object class="Achievement" base="Achievement">
             <attribute name="description" />
@@ -55,22 +55,18 @@
             <attribute name="endDate" />
         </object>
         <object class="Media" base="Media">
-            <attribute name="type" />
+            <attribute name="type" attribute="true" />
             <attribute name="name" />
             <attribute name="value" />
         </object>
         <object class="Address" base="UserAddress">
+            <attribute name="type" attribute="true" />
             <attribute name="street1" />
             <attribute name="street2" />
             <attribute name="city" />
             <attribute name="province" />
             <attribute name="postalCode" />
             <attribute name="country" />
-        </object>
-        <object class="Media" base="Media">
-            <attribute name="type" />
-            <attribute name="name" />
-            <attribute name="value" />
         </object>
         <object class="Language" base="Language">
             <attribute name="name" />
@@ -93,7 +89,7 @@
     </interfaces>
     <interfaces scope="user">
         <interface name="detail" type="DetailedProfile" collection="true" />
-        <interface name="educations" type="Education" collection="true" />
+        <interface name="education" type="Education" collection="true" />
         <interface name="skills" type="Skill" collection="true" />
         <interface name="skills#technical" type="Skill" collection="true" />
         <interface name="skills#soft" type="Skill" collection="true" />

@@ -10,13 +10,13 @@ class XMLDataView extends StaticView {
     {
         parent::__construct($controller, $action);
         $this->clearContent();
-        //header("Content-type: text/xml");
+        header("Content-type: text/xml");
     }
     
     public function render()
     {
         $model = $this->getModel();
-        $formatter = new \Rexume\Lib\Formatters\SimpleXMLFormatter($model->objects());
+        $formatter = new \Rexume\Lib\Formatters\DataObjectXMLSerializer($model->objects());
         echo $formatter->format();
     }
 }

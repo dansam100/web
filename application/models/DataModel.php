@@ -61,7 +61,12 @@ class DataModel extends Model
         $this->createOutput($results, $readType);
     }
     
-    public function createOutput($entities, $readType){
+    /**
+     * Creates data objects from a given set of entities read in
+     * @param Entity[] $entities
+     * @param Rexume\Config\ReadType $readType
+     */
+    protected function createOutput($entities, $readType){
         $attributes = $readType->getAttributes();
         if(isset($entities)){
             if(is_collection($entities)){
@@ -77,12 +82,20 @@ class DataModel extends Model
         }
     }
     
+    /**
+     * Constructs a data object: primitive types are returned as is, datetime objects are cast to strings
+     * @param \Entity $object
+     * @return mixed a data object representing the created object
+     */
     private function createDataObject($object){
-        $class = get_class_name($object);
         if(empty($object) || is_scalar($object)){
             return $object;
         }
+        elseif($object instanceof \DateTime){
+            return $object->format(DATE_ATOM);
+        }
         else{
+            $class = get_class_name($object);
             $dataObject = null;
             if(is_callable(array($object, 'getId'))){
                 $dataObject = new DataObject($object->getId(), $class);
@@ -95,6 +108,14 @@ class DataModel extends Model
         }
     }
     
+    /**
+     * Sets a set of given attributes from a given Entity onto a DTO and returns the results
+     * 
+     * @param Rexume\Config\DataObject $dataObject
+     * @param Entity $entity
+     * @param Rexume\Config\AttributeRef[] $attributes
+     * @return Rexume\Config\DataObject
+     */
     private function setAttributes($dataObject, $entity, $attributes){
         foreach($attributes as $attribute){
             $target = $entity->{$attribute->getName()};
@@ -118,10 +139,24 @@ class DataModel extends Model
                     $dataObject->{$attribute->getName()} = $this->createDataObject($target);
                 }
             }
+            //set flags on the data object
+            if($attribute->isAttribute()){
+                $dataObject->setFlags($attribute->getName(), DataObject::IS_ATTRIBUTE);
+            }
+            if($attribute->isCollapsed()){
+                $dataObject->setFlags($attribute->getName(), DataObject::IS_COLLAPSED);
+            }
+            if($attribute->isHidden()){
+                $dataObject->setFlags($attribute->getName(), DataObject::IS_HIDDEN);
+            }
         }
         return $dataObject;
     }
     
+    /**
+     * Resulting data objects
+     * @return Rexume\Config\DataObject[]
+     */
     public function objects(){
         return $this->objects;
     }
