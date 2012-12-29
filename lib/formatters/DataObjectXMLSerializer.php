@@ -54,7 +54,7 @@ class DataObjectXMLSerializer {
                     if(is_array($val)){
                         if($data->isCollapsed($key)){
                             foreach($val as $subVal){
-                                $subelements .= $this->encode($subVal, $subVal->class, ($depth + 1));
+                                $subelements .= $this->encode($subVal, strtolower($subVal->class), ($depth + 1));
                             }
                         }
                         else{

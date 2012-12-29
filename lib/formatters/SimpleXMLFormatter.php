@@ -41,13 +41,13 @@ class SimpleXMLFormatter {
 	 *    @param        int $depth Used for indentation
 	 *    @return        string $xml
 	 */
-	private function encode($data, $node, $depth) {
+	private function encode($data, $node, $depth, $attributes = array()) {
 		$xml = str_repeat("\t", $depth);
-		$xml .= "<$node>";
+		$xml .= "<$node " . to_key_value_pair($attributes, true) . '>';
 		foreach($data as $key => $val) {
 			if(is_array($val) || is_object($val)) {
                 if($val instanceof \Rexume\Config\DataObject){
-                    $xml .= self::encode($val, $val->class, ($depth + 1));
+                    $xml .= self::encode($val, strtolower($val->class), ($depth + 1));
                 }
 				else{
                     $xml .= self::encode($val, $key, ($depth + 1));
