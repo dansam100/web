@@ -50,10 +50,11 @@
                 <mapping name="positions/position" type="Experience">
                     <bind source="title" target="position" type="string"/>
                     <bind source="summary" target="description" type="string" />
-                    <!-- WHY CAN"T I SUPPORT THIS????!!??
-                    <bind source="type" target="type" type="ExperienceType" default="new ExperienceType()">
+                    <bind source="type" target="type" type="ExperienceType">
+                        <data>
+                            <bind source="name" target="name" default="Work" />
+                        </data>
                     </bind>
-                    -->
                     <!--Extra parsing using a recursive protocol bind parser-->
                     <bind source="." target="durations" type="Duration">
                         <data>
@@ -80,7 +81,7 @@
                     <bind source="is-current" target="isCurrent" type="boolean" />
                     <bind source="summary" target="achievements" parser="ProtoMapper\Parsers\NewlineDelimitedParser" type="Achievement">
                         <data>
-                            <bind source="." target="description" type="string" />
+                            <bind source="." target="description" type="string" formatter="ProtoMapper\Formatters\TrimFormatter" />
                         </data>
                     </bind>
                 </mapping>
@@ -159,6 +160,11 @@
                     <bind source="cause/name" target="description" type="string" />
                     <bind source="cause/name" target="department" type="string" />
                     <bind source="organization/name" target="status" type="string" />
+                    <bind source="type" target="type" type="ExperienceType">
+                        <data>
+                            <bind source="name" target="name" default="Volunteer" />
+                        </data>
+                    </bind>
                 </mapping>
             </mappings>
         </read>
