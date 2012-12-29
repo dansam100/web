@@ -55,7 +55,7 @@ class OAuthReader extends OAuth\OAuthBase
             $signatures['oauth_secret'] = $accessTokenSecret;
 
             $result = $this->oauthObject->sign(array(/* 'action' => 'POST', */ 'path' => $url, 'signatures'=> $signatures));
-            $page = \getWebContent($result['signed_url']);
+            $page = \get_web_content($result['signed_url']);
             //get the required id from the xml content
             return $page;
         }

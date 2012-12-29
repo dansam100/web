@@ -34,7 +34,7 @@ class LinkedInAuth extends Authentication
                 // The above object generates a simple URL that includes a signature, the 
                 // needed parameters, and the web page that will handle our request.  I now
                 // "load" that web page into a string variable.
-                $page = getWebContent($result['signed_url']);
+                $page = get_web_content($result['signed_url']);
                 // We parse the string for the request token and the matching token secret
                 $returned_items = array();
                 parse_str($page, $returned_items);
@@ -64,7 +64,7 @@ class LinkedInAuth extends Authentication
                 $access_signature = $this->oauthReader->constructAccessSignature($_GET['oauth_token'], $_COOKIE['oauth_token_secret'], $_GET['oauth_verifier']);
                 $result = $this->oauthObject->sign($access_signature);	
                 // ... and grab the resulting string again. 
-                $page = \getWebContent($result['signed_url']);
+                $page = \get_web_content($result['signed_url']);
 
                 // Voila, we've got a long-term access token.
                 parse_str($page, $returned_items);

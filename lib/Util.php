@@ -91,7 +91,7 @@ function find($dir, $pattern){
  * @param string $url the url to access
  * @return string the parsed page
  */
-function getWebContent($url)
+function get_web_content($url)
 {
 	$page = null;
 	if(ini_get('allow_url_fopen')) {
