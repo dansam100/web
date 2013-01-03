@@ -23,18 +23,21 @@
                 <bind source="volunteer" target="experiences" />
                 <bind source="phone-numbers/phone-number" target="media" />
                 <bind source="im-accounts/im-account" target="media" />
-                <!--
                 <bind source="." target="profiles" name="person"/>
+                <bind source="main-address" target="addresses" />
                 <bind source="skills/skill" target="skills" />
                 <bind source="languages/language" target="languages" />
-                -->
             </object>
             <mappings>
                 <!--object binds find mappings by name-->
                 <mapping name="person" type="Profile">
                     <bind source="first-name" target="firstName" type="string" />
                     <bind source="last-name" target="lastName" type="string" />
-                    <bind source="main-address" target="addresses" type="UserAddress" parser="ProtoMapper\Parsers\SimpleAddressParser">
+                    <bind source="headline" target="status" type="string" />
+                    <bind source="summary" target="objective" type="string" />
+                </mapping>
+                <mapping name="main-address" type="UserAddress">
+                    <bind source="." target="address" type="Address" parser="ProtoMapper\Parsers\SimpleAddressParser">
                         <data>
                             <bind source="street1" target="street1" type="string"/>
                             <bind source="street2" target="street2" type="string"/>
@@ -44,17 +47,21 @@
                             <bind source="province" target="province" type="string"/>
                         </data>
                     </bind>
-                    <bind source="headline" target="status" type="string" />
-                    <bind source="summary" target="objective" type="string" />
+                    <make source="type" target="type" type="AddressType" unique="true">
+                        <data>
+                            <bind source="type" target="name" type="string" default="Permanent" />
+                        </data>
+                    </make>
+                    <bind source="isDefault" target="isDefault" default="false" type="boolean" />
                 </mapping>
                 <mapping name="positions/position" type="Experience">
                     <bind source="title" target="position" type="string"/>
                     <bind source="summary" target="description" type="string" />
-                    <bind source="type" target="type" type="ExperienceType">
+                    <make source="type" target="type" type="ExperienceType" unique="true">
                         <data>
-                            <bind source="name" target="name" default="Work" />
+                            <bind source="name" target="name" default="Work History" type="string" />
                         </data>
-                    </bind>
+                    </make>
                     <!--Extra parsing using a recursive protocol bind parser-->
                     <bind source="." target="durations" type="Duration">
                         <data>
@@ -72,12 +79,7 @@
                             </bind>
                         </data>
                     </bind>
-                    <bind source="company" target="company" type="Company">
-                        <data>
-                            <bind source="name" target="name" type="string" />
-                            <bind source="industry" target="industry" type="string" />
-                        </data>
-                    </bind>
+                    <bind source="company/name" target="companyName" type="string" />
                     <bind source="is-current" target="isCurrent" type="boolean" />
                     <bind source="summary" target="achievements" parser="ProtoMapper\Parsers\NewlineDelimitedParser" type="Achievement">
                         <data>
@@ -88,7 +90,7 @@
                 <mapping name="twitter-account" type="Media">
                     <bind source="provider-account-id" target="value" type="string" />
                     <bind source="provider-account-name" target="name" type="string" default="Twitter"/>
-                    <bind source="provider-account-type" target="type" type="MediaType">
+                    <bind source="provider-account-type" target="type" type="MediaType" unique="true">
                         <data>
                             <bind source="." target="name" default="Twitter" type="string" />
                         </data>
@@ -97,19 +99,16 @@
                 <mapping name="im-accounts/im-account" type="Media">
                     <bind source="im-account-type" name="name" target="name" type="string" default="IM" />
                     <bind source="im-account-name" target="value" type="string" default="IM" />
-                    <bind source="im-account-type" target="type" type="MediaType">
+                    <bind source="im-account-type" target="type" type="MediaType" unique="true">
                         <data>
                             <bind source="." target="name" type="string" />
                         </data>
                     </bind>
                 </mapping>
-                <mapping name="main-address" type="Address">
-                    <bind source="." target="address" parser="ProtoMapper\Parsers\SimpleAddressParser" />
-                </mapping>
                 <mapping name="phone-numbers/phone-number" type="Media">
                     <bind source="phone-type" name="name" target="name" type="string" />
                     <bind source="phone-number" target="value" type="string" />
-                    <bind source="phone-type" target="type" type="MediaType">
+                    <bind source="phone-type" target="type" type="MediaType" unique="true">
                         <data>
                             <bind source="." target="name" type="string" />
                         </data>
@@ -118,26 +117,16 @@
                 <mapping name="interest" type="Activity">
                     <bind source="." target="description" type="string" />
                 </mapping>
-                <mapping name="company" type="Company">
-                    <!--definition name="LinkedIn" type="REST">
-                        <read contentstype="Data" scope="/v1/companies/">
-                            <query>${id}</query> 
-                            <object source="address" target="Address">
-                                <bind source="street1" target="street1" type="string" />
-                                <bind source="street2" target="street2" type="string" />
-                                <bind source="city" target="city" type="string" />
-                                <bind source="postal-code" target="postalCode" type="string" />
-                            </object>
-                        </read>
-                    </definition-->
-                    <bind source="name" target="name" type="string" />
-                    <bind source="industry" target="industry" type="string" />
-                </mapping>
                 <mapping name="languages/language" type="Language">
                     <bind source="language/name" target="name" type="string" />
                 </mapping>
                 <mapping name="skills/skill" type="Skill">
-                    <bind source="name" target="name" type="string" />
+                    <bind source="skill/name" target="name" type="string" />
+                    <make source="type" target="type" type="SkillType" unique="true">
+                        <data>
+                            <bind source="." target="name" type="string" default="Technical"/>
+                        </data>
+                    </make>
                 </mapping>
                 <mapping name="educations/education" type="Degree">
                     <bind source="school-name" target="school" type="string" />
@@ -160,11 +149,11 @@
                     <bind source="cause/name" target="description" type="string" />
                     <bind source="cause/name" target="department" type="string" />
                     <bind source="organization/name" target="status" type="string" />
-                    <bind source="type" target="type" type="ExperienceType">
+                    <make source="type" target="type" type="ExperienceType" unique="true">
                         <data>
                             <bind source="name" target="name" default="Volunteer" />
                         </data>
-                    </bind>
+                    </make>
                 </mapping>
             </mappings>
         </read>
