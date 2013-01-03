@@ -12,6 +12,8 @@
 		protected $position;
 		/** @Column(type="string") */
 		protected $department;
+        /** @Column(type="string") */
+		protected $companyName;
 		/** @Column(type="string") */
 		protected $description;
         /**
@@ -23,8 +25,8 @@
         /** @Column(type="boolean", name="current") */
         protected $isCurrent;
 		/**
-	     * @ManyToOne(targetEntity="ExperienceType")
-		 * @JoinColumn(name="type", referencedColumnName="type")
+	     * @ManyToOne(targetEntity="ExperienceType", cascade={"persist"})
+		 * @JoinColumn(name="type", referencedColumnName="id")
 	     */
 		protected $type;
 		/**
@@ -32,11 +34,6 @@
 		 * @JoinColumn(name="userId", referencedColumnName="id")
 	     */
 		protected $user;
-		/**
-	     * @ManyToOne(targetEntity="Company", cascade={"persist"})
-		 * @JoinColumn(name="companyId", referencedColumnName="id")
-	     */
-		protected $company;
         /**
 	     * @var Achievement[]
 		 * 

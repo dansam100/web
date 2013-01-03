@@ -25,13 +25,13 @@
 		 * @JoinColumn(name="userId", referencedColumnName="id")
 	     */
 		protected $user = null;
-		/** @Column(type="boolean", name="default") */
+		/** @Column(type="boolean") */
 		protected $isDefault;
 		/**
 	     * @ AddressType
 		 * 
-		 * @ManyToOne(targetEntity="AddressType")
-		 * @JoinColumn(name="type", referencedColumnName="name")
+		 * @ManyToOne(targetEntity="AddressType", cascade={"persist"})
+		 * @JoinColumn(name="type", referencedColumnName="id")
      	*/
 		protected $type;
 		
@@ -103,8 +103,9 @@
 			if(isset($isDefault))
             {
                 $this->isDefault = true;
-                $this->user->defaultAddress = $this;
+                //$this->user->defaultAddress = $this;
             }
+            return false;
             return ($this->address === $this->user->defaultAddress);
 		}
         

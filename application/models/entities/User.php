@@ -277,6 +277,16 @@
             return $this->activities;
         }
         
+        public function addresses($addresses = null)
+        {
+            if(isset($addresses))
+            {
+                $addresses->user($this);
+                $this->addresses[] = $addresses;
+            }
+            return $this->addresses;
+        }
+        
         public function degrees($degree = null)
         {
             if(isset($degree))
