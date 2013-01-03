@@ -26,7 +26,6 @@ class DataController extends Controller {
         $this->configuration = \Rexume\Config\Configuration::getInstance()->getInterfaceConfiguration();
         parent::__construct($model, $view, $action);
         $this->model = new $model(Authentication::currentUser(), $this->configuration);
-        //TEST: $this->model = new $model(\DB::getOne('User', array('memberId' => 'tDz75GX1SG')), $this->configuration);
     }
     
     /**
@@ -42,8 +41,14 @@ class DataController extends Controller {
         if(count($arguments) > 1){
             $where = $arguments[1];
         }
-        //support for multiple interface query (eg: data/resumes/profile+detail+educations)
-        $arguments = \trim($arguments[0], self::INTERFACE_DELIMITER);
+        //no arguments supplied, attempt to use default query value for current node
+        if(count($arguments) <= 0){
+            $arguments = $this->configuration->getDefaultQuery();
+        }
+        else{
+            //support for multiple interface query (eg: data/resumes/profile+detail+educations)
+            $arguments = \trim($arguments[0], self::INTERFACE_DELIMITER);
+        }
         //remove redundant queries
         $interfaceNames = \array_unique(\explode(self::INTERFACE_DELIMITER, $arguments));
         //get configuration for interfaces

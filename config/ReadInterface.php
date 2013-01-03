@@ -8,10 +8,10 @@ namespace Rexume\Config;
 class ReadInterface
 {
     protected $name;    
-    protected $type = 'Object';
+    protected $type = 'Entity';
     protected $isCollection = false;
     
-    public function __construct($name, $type = 'Object', $isCollection = false) {
+    public function __construct($name, $type = 'Entity', $isCollection = false) {
         $this->name = $name;
         if(!empty($this->type)){
             $this->type = $type;

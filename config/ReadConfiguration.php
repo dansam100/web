@@ -10,9 +10,13 @@ class ReadConfiguration {
     protected $interfaces;
     protected $types;
     
-    public function __construct($types = null, $interfaces = null) {
+    public function __construct($types = array(), $interfaces = array()) {
         $this->types = $types;
         $this->interfaces = $interfaces;
+    }
+    
+    public function getDefaultQuery(){
+        return ".";
     }
     
     public function getInterface($scope, $name){
@@ -51,18 +55,17 @@ class ReadConfiguration {
     
     public function load($file_config){
         $data_config_xml = simplexml_load_file($file_config);
-        $this->interfaces = array(); $this->types = array();
         $interfaceNodes = $data_config_xml->xpath('//interfaces');
         foreach($interfaceNodes as $interfaceNode)
         {
             $scope = (string)$interfaceNode['scope'];
             $this->interfaces[$scope] = array();
-            foreach($interfaceNode->xpath('//interface') as $interface)
+            foreach($interfaceNode->interface as $interface)
             {
                 $name = (string)$interface['name'];
                 $this->interfaces[$scope][$name] = new ReadInterface
                     (
-                        (string)$interface['name'],
+                        $name,
                         (string)$interface['type'],
                         (bool)$interface['isCollection']
                     );

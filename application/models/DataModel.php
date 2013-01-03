@@ -47,7 +47,12 @@ class DataModel extends Model
             $whereValue = $this->defaultWhere;
             $whereValue['id'] = $where;
         }
+        //every other class uses userId to refer to the user.id
+        if(get_class_name($this->model) != $readType->getBaseType()){
+            $whereValue['user'] = $this->defaultWhere['id'];
+        }
         else $whereValue = $this->defaultWhere;
+        
         $results = null;
         //TODO: use a DQL to only select relevant attributes
         if($isCollection){
@@ -56,8 +61,6 @@ class DataModel extends Model
         else{
             $results = \DB::getOne($readType->getBaseType(), $whereValue);
         }
-        //var_dump($whereValue);
-        //var_dump($results);
         $this->createOutput($results, $readType);
     }
     
