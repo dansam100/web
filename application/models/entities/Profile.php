@@ -60,9 +60,9 @@
 	     * @var Media[]
 		 * 
 		 * @ManyToMany(targetEntity="Media", inversedBy="profiles", cascade={"persist"})
-		 * @JoinTable(name="ProfileAddress",
+		 * @JoinTable(name="ProfileMedia",
 		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
-     	 *      inverseJoinColumns={@JoinColumn(name="locationId", referencedColumnName="id")}
+     	 *      inverseJoinColumns={@JoinColumn(name="mediaId", referencedColumnName="id")}
  		 * )
 	     */
 		protected $media = null;
@@ -80,7 +80,7 @@
 	     * @var Language[]
 		 * 
 		 * @ManyToMany(targetEntity="Language", inversedBy="profiles", cascade={"persist"})
-		 * @JoinTable(name="ProfileAddress",
+		 * @JoinTable(name="ProfileLanguage",
 		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
      	 *      inverseJoinColumns={@JoinColumn(name="languageId", referencedColumnName="id")}
  		 * )
@@ -90,7 +90,7 @@
 		 *	@var Activity[] 
 		 *
 	     * @ManyToMany(targetEntity="Activity", inversedBy="profiles", cascade={"persist"})
-		 * @JoinTable(name="ProfileAddress",
+		 * @JoinTable(name="ProfileActivity",
 		 *      joinColumns={@JoinColumn(name="profileId", referencedColumnName="id")},
      	 *      inverseJoinColumns={@JoinColumn(name="activityId", referencedColumnName="id")}
  		 * )
