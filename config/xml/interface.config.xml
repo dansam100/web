@@ -37,12 +37,12 @@
         </object>
         <object class="Experience" base="Experience">
             <attribute name="position" />
-            <attribute name="company" />
+            <attribute name="companyName" />
             <attribute name="description" />
             <attribute name="department" />
             <attribute name="durations" />
             <attribute name="isCurrent" />
-            <attribute name="achievements" />
+            <attribute name="achievements" collapse="true" />
         </object>
         <object class="Company" base="Company">
             <attribute name="name" attribute="true" />
@@ -51,8 +51,8 @@
             <attribute name="description" />
         </object>
         <object class="Duration" base="Duration">
-            <attribute name="startDate" />
-            <attribute name="endDate" />
+            <attribute name="startDate" attribute="true" />
+            <attribute name="endDate" attribute="true" />
         </object>
         <object class="Media" base="Media">
             <attribute name="type" attribute="true" />
