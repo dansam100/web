@@ -9,7 +9,11 @@
     	protected $id;
 		/** @Column(type="string") */
 		protected $name;
-		
+        
+		public function getId(){
+            return $this->id;
+        }
+        
 		public function name($name = null)
 		{
 			if(isset($name))

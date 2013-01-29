@@ -37,14 +37,11 @@ class DB {
     {
         try{
             $repository = self::getInstance()->getRepository($entityType);
-            if(!empty($repository))
-            {
+            if(!empty($repository)){
                 return $repository->findBy($where);
             }
         }
-        catch(Exception $e)
-        {
-            //swallow
+        catch(Exception $e){
             throw $e;
         }
         return null;
@@ -54,19 +51,22 @@ class DB {
     {
         try{
             $repository = self::getInstance()->getRepository($entityType);
-            if(!empty($repository))
-            {
+            if(!empty($repository)){
                 return $repository->findOneBy($where);
             }
         }
-        catch(Exception $e)
-        {
-            //swallow
+        catch(\Exception $e){
             throw $e;
         }
         return null;
     }
     
+    /**
+     * Removes and commits a set of entities from the datasource
+     * @param Entity[] $entities
+     * @return int success or failure code
+     * @throws \Exception 
+     */
     public static function remove($entities)
     {
         try
@@ -82,8 +82,7 @@ class DB {
             }
             return $entityManager->flush();
         }
-        catch(Exception $e){
-            //swallow
+        catch(\Exception $e){
             throw $e;
         }
         return -1;
