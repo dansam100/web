@@ -67,7 +67,7 @@ class ReadConfiguration {
                     (
                         $name,
                         (string)$interface['type'],
-                        (bool)$interface['isCollection']
+                        (bool)$interface['collection']
                     );
             }
         }
@@ -79,7 +79,7 @@ class ReadConfiguration {
                 (string)$type['base'],
                 array_map(
                     function($item){
-                        return new AttributeRef((string)$item['name'], $item['limit'], $item['attribute'], $item['collapse'], $item['hidden']);
+                        return new AttributeRef((string)$item['name'], (string)$item['source'], $item['limit'], $item['attribute'], $item['collapse'], $item['hidden']);
                     },
                     $type->xpath('attribute')
                 )

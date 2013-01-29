@@ -38,11 +38,11 @@ class DataController extends Controller {
         //TODO: Remember to add security here
         $where = null;
         //having more than one argument denotes a select on an oid
-        if(count($arguments) > 1){
+        if(count($arguments) > 1 && !empty($arguments[1])){
             $where = $arguments[1];
         }
         //no arguments supplied, attempt to use default query value for current node
-        if(count($arguments) <= 0){
+        if(count($arguments) <= 0 || empty($arguments[0])){
             $arguments = $this->configuration->getDefaultQuery();
         }
         else{

@@ -57,13 +57,21 @@ class DataObjectXMLSerializer {
                                 $subelements .= $this->encode($subVal, strtolower($subVal->class), ($depth + 1));
                             }
                         }
+                        elseif($data->isAttribute($key)){
+                            foreach($val as $item){
+                                if($item instanceof \Rexume\Config\DataObject){
+                                    $attributes .= self::dataobject_to_value_pair($item, true);
+                                }
+                                else $attributes .= to_key_value_pair($item, true) . ' ';
+                            }
+                        }
                         else{
                             $subelements .= $this->encode($val, $key, ($depth + 1));
                         }
                     }
                     elseif(is_object($val)){
                         if($data->isAttribute($key)){
-                            $attributes .= to_key_value_pair($val, true);
+                            $attributes .= self::dataobject_to_value_pair($val, true);
                         }
                         else{
                             $subelements .= $this->encode($val, strtolower($val->class), ($depth + 1));
@@ -95,4 +103,23 @@ class DataObjectXMLSerializer {
         $result = "<$node>\n" . $subelements . "\n</$node>";
         return $result;
 	}
+    
+    /**
+     * 
+     * @param Rexume\Config\DataObject $object
+     * @param type $escape
+     * @return type
+     */
+    public static function dataobject_to_value_pair($object, $escape = false){
+        $result = "";
+        foreach($object as $key => $value){
+            if($object->isValue($key)){
+                if($escape){
+                    $result .= "$key='" . htmlspecialchars($value) . "' ";
+                }
+                else $result .= "$key='$value' ";
+            }
+        }
+        return \trim($result);
+    }
 }

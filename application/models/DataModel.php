@@ -52,7 +52,6 @@ class DataModel extends Model
             $whereValue['user'] = $this->defaultWhere['id'];
         }
         else $whereValue = $this->defaultWhere;
-        
         $results = null;
         //TODO: use a DQL to only select relevant attributes
         if($isCollection){
@@ -121,13 +120,12 @@ class DataModel extends Model
      */
     private function setAttributes($dataObject, $entity, $attributes){
         foreach($attributes as $attribute){
-            $target = $entity->{$attribute->getName()};
+            $target = $entity->{$attribute->getSource()};
             if(!empty($target)){
-                //slice the array if a limit is set on the attribute ref
                 if(is_collection($target)){
-                    if(count($target) > 0)
-                    {
+                    if(count($target) > 0){
                         $limit = $attribute->getLimit();
+                        //slice the array if a limit is set on the attribute ref
                         if(isset($limit)){
                             $target = $target->slice(0, $limit);
                         }

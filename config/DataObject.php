@@ -7,18 +7,24 @@ namespace Rexume\Config;
  * @author sam.jr
  */
 class DataObject {
+    public $id;
+    public $class;
     private $properties = array();
     //constants
     const NONE = 0;
     const IS_ATTRIBUTE = 1;
     const IS_COLLAPSED = 2;
-    const IS_HIDDEN = 4;
+    const IS_VALUE = 4;
+    const IS_HIDDEN = 8;
     const DATAOBJECT_ATTRIBUTE = 'attribute';
     const DATAOBJECT_COLLAPSED = 'collapsed';
     const DATAOBJECT_HIDDEN = 'hidden';
     
     public function __construct($id, $class) {
         $this->properties = array();
+        foreach(get_attributes($this) as $attribute){
+            $this->properties[$attribute] = self::NONE;
+        }
         $this->id = $id;
         $this->class = $class;
         $this->setFlags("id", self::IS_ATTRIBUTE);
@@ -33,7 +39,7 @@ class DataObject {
     public function __set($name, $value){
         $this->$name = $value;
         if(!isset($this->properties[$name])){
-            $this->properties[$name] = self::NONE;
+            $this->properties[$name] = self::IS_VALUE;
         }
     }
     
@@ -72,5 +78,10 @@ class DataObject {
     public function isHidden($attribute){
         $flags = $this->properties[$attribute];
         return (($flags & self::IS_HIDDEN) == self::IS_HIDDEN);
+    }
+    
+    public function isValue($attribute){
+        $flags = $this->properties[$attribute];
+        return (($flags & self::IS_VALUE) == self::IS_VALUE);
     }
 }
