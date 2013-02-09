@@ -71,7 +71,7 @@ class DataObjectXMLSerializer {
                     }
                     elseif(is_object($val)){
                         if($data->isAttribute($key)){
-                            $attributes .= self::dataobject_to_value_pair($val, true);
+                            $attributes = \trim($attributes) . " " . self::dataobject_to_value_pair($val, true);
                         }
                         else{
                             $subelements .= $this->encode($val, strtolower($val->class), ($depth + 1));
@@ -79,7 +79,7 @@ class DataObjectXMLSerializer {
                     }
                     else{
                         if($data->isAttribute($key)){
-                            $attributes .= "$key='" . htmlspecialchars($val) . "' ";
+                            $attributes = \trim($attributes) . " $key='" . htmlspecialchars($val) . "' ";
                         }
                         else{
                             $subelements .= str_repeat("\t", ($depth + 1));
