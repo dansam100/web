@@ -14,6 +14,10 @@
 		 * @JoinColumn(name="userId", referencedColumnName="id")
 	     */
         protected $user;
+        
+        public function getId(){
+            return $this->id;
+        }
 		
 		public function name($name = null)
 		{

@@ -16,12 +16,22 @@ class DataModel extends Model
     protected $model;
     /**
      *
-     * @var Rexume\Config\ReadConfiguration 
+     * @var \Rexume\Config\ReadConfiguration 
      */
     protected $readConfiguration;
     
+    protected $whereValue = array();
     protected $defaultWhere;
-    
+    protected $isCollection;
+    /**
+     *
+     * @var \Rexume\Config\ReadType
+     */
+    protected $readType;
+    /**
+     *
+     * @var \Rexume\Config\DataModel[]
+     */
     protected $objects;
 
 
@@ -42,25 +52,33 @@ class DataModel extends Model
      * @param int $where
      * @param boolean $isCollection
      */
-    public function setQuery($readType, $where = null, $isCollection = false){
+    public function setQuery($readType, $filter, $where = null, $isCollection = false){
+        $this->readType = $readType;
         if(isset($where)){
-            $whereValue = $this->defaultWhere;
-            $whereValue['id'] = $where;
+            $this->whereValue = $this->defaultWhere;
+            $this->whereValue['id'] = $where;
         }
+        if(isset($filter)){
+            $this->whereValue = $filter->getWhereValue();
+        }
+        $this->isCollection = $isCollection;
         //every other class uses userId to refer to the user.id
         if(get_class_name($this->model) != $readType->getBaseType()){
-            $whereValue['user'] = $this->defaultWhere['id'];
+            $this->whereValue['user'] = $this->defaultWhere['id'];
         }
-        else $whereValue = $this->defaultWhere;
+        else $$this->whereValue = $this->defaultWhere;
+    }
+    
+    public function getResults(){
         $results = null;
         //TODO: use a DQL to only select relevant attributes
-        if($isCollection){
-            $results = \DB::get($readType->getBaseType(), $whereValue);
+        if($this->isCollection){
+            $results = \DB::get($this->readType->getBaseType(), $this->whereValue);
         }
         else{
-            $results = \DB::getOne($readType->getBaseType(), $whereValue);
+            $results = \DB::getOne($this->readType->getBaseType(), $this->whereValue);
         }
-        $this->createOutput($results, $readType);
+        $this->createOutput($results, $this->readType);
     }
     
     /**

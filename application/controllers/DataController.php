@@ -9,6 +9,7 @@ use Rexume\Lib\Authentication\Authentication as Authentication;
 class DataController extends Controller {
     const INTERFACE_DELIMITER = ' ';
     const PARAMETER_SEPARATOR = '/';
+    const FILTER_DELIMITER = '#';
     /**
      * Read configuration interface for accessing interface declarations and types
      * @var Rexume\Config\ReadConfiguration
@@ -53,8 +54,16 @@ class DataController extends Controller {
         $interfaceNames = \array_unique(\explode(self::INTERFACE_DELIMITER, $arguments));
         //get configuration for interfaces
         foreach($interfaceNames as $interfaceName){
+            $filterSplit = \explode(self::FILTER_DELIMITER, $interfaceName);
+            $filter = null; $interface = null;
             //get the interface definition for the names in the request to deduce return types
-            $interface = $this->configuration->getInterface($scope, $interfaceName);
+            if(count($filterSplit) > 1){
+                $interface = $this->configuration->getInterface($scope, $filterSplit[0]);
+                $filter = $interface->getFilter($$filterSplit[1]);
+            }
+            else{
+                $interface = $this->configuration->getInterface($scope, $interfaceName);
+            }
             //ensure client is asking for a defined interface
             if(isset($interface)){
                 //all interfaces must return defined types
@@ -63,8 +72,12 @@ class DataController extends Controller {
                 if(isset($type)){
                     //discriminate between interfaces that expect to return collections and those that don't.
                     //the model will take care of the rest of the work
-                    $this->model->setQuery($type, $where, $interface->getIsCollection());
+                    $this->model->setQuery($type, $filter, $where, $interface->getIsCollection());
+                    $this->model->getResults();
                 }
+            }
+            else{
+                //TODO: invalid interface accessed
             }
         }
     }    

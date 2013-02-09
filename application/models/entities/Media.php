@@ -24,6 +24,10 @@
 		/** @Column(type="datetime") */
 		protected $editTime;
 		
+        public function getId(){
+            return $this->id;
+        }
+        
 		public function user($user = null)
 		{
 			if(isset($user) && $this->user !== $user)

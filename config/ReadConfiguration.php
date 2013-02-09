@@ -67,7 +67,13 @@ class ReadConfiguration {
                     (
                         $name,
                         (string)$interface['type'],
-                        (bool)$interface['collection']
+                        (bool)$interface['collection'],
+                        array_map(
+                            function($filterConfig){
+                                return new ReadFilter((string)$filterConfig['name'], (string)$filterConfig['attribute'], (string)$filterConfig['value']);
+                            },
+                            $interface->xpath('filter')
+                        )
                     );
             }
         }
