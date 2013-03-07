@@ -50,7 +50,6 @@
 			if(isset($user) && $this->user !== $user)
             {
                 $this->user = $user;
-                $user->degrees($this);
             }
             return $this->user;
 		}

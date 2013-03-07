@@ -57,7 +57,7 @@
 		
 		function getFooter()
 		{
-			return $footer;
+			return $this->footer;
 		}
 		
 		function setFooter($footer)
@@ -67,7 +67,7 @@
 		
 		function getSidebar()
 		{
-			return $this->footer;
+			return $this->sidebar;
 		}
 		
 		function setSidebar($sidebar)

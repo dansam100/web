@@ -59,7 +59,7 @@ class DataController extends Controller {
             //get the interface definition for the names in the request to deduce return types
             if(count($filterSplit) > 1){
                 $interface = $this->configuration->getInterface($scope, $filterSplit[0]);
-                $filter = $interface->getFilter($$filterSplit[1]);
+                $filter = $interface->getFilter($filterSplit[1]);
             }
             else{
                 $interface = $this->configuration->getInterface($scope, $interfaceName);
